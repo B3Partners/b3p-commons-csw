@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+	<item>
+		<identifier>a354a76b-c569-47ac-8144-688f251185fb</identifier>
+		<title>een titel</title>
+		<abstract>een korte beschrijving</abstract>
+		<resource>
+			<linkage>file://d:\projdata\lagen\blah.lyr</linkage>
+			<protocol>download</protocol>
+			<name>blah</name>
+		</resource>
+	</item>
+	<item>
+		<identifier>a354a76b-c569-47ac-8144-688f251185fc</identifier>
+		<title>een titel2</title>
+		<abstract>een korte beschrijving2</abstract>
+		<resource>
+			<linkage>file://d:\projdata\lagen\blah2.lyr</linkage>
+			<protocol>download</protocol>
+			<name>blah2a</name>
+		</resource>
+		<resource>
+			<linkage>file://d:\projdata\lagen\blah.lyr</linkage>
+			<protocol>download</protocol>
+			<name>blah2b</name>
+		</resource>
+	</item>
+</response>
