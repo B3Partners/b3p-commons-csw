@@ -10,5 +10,5 @@ package nl.b3p.csw.input;
  * @author Erik van de Pol
  */
 public interface Inputable {
-
+  
 }

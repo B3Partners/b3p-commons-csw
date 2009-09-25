@@ -39,51 +39,53 @@ public class CswRequestCreator {
     log = LogFactory.getLog(this.getClass());
   }
 
-  /*public String createEmptyCswResponse() {
-    GetRecordsResponse r = new GetRecordsResponse();
-    SearchStatus ss = new SearchStatus();
-    ss.setTimestamp(new Date());
-    r.setSearchStatus(ss);
-    SearchResults sr = new SearchResults();
-    sr.setElementSet(SearchResultsElementSetType.BRIEF);
-    sr.setNextRecord(0);
-    sr.setNumberOfRecordsMatched(0);
-    sr.setNumberOfRecordsReturned(0);
-    return marshalObject(r);
-  }*/
+  public GetRecords createSimpleCswRequest(String queryString) {
+    return createCswRequest(queryString, "", "", "", "");
+  }
 
-  public String createCswRequest(String q, String p, String o, String s, String t) {
-    if (q == null || q.trim().length() == 0) {
+  public GetRecords createCswRequest(
+          String queryString,
+          String propertyName,
+          String elementSetName,
+          String outputSchema,
+          String resultType)
+  {
+    if (queryString == null || queryString.trim().length() == 0) {
       return null;
     }
 
-    if (p == null || p.trim().length() == 0) {
-      p = "anyText";
+    if (propertyName == null || propertyName.trim().length() == 0) {
+      propertyName = "anyText";
     }
 
-    if (o == null || o.trim().length() == 0) {
-      o = ElementSetNameType.FULL.toString();
+    if (elementSetName == null || elementSetName.trim().length() == 0) {
+      elementSetName = ElementSetNameType.FULL.toString();
     }
 
-    if (s == null || s.trim().length() == 0) {
-      s = GetRecordsOutputSchemaType.CSW_ISORECORD.toString();
+    if (outputSchema == null || outputSchema.trim().length() == 0) {
+      outputSchema = GetRecordsOutputSchemaType.CSW_ISORECORD.toString();
     }
 
-    if (t == null || t.trim().length() == 0) {
-      t = GetRecordsResultTypeType.RESULTS.toString();
+    if (resultType == null || resultType.trim().length() == 0) {
+      resultType = GetRecordsResultTypeType.RESULTS.toString();
     }
 
-    return createCswRequest(q, p,
-            ElementSetNameType.valueOf(o), //ElementSetNameType.BRIEF, //ElementSetNameType.FULL, //ElementSetNameType.SUMMARY,
-            GetRecordsOutputSchemaType.valueOf(s), // GetRecordsOutputSchemaType.CSW_ISORECORD, // GetRecordsOutputSchemaType.CSW_RECORD,
-            GetRecordsResultTypeType.valueOf(t)); // GetRecordsResultTypeType.RESULTS, GetRecordsResultTypeType.HITS
+    return createCswRequest(queryString, propertyName,
+            ElementSetNameType.valueOf(elementSetName), //ElementSetNameType.BRIEF, //ElementSetNameType.FULL, //ElementSetNameType.SUMMARY,
+            GetRecordsOutputSchemaType.valueOf(outputSchema), // GetRecordsOutputSchemaType.CSW_ISORECORD, // GetRecordsOutputSchemaType.CSW_RECORD,
+            GetRecordsResultTypeType.valueOf(resultType)); // GetRecordsResultTypeType.RESULTS, GetRecordsResultTypeType.HITS
   }
 
-  public String createCswRequest(String q, String p, ElementSetNameType esn,
-          GetRecordsOutputSchemaType gros, GetRecordsResultTypeType grrt) {
-    PropertyIsLike pil = new PropertyIsLike();
-    pil.setEscape(PropertyIsLikeEscapeType._);
-    if ("identifier".equals(p)) {
+  public GetRecords createCswRequest(
+          String queryString,
+          String propertyName,
+          ElementSetNameType elementSetNameType,
+          GetRecordsOutputSchemaType getRecordsOutputSchemaType,
+          GetRecordsResultTypeType getRecordsResultTypeType)
+  {
+    PropertyIsLike propertyIslike = new PropertyIsLike();
+    propertyIslike.setEscape(PropertyIsLikeEscapeType._);
+    if ("identifier".equals(propertyName)) {
       // FIXME:
       // we assume here we are searching for an uuid.
       // we strip the uuid of any starting '{' and/or ending '}'.
@@ -93,45 +95,45 @@ public class CswRequestCreator {
       // which kind of defeats the first 'u' in uuid.
       // So this is still kind of a hack.
 
-      p = "anyText";
+      propertyName = "anyText";
 
-      log.debug("q before: " + q);
+      log.debug("queryString before: " + queryString);
 
-      if (q.startsWith("{")) {
-        q = q.substring(1);
+      if (queryString.startsWith("{")) {
+        queryString = queryString.substring(1);
       }
-      if (q.endsWith("}")) {
-        q = q.substring(0, q.length() - 1);
+      if (queryString.endsWith("}")) {
+        queryString = queryString.substring(0, queryString.length() - 1);
       }
 
-      log.debug("q after: " + q);
+      log.debug("queryString after: " + queryString);
 
-      pil.setLiteral(q);
+      propertyIslike.setLiteral(queryString);
     } else {
-      pil.setLiteral("%" + q + "%");
+      propertyIslike.setLiteral("%" + queryString + "%");
     }
-    pil.setPropertyName(p);
-    pil.setSingleChar(PropertyIsLikeSingleCharType._);
-    pil.setWildCard(PropertyIsLikeWildCardType._);
-    Filter f = new Filter();
-    f.setPropertyIsLike(pil);
-    Constraint c = new Constraint();
-    c.setFilter(f);
-    c.setVersion(ConstraintVersionType.VALUE_0);
-    Query qry = new Query();
-    qry.setConstraint(c);
-    qry.setElementSetName(esn);
-    qry.setTypeNames(QueryTypeNamesType.GMD_MD_METADATA);
-    GetRecords gr = new GetRecords();
-    gr.setOutputSchema(gros);
-    gr.setQuery(qry);
-    gr.setResultType(grrt);
-    gr.setService(GetRecordsServiceType.CSW);
-    gr.setVersion(GetRecordsVersionType.VALUE_0);
-    return marshalObject(gr);
+    propertyIslike.setPropertyName(propertyName);
+    propertyIslike.setSingleChar(PropertyIsLikeSingleCharType._);
+    propertyIslike.setWildCard(PropertyIsLikeWildCardType._);
+    Filter filter = new Filter();
+    filter.setPropertyIsLike(propertyIslike);
+    Constraint constraint = new Constraint();
+    constraint.setFilter(filter);
+    constraint.setVersion(ConstraintVersionType.VALUE_0);
+    Query query = new Query();
+    query.setConstraint(constraint);
+    query.setElementSetName(elementSetNameType);
+    query.setTypeNames(QueryTypeNamesType.GMD_MD_METADATA);
+    GetRecords getRecords = new GetRecords();
+    getRecords.setOutputSchema(getRecordsOutputSchemaType);
+    getRecords.setQuery(query);
+    getRecords.setResultType(getRecordsResultTypeType);
+    getRecords.setService(GetRecordsServiceType.CSW);
+    getRecords.setVersion(GetRecordsVersionType.VALUE_0);
+    return getRecords;
   }
 
-  private String marshalObject(Object o) {
+  public String marshalObject(Object o) {
     StringWriter xmlString = new StringWriter();
     try {
       Marshaller marshal = new Marshaller(xmlString);
