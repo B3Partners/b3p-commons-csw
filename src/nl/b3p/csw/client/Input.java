@@ -5,7 +5,6 @@
 
 package nl.b3p.csw.client;
 
-import nl.b3p.csw.client.CswRequestCreator;
 import nl.b3p.csw.client.castor.cswRequest.GetRecords;
 
 /**
@@ -22,7 +21,7 @@ public class Input {
   public Input(GetRecords getRecords) {
     this.getRecords = getRecords;
   }
-  // TODO
+  // TODO: Wkt input
 
   /**
    * @return the getRecords

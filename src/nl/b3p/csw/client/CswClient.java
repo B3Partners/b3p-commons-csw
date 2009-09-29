@@ -6,11 +6,17 @@ package nl.b3p.csw.client;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import javax.xml.transform.TransformerException;
 import nl.b3p.csw.client.castor.cswRequest.GetRecords;
 import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
 import nl.b3p.csw.util.CswClientFactory;
+import nl.b3p.csw.util.OnlineResource;
+import nl.b3p.csw.util.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.exolab.castor.xml.MarshalException;
@@ -83,15 +89,30 @@ public class CswClient {
     try {
       Output output = client.search(input);
       
-      Document xmlDoc = output.getResultAsXml();
+      Document xmlDoc = output.getXml();
       outputter.output(xmlDoc, System.out);
 
-      Document transformedXmlDoc = output.getResultAsTransformedXml(
+      Document transformedXmlDoc = output.getTransformedXml(
               "C:/dev_erik/b3p-commons-csw/xml/md-response.xsl");
       outputter.output(transformedXmlDoc, System.out);
 
       Document xmlDoc2 = CswClientFactory.searchSimpleAsXml("*eologie", server);
       outputter.output(xmlDoc2, System.out);
+
+      Map<URI, List<OnlineResource>> map = output.getResourcesMap(Protocol.WMS);
+      for (List<OnlineResource> resourceList : map.values()) {
+        for (OnlineResource resource : resourceList) {
+            URI url = resource.getUrl();
+            if (url != null) System.out.println("Resource URL: " + url.toString());
+            String name = resource.getName();
+            if (name != null) System.out.println("Name: " + name);
+            String desc = resource.getDescription();
+            if (desc != null) System.out.println("Description: " + desc);
+            Protocol prot = resource.getProtocol();
+            if (prot != null) System.out.println("Protocol: " + prot.getName());
+            System.out.println();
+        }
+      }
 
     } catch (JDOMException ex) {
       ex.printStackTrace(System.err);

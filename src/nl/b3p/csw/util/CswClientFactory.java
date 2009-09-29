@@ -6,6 +6,9 @@
 package nl.b3p.csw.util;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 import javax.xml.transform.TransformerException;
 import nl.b3p.csw.client.CswClient;
 import nl.b3p.csw.client.Input;
@@ -28,7 +31,7 @@ public class CswClientFactory {
     CswClient client = new CswClient(server);
     Input input = new Input(queryString);
     Output output = client.search(input);
-    return output.getResultAsXml();
+    return output.getXml();
   }
 
   public static Document searchSimpleAsTransformedXml(String queryString, CswServable server, String transformPath)
@@ -36,7 +39,7 @@ public class CswClientFactory {
     CswClient client = new CswClient(server);
     Input input = new Input(queryString);
     Output output = client.search(input);
-    return output.getResultAsTransformedXml(transformPath);
+    return output.getTransformedXml(transformPath);
   }
 
   public static Document searchAsXml(GetRecords getRecords, CswServable server)
@@ -44,7 +47,7 @@ public class CswClientFactory {
     CswClient client = new CswClient(server);
     Input input = new Input(getRecords);
     Output output = client.search(input);
-    return output.getResultAsXml();
+    return output.getXml();
   }
 
   public static Document searchAsTransformedXml(GetRecords getRecords, CswServable server, String transformPath)
@@ -52,7 +55,17 @@ public class CswClientFactory {
     CswClient client = new CswClient(server);
     Input input = new Input(getRecords);
     Output output = client.search(input);
-    return output.getResultAsTransformedXml(transformPath);
+    return output.getTransformedXml(transformPath);
   }
+
+   public static Map<URI, List<OnlineResource>> searchAsWmsResourcesMap(String queryString, CswServable server)
+          throws IOException, JDOMException, MarshalException, ValidationException {
+    CswClient client = new CswClient(server);
+    Input input = new Input(queryString);
+    Output output = client.search(input);
+    return output.getResourcesMap();
+  }
+
+
 
 }
