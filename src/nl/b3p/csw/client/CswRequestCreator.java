@@ -33,17 +33,13 @@ import org.exolab.castor.xml.ValidationException;
  * @author Erik van de Pol
  */
 public class CswRequestCreator {
-  protected static Log log = null;
+  protected static Log log = LogFactory.getLog(CswRequestCreator.class);
 
-  public CswRequestCreator() {
-    log = LogFactory.getLog(this.getClass());
-  }
-
-  public GetRecords createSimpleCswRequest(String queryString) {
+  public static GetRecords createSimpleCswRequest(String queryString) {
     return createCswRequest(queryString, "", "", "", "");
   }
 
-  public GetRecords createCswRequest(
+  public static GetRecords createCswRequest(
           String queryString,
           String propertyName,
           String elementSetName,
@@ -76,7 +72,7 @@ public class CswRequestCreator {
             GetRecordsResultTypeType.valueOf(resultType)); // GetRecordsResultTypeType.RESULTS, GetRecordsResultTypeType.HITS
   }
 
-  public GetRecords createCswRequest(
+  public static GetRecords createCswRequest(
           String queryString,
           String propertyName,
           ElementSetNameType elementSetNameType,
@@ -133,7 +129,7 @@ public class CswRequestCreator {
     return getRecords;
   }
 
-  public String marshalObject(Object o) throws IOException, MarshalException, ValidationException{
+  public static String marshalObject(Object o) throws IOException, MarshalException, ValidationException{
     StringWriter xmlString = new StringWriter();
     try {
       Marshaller marshal = new Marshaller(xmlString);
