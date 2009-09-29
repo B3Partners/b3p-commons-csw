@@ -7,8 +7,6 @@ package nl.b3p.csw.client;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
