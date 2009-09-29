@@ -52,22 +52,16 @@ public class GeoNetworkCswServer implements CswServable {
     cswRequestCreator = new CswRequestCreator();
   }
   
-  public String search(String cswRequestXml) {
-    String xmlResponse = null;
-
+  public String search(String cswRequestXml) throws IOException {
     try {
-      log.debug("sending xml:");
-      log.debug(cswRequestXml);
       if (login(loginUrl, cswUser, cswPassword)) {
-        xmlResponse = httpPostCswRequest(cswRequestXml, cswUrl);
+        return httpPostCswRequest(cswRequestXml, cswUrl);
       } else {
-        xmlResponse = httpPostCswRequest(cswRequestXml, cswUrl, cswUser, cswPassword);
+        return httpPostCswRequest(cswRequestXml, cswUrl, cswUser, cswPassword);
       }
     } catch (IOException e) {
-      log.error("Exception bij ophalen csw: " + cswUrl, e);
+      throw new IOException("Exception bij ophalen csw: " + cswUrl, e);
     }
-
-    return xmlResponse;
   }
 
   protected boolean login(String url, String username, String password) throws IOException {
@@ -86,15 +80,19 @@ public class GeoNetworkCswServer implements CswServable {
     loginMessage.append("</password>");
     loginMessage.append("</request>");
 
-    String responseMessage = httpPostCswRequest(loginMessage.toString(), url);
-
-    if (responseMessage != null) {
-      return true;
+    String responseMessage = null;
+    try {
+      responseMessage = httpPostCswRequest(loginMessage.toString(), url);
+    } catch (IOException ex) {
+      log.error("Error logging in.", ex);
     }
-    return false;
+
+    boolean loginSuccess = responseMessage != null;
+
+    return loginSuccess;
   }
 
-  protected  String httpPostCswRequest(String request, String url) throws IOException {
+  protected String httpPostCswRequest(String request, String url) throws IOException {
     return httpPostCswRequest(request, url, null, null);
   }
 
@@ -129,8 +127,7 @@ public class GeoNetworkCswServer implements CswServable {
     try {
       int statusCode = client.executeMethod(method);
       if (statusCode != HttpStatus.SC_OK) {
-        log.error("Host: " + url + " error: " + method.getStatusLine().getReasonPhrase());
-        return null;
+        throw new IOException("HttpStatus: " + statusCode + "; Host: " + url + "; Reason: " + method.getStatusLine().getReasonPhrase());
       }
 
       cookies = client.getState().getCookies();

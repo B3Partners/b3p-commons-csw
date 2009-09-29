@@ -7,6 +7,8 @@ package nl.b3p.csw.client;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -16,6 +18,8 @@ import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.exolab.castor.xml.MarshalException;
+import org.exolab.castor.xml.ValidationException;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -57,7 +61,8 @@ public class CswClient {
    * @param queryString
    * @throws NullPointerException
    */
-  public void searchSimple(String queryString) throws NullPointerException {
+  public void searchSimple(String queryString)
+          throws NullPointerException, IOException, JDOMException, MarshalException, ValidationException {
     if (queryString == null || queryString.equals("")) {
       throw new NullPointerException("Query string empty or not set.");
     }
@@ -72,7 +77,8 @@ public class CswClient {
    * @param getRecords
    * @throws NullPointerException
    */
-  public void search(GetRecords getRecords) throws NullPointerException {
+  public void search(GetRecords getRecords)
+          throws NullPointerException, IOException, JDOMException, MarshalException, ValidationException {
     if (getRecords == null) {
       throw new NullPointerException("Csw getRecords not set.");
     }
@@ -83,10 +89,10 @@ public class CswClient {
 
     try {
       xmlDocument = builder.build(new StringReader(xmlResponse));
-    } catch (JDOMException ex) {
-      log.error("Could not build an xml document from the csw response.\nResponse: " + xmlResponse, ex);
-    } catch (IOException ex) {
-      log.error("Could not build an xml document from the csw response.\nResponse: " + xmlResponse, ex);
+    } catch(JDOMException ex) {
+      throw new JDOMException("Could not build an xml document from the csw response.\nResponse: " + xmlResponse, ex);
+    } catch(IOException ex) {
+      throw new IOException("Could not build an xml document from the csw response.\nResponse: " + xmlResponse, ex);
     }
   }
 
@@ -98,7 +104,7 @@ public class CswClient {
     return xmlDocument;
   }
 
-  public Document getResultAsTransformedXml(String transformPath) {
+  public Document getResultAsTransformedXml(String transformPath) throws TransformerException {
     try {
       Transformer transformer =
               TransformerFactory.newInstance().newTransformer(new StreamSource(transformPath));
@@ -107,35 +113,37 @@ public class CswClient {
       transformer.transform(in, out);
       return out.getDocument();
     } catch (TransformerException e) {
-      log.error("Xml Csw response could not be transformed with " + transformPath +
+      throw new TransformerException(
+              "Xml Csw response could not be transformed with " + transformPath +
               ".\nXml: " + xmlDocument.toString(), e);
-      return null;
     }
   }
 
   // temporarily for testing purposes:
   public static void main(String[] args) {
-    log.debug("starting test");
-
     CswServable server = new GeoNetworkCswServer(
             "http://dev.b3p.nl/geonetwork/srv/en/xml.user.login",
             "http://dev.b3p.nl/geonetwork/srv/en/csw",
             "admin", "admin");
     CswClient client = new CswClient(server);
-    client.searchSimple("archeo*");
-    Document xmlDoc = client.getResultAsXml();
 
-    XMLOutputter outputter = new XMLOutputter();
     try {
+      client.searchSimple("archeo*");
+      Document xmlDoc = client.getResultAsXml();
+
+      XMLOutputter outputter = new XMLOutputter();
       outputter.output(xmlDoc, System.out);
+    } catch (JDOMException ex) {
+      ex.printStackTrace(System.err);
+    } catch (IOException ex) {
+      ex.printStackTrace(System.err);
+    } catch (NullPointerException ex) {
+      ex.printStackTrace(System.err);
+    } catch (MarshalException ex) {
+      ex.printStackTrace(System.err);
+    } catch (ValidationException ex) {
+      ex.printStackTrace(System.err);
     }
-    catch (IOException e) {
-      System.err.println(e);
-    }
-
-    log.debug("xml result: " + xmlDoc.toString());
-    log.debug("finished test");
   }
-
 
 }

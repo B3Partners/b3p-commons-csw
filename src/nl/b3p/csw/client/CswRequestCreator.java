@@ -133,7 +133,7 @@ public class CswRequestCreator {
     return getRecords;
   }
 
-  public String marshalObject(Object o) {
+  public String marshalObject(Object o) throws IOException, MarshalException, ValidationException{
     StringWriter xmlString = new StringWriter();
     try {
       Marshaller marshal = new Marshaller(xmlString);
@@ -142,11 +142,11 @@ public class CswRequestCreator {
       marshal.setNamespaceMapping("ogc", "http://www.opengis.net/ogc");
       marshal.marshal(o);
     } catch (IOException ex) {
-      log.error("IOException: " + o.toString(), ex);
+      throw new IOException("Error marshalling object: " + o.toString(), ex);
     } catch (MarshalException ex) {
-      log.error("MarshalException: " + o.toString(), ex);
+      throw new MarshalException("Error marshalling object: " + o.toString(), ex);
     } catch (ValidationException ex) {
-      log.error("ValidationException: " + o.toString(), ex);
+      throw new ValidationException("Error marshalling object: " + o.toString(), ex);
     }
 
     return xmlString.toString();

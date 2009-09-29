@@ -5,6 +5,8 @@
 
 package nl.b3p.csw.server;
 
+import java.io.IOException;
+
 /**
  *
  * @author Erik van de Pol
@@ -17,6 +19,6 @@ public interface CswServable {
    * @param cswRequestXml
    * @return The response from the server as a String. The String should contain xml.
    */
-  public String search(String cswRequestXml);
+  public String search(String cswRequestXml) throws IOException;
   
 }
