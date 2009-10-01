@@ -20,133 +20,128 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  *
  * @author Erik van de Pol. Most of this class by Chris van Lith.
  */
 public class GeoNetworkCswServer implements CswServable {
-  protected static Log log;
 
-  protected static final String host = AuthScope.ANY_HOST;
-  protected static final int port = AuthScope.ANY_PORT;
-  protected static final int RTIMEOUT = 20000;
-  protected static Cookie[] cookies = null;
+    protected static Log log;
+    protected static final String host = AuthScope.ANY_HOST;
+    protected static final int port = AuthScope.ANY_PORT;
+    protected static final int RTIMEOUT = 20000;
+    protected static Cookie[] cookies = null;
+    protected String cswUrl;
+    protected String loginUrl;
+    protected String cswUser;
+    protected String cswPassword;
+    protected CswRequestCreator cswRequestCreator = null;
 
-  protected String cswUrl;
-  protected String loginUrl;
-  protected String cswUser;
-  protected String cswPassword;
+    public GeoNetworkCswServer(String loginUrl, String cswUrl, String cswUser, String cswPassword) {
+        log = LogFactory.getLog(this.getClass());
+        log.info("Initializing " + this.getClass().getSimpleName());
 
-  protected CswRequestCreator cswRequestCreator = null;
+        this.loginUrl = loginUrl;
+        this.cswUrl = cswUrl;
+        this.cswUser = cswUser;
+        this.cswPassword = cswPassword;
 
-  public GeoNetworkCswServer(String loginUrl, String cswUrl, String cswUser, String cswPassword) {
-    log = LogFactory.getLog(this.getClass());
-    log.info("Initializing " + this.getClass().getSimpleName());
-
-    this.loginUrl = loginUrl;
-    this.cswUrl = cswUrl;
-    this.cswUser = cswUser;
-    this.cswPassword = cswPassword;
-
-    cswRequestCreator = new CswRequestCreator();
-  }
-  
-  public String search(String cswRequestXml) throws IOException {
-    try {
-      if (login(loginUrl, cswUser, cswPassword)) {
-        return httpPostCswRequest(cswRequestXml, cswUrl);
-      } else {
-        return httpPostCswRequest(cswRequestXml, cswUrl, cswUser, cswPassword);
-      }
-    } catch (IOException e) {
-      throw new IOException("Exception bij ophalen csw: " + cswUrl, e);
-    }
-  }
-
-  protected boolean login(String url, String username, String password) throws IOException {
-    if (url == null || username == null || password == null) {
-      return false;
+        cswRequestCreator = new CswRequestCreator();
     }
 
-    StringBuffer loginMessage = new StringBuffer();
-    loginMessage.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-    loginMessage.append("<request>");
-    loginMessage.append("<username>");
-    loginMessage.append(username);
-    loginMessage.append("</username>");
-    loginMessage.append("<password>");
-    loginMessage.append(password);
-    loginMessage.append("</password>");
-    loginMessage.append("</request>");
-
-    String responseMessage = null;
-    try {
-      responseMessage = httpPostCswRequest(loginMessage.toString(), url);
-    } catch (IOException ex) {
-      log.error("Error logging in.", ex);
+    public String search(String cswRequestXml) throws IOException {
+        try {
+            if (login(loginUrl, cswUser, cswPassword)) {
+                return httpPostCswRequest(cswRequestXml, cswUrl);
+            } else {
+                return httpPostCswRequest(cswRequestXml, cswUrl, cswUser, cswPassword);
+            }
+        } catch (IOException e) {
+            throw new IOException("Exception bij ophalen csw: " + cswUrl, e);
+        }
     }
 
-    boolean loginSuccess = responseMessage != null;
+    protected boolean login(String url, String username, String password) throws IOException {
+        if (url == null || username == null || password == null) {
+            return false;
+        }
 
-    return loginSuccess;
-  }
+        StringBuffer loginMessage = new StringBuffer();
+        loginMessage.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        loginMessage.append("<request>");
+        loginMessage.append("<username>");
+        loginMessage.append(username);
+        loginMessage.append("</username>");
+        loginMessage.append("<password>");
+        loginMessage.append(password);
+        loginMessage.append("</password>");
+        loginMessage.append("</request>");
 
-  protected String httpPostCswRequest(String request, String url) throws IOException {
-    return httpPostCswRequest(request, url, null, null);
-  }
+        String responseMessage = null;
+        try {
+            responseMessage = httpPostCswRequest(loginMessage.toString(), url);
+        } catch (IOException ex) {
+            log.error("Error logging in.", ex);
+        }
 
-  protected String httpPostCswRequest(String request, String url, String username, String password) throws IOException {
-    HttpState initialState = new HttpState();
-    if (cookies != null) {
-      for (int i = 0; i < cookies.length; i++) {
-        initialState.addCookie(cookies[i]);
-      }
+        boolean loginSuccess = responseMessage != null;
+
+        return loginSuccess;
     }
 
-    HttpClient client = new HttpClient();
-    client.getHttpConnectionManager().getParams().setConnectionTimeout(RTIMEOUT);
-    client.getParams().setCookiePolicy(CookiePolicy.RFC_2109);
-    //client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
-
-    if (username != null && password != null) {
-      client.getParams().setAuthenticationPreemptive(true);
-      Credentials defaultcreds = new UsernamePasswordCredentials(username, password);
-      AuthScope authScope = new AuthScope(host, port);
-      initialState.setCredentials(authScope, defaultcreds);
+    protected String httpPostCswRequest(String request, String url) throws IOException {
+        return httpPostCswRequest(request, url, null, null);
     }
 
-    client.setState(initialState);
+    protected String httpPostCswRequest(String request, String url, String username, String password) throws IOException {
+        HttpState initialState = new HttpState();
+        if (cookies != null) {
+            for (int i = 0; i < cookies.length; i++) {
+                initialState.addCookie(cookies[i]);
+            }
+        }
 
-    // Create a method instance.
-    PostMethod method = new PostMethod(url);
-    method.setRequestHeader("Accept", "text/xml");
-    method.setRequestEntity(new StringRequestEntity(request, "text/xml", "UTF-8"));
+        HttpClient client = new HttpClient();
+        client.getHttpConnectionManager().getParams().setConnectionTimeout(RTIMEOUT);
+        client.getParams().setCookiePolicy(CookiePolicy.RFC_2109);
+        //client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 
-    String responseString = null;
-    try {
-      int statusCode = client.executeMethod(method);
-      if (statusCode != HttpStatus.SC_OK) {
-        throw new IOException("HttpStatus: " + statusCode + "; Host: " + url + "; Reason: " + method.getStatusLine().getReasonPhrase());
-      }
+        if (username != null && password != null) {
+            client.getParams().setAuthenticationPreemptive(true);
+            Credentials defaultcreds = new UsernamePasswordCredentials(username, password);
+            AuthScope authScope = new AuthScope(host, port);
+            initialState.setCredentials(authScope, defaultcreds);
+        }
 
-      cookies = client.getState().getCookies();
+        client.setState(initialState);
 
-      // Display the cookies
-      log.debug("Present cookies: ");
-      for (int i = 0; i < cookies.length; i++) {
-        log.debug(" - " + cookies[i].toExternalForm());
-      }
+        // Create a method instance.
+        PostMethod method = new PostMethod(url);
+        method.setRequestHeader("Accept", "text/xml");
+        method.setRequestEntity(new StringRequestEntity(request, "text/xml", "UTF-8"));
 
-      responseString = method.getResponseBodyAsString();
-      
-    } finally {
-      // Release the connection.
-      method.releaseConnection();
-      return responseString;
+        String responseString = null;
+        try {
+            int statusCode = client.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK) {
+                throw new IOException("HttpStatus: " + statusCode + "; Host: " + url + "; Reason: " + method.getStatusLine().getReasonPhrase());
+            }
+
+            cookies = client.getState().getCookies();
+
+            // Display the cookies
+            log.debug("Present cookies: ");
+            for (int i = 0; i < cookies.length; i++) {
+                log.debug(" - " + cookies[i].toExternalForm());
+            }
+
+            responseString = method.getResponseBodyAsString();
+
+        } finally {
+            // Release the connection.
+            method.releaseConnection();
+            return responseString;
+        }
+
     }
-
-  }
-
-
 }
