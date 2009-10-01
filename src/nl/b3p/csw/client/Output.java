@@ -58,12 +58,7 @@ public class Output {
                     TransformerFactory.newInstance().newTransformer(new StreamSource(transformPath));
             JDOMSource in = new JDOMSource(xmlDocument);
             JDOMResult out = new JDOMResult();
-            //in.setSystemId("./js/metadataEditor");
-            //transformer.setParameter("baseURL", "./js/metadataEditor/");
             transformer.transform(in, out);
-            log.debug("Output SystemId: " + out.getSystemId());
-            out.setSystemId("./js/metadataEditor");
-            log.debug("Output New SystemId: " + out.getSystemId());
             return out.getDocument();
         } catch (TransformerException e) {
             throw new TransformerException(
