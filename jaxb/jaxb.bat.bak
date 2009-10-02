@@ -1,0 +1,1 @@
+xjc -d ..\src -p nl.b3p.csw.jaxb .\xsds\csw-request.xsd

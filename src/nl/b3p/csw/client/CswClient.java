@@ -9,8 +9,12 @@ import java.io.StringReader;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.transform.TransformerException;
-import nl.b3p.csw.client.castor.cswRequest.GetRecords;
+import nl.b3p.csw.jaxb.request.GetRecords;
+import nl.b3p.csw.jaxb.response.GetRecordsResponse;
 import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
 import nl.b3p.csw.util.CswClientFactory;
@@ -18,8 +22,6 @@ import nl.b3p.csw.util.OnlineResource;
 import nl.b3p.csw.util.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.ValidationException;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -53,13 +55,20 @@ public class CswClient {
     }
 
     public Output search(Input input)
-            throws IOException, JDOMException, MarshalException, ValidationException {
+            throws IOException, JDOMException, JAXBException { //, MarshalException, ValidationException {
         GetRecords getRecords = input.getGetRecords();
         if (getRecords == null) {
             throw new IllegalArgumentException("Csw getRecords not set.");
         }
 
-        String marshalledCswXml = CswRequestCreator.marshalObject(getRecords);
+        JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.request");
+        Marshaller marshaller = jaxbContext.createMarshaller();
+
+        //XMLOutputter o = new Xml
+        String marshalledCswXml = marshaller.marshal(getRecords, null);
+        
+        //CswRequestCreator.marshalObject(getRecords);
+
         String xmlResponse = server.search(marshalledCswXml);
         SAXBuilder builder = new SAXBuilder(VALIDATE_CSW_RESPONSE);
 
@@ -87,6 +96,11 @@ public class CswClient {
 
         try {
             Output output = client.search(input);
+
+            GetRecordsResponse response = output.getGetRecordsResponse();
+
+            List<Object> listMD_Metadata = response.getSearchResults().getAnynode();
+            System.out.println("MD_Metadata: " + listMD_Metadata.size());
 
             Document xmlDoc = output.getXml();
             outputter.output(xmlDoc, System.out);
@@ -130,6 +144,8 @@ public class CswClient {
         } catch (ValidationException ex) {
             ex.printStackTrace(System.err);
         } catch (TransformerException ex) {
+            ex.printStackTrace(System.err);
+        } catch (JAXBException ex) {
             ex.printStackTrace(System.err);
         }
     }

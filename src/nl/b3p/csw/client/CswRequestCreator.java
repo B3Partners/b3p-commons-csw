@@ -4,9 +4,7 @@
  */
 package nl.b3p.csw.client;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import nl.b3p.csw.client.castor.cswFilter.Filter;
+/*import nl.b3p.csw.client.castor.cswFilter.Filter;
 import nl.b3p.csw.client.castor.cswFilter.PropertyIsLike;
 import nl.b3p.csw.client.castor.cswFilter.types.PropertyIsLikeEscapeType;
 import nl.b3p.csw.client.castor.cswFilter.types.PropertyIsLikeSingleCharType;
@@ -20,12 +18,19 @@ import nl.b3p.csw.client.castor.cswRequest.types.GetRecordsOutputSchemaType;
 import nl.b3p.csw.client.castor.cswRequest.types.GetRecordsResultTypeType;
 import nl.b3p.csw.client.castor.cswRequest.types.GetRecordsServiceType;
 import nl.b3p.csw.client.castor.cswRequest.types.GetRecordsVersionType;
-import nl.b3p.csw.client.castor.cswRequest.types.QueryTypeNamesType;
+import nl.b3p.csw.client.castor.cswRequest.types.QueryTypeNamesType;*/
+
+import nl.b3p.csw.jaxb.request.ComparisonOpsType;
+import nl.b3p.csw.jaxb.request.FilterType;
+import nl.b3p.csw.jaxb.request.GetRecords;
+import nl.b3p.csw.jaxb.request.LiteralType;
+import nl.b3p.csw.jaxb.request.LogicOpsType;
+import nl.b3p.csw.jaxb.request.ObjectFactory;
+import nl.b3p.csw.jaxb.request.PropertyIsLikeType;
+import nl.b3p.csw.jaxb.request.PropertyNameType;
+import nl.b3p.csw.jaxb.request.SpatialOpsType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.Marshaller;
-import org.exolab.castor.xml.ValidationException;
 
 /**
  *
@@ -54,24 +59,49 @@ public class CswRequestCreator {
         }
 
         if (elementSetName == null || elementSetName.trim().length() == 0) {
-            elementSetName = ElementSetNameType.FULL.toString();
+            elementSetName = "full";//ElementSetNameType.FULL.toString();
         }
 
         if (outputSchema == null || outputSchema.trim().length() == 0) {
-            outputSchema = GetRecordsOutputSchemaType.CSW_ISORECORD.toString();
+            outputSchema = "csw:IsoRecord";// GetRecordsOutputSchemaType.CSW_ISORECORD.toString();
         }
 
         if (resultType == null || resultType.trim().length() == 0) {
-            resultType = GetRecordsResultTypeType.RESULTS.toString();
+            resultType = "results";//GetRecordsResultTypeType.RESULTS.toString();
         }
 
-        return createCswRequest(queryString, propertyName,
+        ObjectFactory objectFactory = new ObjectFactory();
+
+        PropertyIsLikeType comparisonType = objectFactory.createPropertyIsLikeType();
+
+        LiteralType literalType = objectFactory.createLiteralType();
+        literalType.getContent().add(queryString);
+
+        comparisonType.setLiteral(literalType);
+
+        PropertyNameType propertyNameType = objectFactory.createPropertyNameType();
+        propertyNameType.setContent(propertyName);
+        
+        comparisonType.setPropertyName(propertyNameType);
+
+        comparisonType.setWildCard("*");
+        comparisonType.setSingleChar("?");
+        comparisonType.setEscapeChar("\\");
+
+        return createCswRequest(elementSetName,
+                outputSchema,
+                resultType,
+                comparisonType, null, null);
+
+
+        /*return createCswRequest(queryString, propertyName,
                 ElementSetNameType.valueOf(elementSetName), //ElementSetNameType.BRIEF, //ElementSetNameType.FULL, //ElementSetNameType.SUMMARY,
                 GetRecordsOutputSchemaType.valueOf(outputSchema), // GetRecordsOutputSchemaType.CSW_ISORECORD, // GetRecordsOutputSchemaType.CSW_RECORD,
                 GetRecordsResultTypeType.valueOf(resultType)); // GetRecordsResultTypeType.RESULTS, GetRecordsResultTypeType.HITS
+         */
     }
 
-    public static GetRecords createCswRequest(
+    /*public static GetRecords createCswRequest(
             String queryString,
             String propertyName,
             ElementSetNameType elementSetNameType,
@@ -125,9 +155,9 @@ public class CswRequestCreator {
         getRecords.setService(GetRecordsServiceType.CSW);
         getRecords.setVersion(GetRecordsVersionType.VALUE_0);
         return getRecords;
-    }
+    }*/
 
-    public static String marshalObject(Object o) throws IOException, MarshalException, ValidationException {
+    /*public static String marshalObject(Object o) throws IOException, MarshalException, ValidationException {
         StringWriter xmlString = new StringWriter();
         try {
             Marshaller marshal = new Marshaller(xmlString);
@@ -144,5 +174,63 @@ public class CswRequestCreator {
         }
 
         return xmlString.toString();
+    }*/
+
+
+    public static GetRecords createCswRequest(
+            ComparisonOpsType comparisonOpsType,
+            LogicOpsType logicOpsType,
+            SpatialOpsType spatialOpsType
+            ) {
+        return createCswRequest("full", "csw:IsoRecord", "results", 
+                comparisonOpsType, logicOpsType, spatialOpsType);
+    }
+
+    public static GetRecords createCswRequest(
+            String elementSetName,
+            String outputSchema,
+            String resultType,
+            ComparisonOpsType comparisonOpsType,
+            LogicOpsType logicOpsType,
+            SpatialOpsType spatialOpsType
+            ) {
+        ObjectFactory objectFactory = new ObjectFactory();
+
+        GetRecords getRecords = objectFactory.createGetRecords();
+
+        getRecords.setService("CSW");
+        getRecords.setResultType(resultType);
+        getRecords.setOutputSchema(outputSchema);
+        getRecords.setVersion("2.0.2");
+        
+        GetRecords.Query query = objectFactory.createGetRecordsQuery();
+
+        query.setElementSetName(elementSetName);
+        query.setTypeNames("gmd:MD_Metadata");
+
+        GetRecords.Query.Constraint constraint = objectFactory.createGetRecordsQueryConstraint();
+
+        constraint.setVersion("1.1.0");
+
+        FilterType filterType = objectFactory.createFilterType();
+
+        // TODO: meerdere filters??? Rare/onduidelijke xsds.
+        if (comparisonOpsType != null) {
+            filterType.setComparisonOps(objectFactory.createComparisonOps(comparisonOpsType));
+        }
+        if (logicOpsType != null) {
+            filterType.setLogicOps(objectFactory.createLogicOps(logicOpsType));
+        }
+        if (spatialOpsType != null) {
+            filterType.setSpatialOps(objectFactory.createSpatialOps(spatialOpsType));
+        }
+
+        constraint.setFilter(filterType);
+        
+        query.setConstraint(constraint);
+
+        getRecords.setQuery(query);
+
+        return getRecords;
     }
 }

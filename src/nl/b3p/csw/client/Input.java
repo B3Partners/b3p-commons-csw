@@ -4,7 +4,8 @@
  */
 package nl.b3p.csw.client;
 
-import nl.b3p.csw.client.castor.cswRequest.GetRecords;
+import nl.b3p.csw.jaxb.request.GetRecords;
+
 
 /**
  *

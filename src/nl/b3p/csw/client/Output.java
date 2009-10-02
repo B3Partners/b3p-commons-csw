@@ -11,18 +11,24 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
+import nl.b3p.csw.jaxb.response.GetRecordsResponse;
 import nl.b3p.csw.util.OnlineResource;
 import nl.b3p.csw.util.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.filter.ElementFilter;
+import org.jdom.output.DOMOutputter;
 import org.jdom.transform.JDOMResult;
 import org.jdom.transform.JDOMSource;
 
@@ -50,6 +56,19 @@ public class Output {
 
     public Document getXml() {
         return xmlDocument;
+    }
+
+    // BUG: result list seems empty
+    public GetRecordsResponse getGetRecordsResponse() throws JDOMException, JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.response");
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+        // transform to w3c dom to be able to use jaxb to unmarshall.
+        DOMOutputter domOutputter = new DOMOutputter();
+        org.w3c.dom.Document w3cDomDoc = domOutputter.output(xmlDocument);
+        return (GetRecordsResponse)unmarshaller.unmarshal(w3cDomDoc);
+        
+        //return (GetRecordsResponse)unmarshaller.unmarshal(new JDOMSource(xmlDocument));
     }
 
     public Document getTransformedXml(String transformPath) throws TransformerException {
