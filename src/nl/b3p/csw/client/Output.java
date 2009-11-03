@@ -4,6 +4,7 @@
  */
 package nl.b3p.csw.client;
 
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -11,13 +12,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import nl.b3p.csw.jaxb.response.GetRecordsResponse;
 import nl.b3p.csw.util.OnlineResource;
 import nl.b3p.csw.util.Protocol;
@@ -31,6 +42,7 @@ import org.jdom.filter.ElementFilter;
 import org.jdom.output.DOMOutputter;
 import org.jdom.transform.JDOMResult;
 import org.jdom.transform.JDOMSource;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -60,12 +72,39 @@ public class Output {
 
     // BUG: result list seems empty
     public GetRecordsResponse getGetRecordsResponse() throws JDOMException, JAXBException {
+        /*Schema mySchema;
+        SchemaFactory sf =
+            SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        try {
+            mySchema = sf.newSchema(file);
+        } catch (SAXException saxe) {
+            // ...(error handling)
+            mySchema = null;
+        }*/
+
         JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.response");
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        //unmarshaller.setSchema(mySchema);
 
         // transform to w3c dom to be able to use jaxb to unmarshall.
         DOMOutputter domOutputter = new DOMOutputter();
         org.w3c.dom.Document w3cDomDoc = domOutputter.output(xmlDocument);
+
+        /*
+        // ff tijdelijk om te testen. Ben ik blij dat ik JDOM gebruik! :-)
+        Source source = new DOMSource(w3cDomDoc);
+        StringWriter stringWriter = new StringWriter();
+        Result result = new StreamResult(stringWriter);
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = factory.newTransformer();
+            transformer.transform(source, result);
+            System.out.println("w3c.dom.Document: " + stringWriter.getBuffer().toString());
+        } catch (Exception ex) {
+            System.out.println("schrijven niet ok");
+        }*/
+      
         return (GetRecordsResponse)unmarshaller.unmarshal(w3cDomDoc);
         
         //return (GetRecordsResponse)unmarshaller.unmarshal(new JDOMSource(xmlDocument));

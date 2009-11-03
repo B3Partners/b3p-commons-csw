@@ -8,14 +8,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 import nl.b3p.csw.client.CswClient;
 import nl.b3p.csw.client.Input;
 import nl.b3p.csw.client.Output;
-import nl.b3p.csw.client.castor.cswRequest.GetRecords;
+import nl.b3p.csw.jaxb.request.GetRecords;
 import nl.b3p.csw.server.CswServable;
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.ValidationException;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 
@@ -26,7 +25,7 @@ import org.jdom.JDOMException;
 public class CswClientFactory {
 
     public static Document searchSimpleAsXml(String queryString, CswServable server)
-            throws IOException, JDOMException, MarshalException, ValidationException {
+            throws IOException, JDOMException, JAXBException {
         CswClient client = new CswClient(server);
         Input input = new Input(queryString);
         Output output = client.search(input);
@@ -34,7 +33,7 @@ public class CswClientFactory {
     }
 
     public static Document searchSimpleAsTransformedXml(String queryString, CswServable server, String transformPath)
-            throws IOException, JDOMException, MarshalException, ValidationException, TransformerException {
+            throws IOException, JDOMException, TransformerException, JAXBException {
         CswClient client = new CswClient(server);
         Input input = new Input(queryString);
         Output output = client.search(input);
@@ -42,7 +41,7 @@ public class CswClientFactory {
     }
 
     public static Document searchAsXml(GetRecords getRecords, CswServable server)
-            throws IOException, JDOMException, MarshalException, ValidationException {
+            throws IOException, JDOMException, JAXBException {
         CswClient client = new CswClient(server);
         Input input = new Input(getRecords);
         Output output = client.search(input);
@@ -50,7 +49,7 @@ public class CswClientFactory {
     }
 
     public static Document searchAsTransformedXml(GetRecords getRecords, CswServable server, String transformPath)
-            throws IOException, JDOMException, MarshalException, ValidationException, TransformerException {
+            throws IOException, JDOMException, TransformerException, JAXBException {
         CswClient client = new CswClient(server);
         Input input = new Input(getRecords);
         Output output = client.search(input);
@@ -58,7 +57,7 @@ public class CswClientFactory {
     }
 
     public static Map<URI, List<OnlineResource>> searchAsWmsResourcesMap(String queryString, CswServable server)
-            throws IOException, JDOMException, MarshalException, ValidationException {
+            throws IOException, JDOMException, JAXBException {
         CswClient client = new CswClient(server);
         Input input = new Input(queryString);
         Output output = client.search(input);

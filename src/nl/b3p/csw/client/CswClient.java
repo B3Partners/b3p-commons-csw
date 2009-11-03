@@ -6,6 +6,7 @@ package nl.b3p.csw.client;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -64,11 +65,10 @@ public class CswClient {
         JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.request");
         Marshaller marshaller = jaxbContext.createMarshaller();
 
-        //XMLOutputter o = new Xml
-        String marshalledCswXml = marshaller.marshal(getRecords, null);
+        StringWriter stringWriter = new StringWriter();
+        marshaller.marshal(getRecords, stringWriter);
+        String marshalledCswXml = stringWriter.toString();
         
-        //CswRequestCreator.marshalObject(getRecords);
-
         String xmlResponse = server.search(marshalledCswXml);
         SAXBuilder builder = new SAXBuilder(VALIDATE_CSW_RESPONSE);
 
@@ -101,6 +101,9 @@ public class CswClient {
 
             List<Object> listMD_Metadata = response.getSearchResults().getAnynode();
             System.out.println("MD_Metadata: " + listMD_Metadata.size());
+            for (Object o : listMD_Metadata) {
+                System.out.println("object: " + o.toString());
+            }
 
             Document xmlDoc = output.getXml();
             outputter.output(xmlDoc, System.out);
@@ -138,10 +141,6 @@ public class CswClient {
         } catch (JDOMException ex) {
             ex.printStackTrace(System.err);
         } catch (IOException ex) {
-            ex.printStackTrace(System.err);
-        } catch (MarshalException ex) {
-            ex.printStackTrace(System.err);
-        } catch (ValidationException ex) {
             ex.printStackTrace(System.err);
         } catch (TransformerException ex) {
             ex.printStackTrace(System.err);
