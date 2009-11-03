@@ -5,14 +5,24 @@
 package nl.b3p.csw.client;
 
 import nl.b3p.csw.jaxb.request.ComparisonOpsType;
+import nl.b3p.csw.jaxb.request.ConstraintType;
+import nl.b3p.csw.jaxb.request.CswVersionType;
+import nl.b3p.csw.jaxb.request.ElementSetNameType;
 import nl.b3p.csw.jaxb.request.FilterType;
+import nl.b3p.csw.jaxb.request.FilterVersionType;
 import nl.b3p.csw.jaxb.request.GetRecords;
 import nl.b3p.csw.jaxb.request.LiteralType;
 import nl.b3p.csw.jaxb.request.LogicOpsType;
 import nl.b3p.csw.jaxb.request.ObjectFactory;
+import nl.b3p.csw.jaxb.request.OutputSchemaType;
 import nl.b3p.csw.jaxb.request.PropertyIsLikeType;
 import nl.b3p.csw.jaxb.request.PropertyNameType;
+import nl.b3p.csw.jaxb.request.QueryType;
+import nl.b3p.csw.jaxb.request.ResultTypeType;
+import nl.b3p.csw.jaxb.request.ServiceType;
 import nl.b3p.csw.jaxb.request.SpatialOpsType;
+import nl.b3p.csw.jaxb.request.TypeNamesType;
+import nl.b3p.csw.jaxb.response.ElementSetType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,17 +52,20 @@ public class CswRequestCreator {
             propertyName = "anyText";
         }
 
-        if (elementSetName == null || elementSetName.trim().length() == 0) {
-            elementSetName = "full";//ElementSetNameType.FULL.toString();
-        }
+        ElementSetNameType elementSetNameType = ElementSetNameType.FULL;
+        try {
+            elementSetNameType = ElementSetNameType.fromValue(elementSetName);
+        } catch (Exception e) {}
 
-        if (outputSchema == null || outputSchema.trim().length() == 0) {
-            outputSchema = "csw:IsoRecord";// GetRecordsOutputSchemaType.CSW_ISORECORD.toString();
-        }
+        OutputSchemaType outputSchemaType = OutputSchemaType.CSW_ISO_RECORD;
+        try {
+            outputSchemaType = OutputSchemaType.fromValue(outputSchema);
+        } catch (Exception e) {}
 
-        if (resultType == null || resultType.trim().length() == 0) {
-            resultType = "results";//GetRecordsResultTypeType.RESULTS.toString();
-        }
+        ResultTypeType resultTypeType = ResultTypeType.RESULTS;
+        try {
+            resultTypeType = ResultTypeType.fromValue(resultType);
+        } catch (Exception e) {}
 
         ObjectFactory objectFactory = new ObjectFactory();
 
@@ -72,9 +85,9 @@ public class CswRequestCreator {
         comparisonType.setSingleChar("?");
         comparisonType.setEscapeChar("\\");
 
-        return createCswRequest(elementSetName,
-                outputSchema,
-                resultType,
+        return createCswRequest(elementSetNameType,
+                outputSchemaType,
+                resultTypeType,
                 comparisonType, null, null);
     }
 
@@ -83,14 +96,18 @@ public class CswRequestCreator {
             LogicOpsType logicOpsType,
             SpatialOpsType spatialOpsType
             ) {
-        return createCswRequest("full", "csw:IsoRecord", "results", 
-                comparisonOpsType, logicOpsType, spatialOpsType);
+        return createCswRequest(ElementSetNameType.FULL,
+                OutputSchemaType.CSW_ISO_RECORD,
+                ResultTypeType.RESULTS,
+                comparisonOpsType, 
+                logicOpsType,
+                spatialOpsType);
     }
 
     public static GetRecords createCswRequest(
-            String elementSetName,
-            String outputSchema,
-            String resultType,
+            ElementSetNameType elementSetNameType,
+            OutputSchemaType outputSchemaType,
+            ResultTypeType resultTypeType,
             ComparisonOpsType comparisonOpsType,
             LogicOpsType logicOpsType,
             SpatialOpsType spatialOpsType
@@ -99,19 +116,19 @@ public class CswRequestCreator {
 
         GetRecords getRecords = objectFactory.createGetRecords();
 
-        getRecords.setService("CSW");
-        getRecords.setResultType(resultType);
-        getRecords.setOutputSchema(outputSchema);
-        getRecords.setVersion("2.0.2");
+        getRecords.setService(ServiceType.CSW);
+        getRecords.setResultType(resultTypeType);
+        getRecords.setOutputSchema(outputSchemaType);
+        getRecords.setVersion(CswVersionType.Version_2_0_2);
         
-        GetRecords.Query query = objectFactory.createGetRecordsQuery();
+        QueryType query = objectFactory.createQueryType();
 
-        query.setElementSetName(elementSetName);
-        query.setTypeNames("gmd:MD_Metadata");
+        query.setElementSetName(elementSetNameType);
+        query.setTypeNames(TypeNamesType.GMD_MD_METADATA);
 
-        GetRecords.Query.Constraint constraint = objectFactory.createGetRecordsQueryConstraint();
+        ConstraintType constraint = objectFactory.createConstraintType();
 
-        constraint.setVersion("1.1.0");
+        constraint.setVersion(FilterVersionType.Version_1_1_0);
 
         FilterType filterType = objectFactory.createFilterType();
 

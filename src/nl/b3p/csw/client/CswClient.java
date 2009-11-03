@@ -24,6 +24,7 @@ import nl.b3p.csw.util.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
+import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
@@ -97,12 +98,17 @@ public class CswClient {
         try {
             Output output = client.search(input);
 
-            GetRecordsResponse response = output.getGetRecordsResponse();
+            /*GetRecordsResponse response = output.getGetRecordsResponse();
 
-            List<Object> listMD_Metadata = response.getSearchResults().getAnynode();
+            List<Element> listMD_Metadata = response.getSearchResults().getAny();
             System.out.println("MD_Metadata: " + listMD_Metadata.size());
-            for (Object o : listMD_Metadata) {
-                System.out.println("object: " + o.toString());
+            for (Element elem : listMD_Metadata) {
+                System.out.println("elem: " + elem.toString());
+            }*/
+            List<Element> mdList = output.getSearchResults();
+            System.out.println("mdList size: " + mdList.size());
+            for (Element elem : mdList) {
+                System.out.println("elem: " + elem.toString());
             }
 
             Document xmlDoc = output.getXml();

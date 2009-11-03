@@ -11,30 +11,32 @@
 							<xs:element name="PropertyName" type="xs:string"/>
 							<xs:element name="Literal" type="xs:string"/>
 						</xs:sequence>
-						<xs:attribute name="wildCard">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:enumeration value="%"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:attribute>
-						<xs:attribute name="singleChar">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:enumeration value="_"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:attribute>
-						<xs:attribute name="escape">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:enumeration value="\"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:attribute>
+						<xs:attribute name="wildCard" type="wildCardType"/>
+						<xs:attribute name="singleChar" type="singleCharType"/>
+						<xs:attribute name="escape" type="escapeType"/>
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	
+	<xs:simpleType name="wildCardType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="%"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="singleCharType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="_"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="escapeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="\"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
 </xs:schema>
