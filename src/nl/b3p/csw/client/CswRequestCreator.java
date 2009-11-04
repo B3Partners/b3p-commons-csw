@@ -92,6 +92,13 @@ public class CswRequestCreator {
                 filterType);
     }
 
+    public static GetRecords createCswRequest(FilterType filterType) {
+         return createCswRequest(ElementSetNameType.FULL,
+                OutputSchemaType.CSW_ISO_RECORD,
+                ResultTypeType.RESULTS,
+                filterType);
+    }
+
     public static GetRecords createCswRequest(
             ElementSetNameType elementSetNameType,
             OutputSchemaType outputSchemaType,
