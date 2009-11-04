@@ -68,48 +68,36 @@ public class CswRequestCreator {
 
         ObjectFactory objectFactory = new ObjectFactory();
 
-        PropertyIsLikeType comparisonOpsType = objectFactory.createPropertyIsLikeType();
+        PropertyIsLikeType propertyIsLikeType = objectFactory.createPropertyIsLikeType();
 
         LiteralType literalType = objectFactory.createLiteralType();
         literalType.getContent().add(queryString);
 
-        comparisonOpsType.setLiteral(literalType);
+        propertyIsLikeType.setLiteral(literalType);
 
         PropertyNameType propertyNameType = objectFactory.createPropertyNameType();
         propertyNameType.setContent(propertyName);
         
-        comparisonOpsType.setPropertyName(propertyNameType);
+        propertyIsLikeType.setPropertyName(propertyNameType);
 
-        comparisonOpsType.setWildCard("*");
-        comparisonOpsType.setSingleChar("?");
-        comparisonOpsType.setEscapeChar("\\");
+        propertyIsLikeType.setWildCard("*");
+        propertyIsLikeType.setSingleChar("?");
+        propertyIsLikeType.setEscapeChar("\\");
+
+        FilterType filterType = objectFactory.createFilterType();
+        filterType.setComparisonOps(objectFactory.createComparisonOps(propertyIsLikeType));
 
         return createCswRequest(elementSetNameType,
                 outputSchemaType,
                 resultTypeType,
-                comparisonOpsType, null, null);
-    }
-
-    public static GetRecords createCswRequest(
-            ComparisonOpsType comparisonOpsType,
-            LogicOpsType logicOpsType,
-            SpatialOpsType spatialOpsType
-            ) {
-        return createCswRequest(ElementSetNameType.FULL,
-                OutputSchemaType.CSW_ISO_RECORD,
-                ResultTypeType.RESULTS,
-                comparisonOpsType, 
-                logicOpsType,
-                spatialOpsType);
+                filterType);
     }
 
     public static GetRecords createCswRequest(
             ElementSetNameType elementSetNameType,
             OutputSchemaType outputSchemaType,
             ResultTypeType resultTypeType,
-            ComparisonOpsType comparisonOpsType,
-            LogicOpsType logicOpsType,
-            SpatialOpsType spatialOpsType
+            FilterType filterType
             ) {
         ObjectFactory objectFactory = new ObjectFactory();
 
@@ -128,20 +116,6 @@ public class CswRequestCreator {
         ConstraintType constraint = objectFactory.createConstraintType();
 
         constraint.setVersion(FilterVersionType.Version_1_1_0);
-
-        FilterType filterType = objectFactory.createFilterType();
-
-        // TODO: meerdere filters??? xsds checken.
-        if (comparisonOpsType != null) {
-            filterType.setComparisonOps(objectFactory.createComparisonOps(comparisonOpsType));
-        }
-        if (logicOpsType != null) {
-            filterType.setLogicOps(objectFactory.createLogicOps(logicOpsType));
-        }
-        if (spatialOpsType != null) {
-            filterType.setSpatialOps(objectFactory.createSpatialOps(spatialOpsType));
-        }
-
         constraint.setFilter(filterType);
         
         query.setConstraint(constraint);

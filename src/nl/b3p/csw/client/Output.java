@@ -58,8 +58,8 @@ public class Output {
     protected static final Namespace gcoNameSpace = Namespace.getNamespace("http://www.isotc211.org/2005/gco");
 
     protected static final String cswResponseXsdPath = "c:\\dev_erik\\b3p-commons-csw\\jaxb\\xsds\\csw-response.xsd";
+    protected static final boolean defaultValidate = false;
     protected static Schema cswResponseSchema = null;
-    protected static boolean validate = true;
     
     // TODO: deze staat hard op ISO 19139. Andere standaarden toevoegen?
     protected static final ElementFilter resultElementFilter = new ElementFilter("MD_Metadata", gmdNameSpace);
@@ -77,22 +77,30 @@ public class Output {
         return xmlDocument;
     }
 
-    public GetRecordsResponse getGetRecordsResponse() throws JDOMException, JAXBException {
-        if (getRecordsResponse == null) {
-            if (validate) {
-                SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                try {
-                    cswResponseSchema = sf.newSchema(new File(cswResponseXsdPath));
-                } catch (SAXException saxe) {
-                    System.err.println("No validation possible. File '" + cswResponseXsdPath + "'; " +
-                            saxe.getLocalizedMessage());
-                    cswResponseSchema = null;
-                }
+    protected Schema getResponseSchema() {
+        if (cswResponseSchema == null) {
+            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            try {
+                cswResponseSchema = sf.newSchema(new File(cswResponseXsdPath));
+            } catch (SAXException saxe) {
+                log.error("No validation possible. File '" + cswResponseXsdPath + "'.", saxe);
+                cswResponseSchema = null;
             }
+        }
+        return cswResponseSchema;
+    }
+
+    public GetRecordsResponse getGetRecordsResponse() throws JDOMException, JAXBException {
+        return getGetRecordsResponse(defaultValidate);
+    }
+
+    public GetRecordsResponse getGetRecordsResponse(boolean validate) throws JDOMException, JAXBException {
+        if (getRecordsResponse == null) {
+            Schema schema = validate ? getResponseSchema() : null;
 
             JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.response");
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            unmarshaller.setSchema(cswResponseSchema);
+            unmarshaller.setSchema(schema);
 
             // transform to w3c dom to be able to use jaxb to unmarshal.
             DOMOutputter domOutputter = new DOMOutputter();

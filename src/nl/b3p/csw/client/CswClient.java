@@ -4,6 +4,7 @@
  */
 package nl.b3p.csw.client;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -96,23 +97,34 @@ public class CswClient {
         XMLOutputter outputter = new XMLOutputter();
 
         try {
+            /*SAXBuilder builder = new SAXBuilder(VALIDATE_CSW_RESPONSE);
+
+            Document inputXmlDoc = builder.build(new FileInputStream("c:\\dev_erik\\b3p-commons-csw\\jaxb\\testcsw.xml"));
+
+            boolean validateInputXml = true;
+            Input input = new Input(inputXmlDoc, validateInputXml);*/
+            
+
+            JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.request");
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            StringWriter stringWriter = new StringWriter();
+
+            marshaller.marshal(input.getGetRecords(), stringWriter);
+            System.out.println(stringWriter.toString());
+
             Output output = client.search(input);
 
-            /*GetRecordsResponse response = output.getGetRecordsResponse();
+            Document outputXmlDoc = output.getXml();
+            outputter.output(outputXmlDoc, System.out);
 
-            List<Element> listMD_Metadata = response.getSearchResults().getAny();
-            System.out.println("MD_Metadata: " + listMD_Metadata.size());
-            for (Element elem : listMD_Metadata) {
-                System.out.println("elem: " + elem.toString());
-            }*/
-            List<Element> mdList = output.getSearchResults();
+            /*List<Element> mdList = output.getSearchResults();
             System.out.println("mdList size: " + mdList.size());
             for (Element elem : mdList) {
                 System.out.println("elem: " + elem.toString());
-            }
+            }*/
 
-            Document xmlDoc = output.getXml();
-            outputter.output(xmlDoc, System.out);
+            //Document xmlDoc = output.getXml();
+            //outputter.output(xmlDoc, System.out);
 
             Document transformedXmlDoc = output.getTransformedXml(
                     "C:/dev_erik/b3p-commons-csw/xml/md-response.xsl");
