@@ -65,7 +65,8 @@ public class Output {
     protected static final ElementFilter resultElementFilter = new ElementFilter("MD_Metadata", gmdNameSpace);
     protected static final ElementFilter resourceElementFilter = new ElementFilter("CI_OnlineResource", gmdNameSpace);
 
-    protected Document xmlDocument;
+    protected Document xmlDocument = null;
+    protected GetRecordsResponse getRecordsResponse = null;
 
 
     public Output(Document xmlDocument) {
@@ -77,26 +78,29 @@ public class Output {
     }
 
     public GetRecordsResponse getGetRecordsResponse() throws JDOMException, JAXBException {
-        if (validate) {
-            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            try {
-                cswResponseSchema = sf.newSchema(new File(cswResponseXsdPath));
-            } catch (SAXException saxe) {
-                System.err.println("No validation possible. File '" + cswResponseXsdPath + "'; " +
-                        saxe.getLocalizedMessage());
-                cswResponseSchema = null;
+        if (getRecordsResponse == null) {
+            if (validate) {
+                SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                try {
+                    cswResponseSchema = sf.newSchema(new File(cswResponseXsdPath));
+                } catch (SAXException saxe) {
+                    System.err.println("No validation possible. File '" + cswResponseXsdPath + "'; " +
+                            saxe.getLocalizedMessage());
+                    cswResponseSchema = null;
+                }
             }
+
+            JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.response");
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            unmarshaller.setSchema(cswResponseSchema);
+
+            // transform to w3c dom to be able to use jaxb to unmarshal.
+            DOMOutputter domOutputter = new DOMOutputter();
+            org.w3c.dom.Document w3cDomDoc = domOutputter.output(xmlDocument);
+
+            getRecordsResponse = (GetRecordsResponse)unmarshaller.unmarshal(w3cDomDoc);
         }
-
-        JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.response");
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        unmarshaller.setSchema(cswResponseSchema);
-
-        // transform to w3c dom to be able to use jaxb to unmarshal.
-        DOMOutputter domOutputter = new DOMOutputter();
-        org.w3c.dom.Document w3cDomDoc = domOutputter.output(xmlDocument);
-
-        return (GetRecordsResponse)unmarshaller.unmarshal(w3cDomDoc);
+        return getRecordsResponse;
     }
 
     public List<org.w3c.dom.Element> getSearchResultsW3C() throws JDOMException, JAXBException {
@@ -115,6 +119,18 @@ public class Output {
         }
 
         return jdomList;
+    }
+
+    public List<Document> getSearchResultsAsDocuments() throws JDOMException, JAXBException {
+        List<Element> elemList = getSearchResults();
+        List<Document> docList = new ArrayList<Document>(elemList.size());
+
+        // transform to jdom doc list
+        for (Element elem : elemList) {
+            docList.add(new Document(elem));
+        }
+
+        return docList;
     }
 
     public Document getTransformedXml(String transformPath) throws TransformerException {

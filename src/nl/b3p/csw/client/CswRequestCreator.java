@@ -22,7 +22,6 @@ import nl.b3p.csw.jaxb.request.ResultTypeType;
 import nl.b3p.csw.jaxb.request.ServiceType;
 import nl.b3p.csw.jaxb.request.SpatialOpsType;
 import nl.b3p.csw.jaxb.request.TypeNamesType;
-import nl.b3p.csw.jaxb.response.ElementSetType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -69,26 +68,26 @@ public class CswRequestCreator {
 
         ObjectFactory objectFactory = new ObjectFactory();
 
-        PropertyIsLikeType comparisonType = objectFactory.createPropertyIsLikeType();
+        PropertyIsLikeType comparisonOpsType = objectFactory.createPropertyIsLikeType();
 
         LiteralType literalType = objectFactory.createLiteralType();
         literalType.getContent().add(queryString);
 
-        comparisonType.setLiteral(literalType);
+        comparisonOpsType.setLiteral(literalType);
 
         PropertyNameType propertyNameType = objectFactory.createPropertyNameType();
         propertyNameType.setContent(propertyName);
         
-        comparisonType.setPropertyName(propertyNameType);
+        comparisonOpsType.setPropertyName(propertyNameType);
 
-        comparisonType.setWildCard("*");
-        comparisonType.setSingleChar("?");
-        comparisonType.setEscapeChar("\\");
+        comparisonOpsType.setWildCard("*");
+        comparisonOpsType.setSingleChar("?");
+        comparisonOpsType.setEscapeChar("\\");
 
         return createCswRequest(elementSetNameType,
                 outputSchemaType,
                 resultTypeType,
-                comparisonType, null, null);
+                comparisonOpsType, null, null);
     }
 
     public static GetRecords createCswRequest(
@@ -132,7 +131,7 @@ public class CswRequestCreator {
 
         FilterType filterType = objectFactory.createFilterType();
 
-        // TODO: meerdere filters??? Rare/onduidelijke xsds.
+        // TODO: meerdere filters??? xsds checken.
         if (comparisonOpsType != null) {
             filterType.setComparisonOps(objectFactory.createComparisonOps(comparisonOpsType));
         }
