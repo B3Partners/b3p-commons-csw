@@ -1,2 +1,2 @@
-xjc -d ..\src -p nl.b3p.csw.jaxb.request .\xsds\csw-request.xsd
-xjc -d ..\src -p nl.b3p.csw.jaxb.response .\xsds\csw-response.xsd
+xjc -d ..\src -b .\xsds\csw-request.xjb .\xsds\csw-request.xsd
+xjc -d ..\src -b .\xsds\csw-response.xjb .\xsds\csw-response.xsd

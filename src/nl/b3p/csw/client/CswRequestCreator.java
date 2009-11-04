@@ -4,23 +4,19 @@
  */
 package nl.b3p.csw.client;
 
-import nl.b3p.csw.jaxb.request.ComparisonOpsType;
+import nl.b3p.csw.jaxb.filter.FilterType;
+import nl.b3p.csw.jaxb.filter.LiteralType;
+import nl.b3p.csw.jaxb.filter.PropertyIsLikeType;
+import nl.b3p.csw.jaxb.filter.PropertyNameType;
 import nl.b3p.csw.jaxb.request.ConstraintType;
 import nl.b3p.csw.jaxb.request.CswVersionType;
 import nl.b3p.csw.jaxb.request.ElementSetNameType;
-import nl.b3p.csw.jaxb.request.FilterType;
 import nl.b3p.csw.jaxb.request.FilterVersionType;
 import nl.b3p.csw.jaxb.request.GetRecords;
-import nl.b3p.csw.jaxb.request.LiteralType;
-import nl.b3p.csw.jaxb.request.LogicOpsType;
-import nl.b3p.csw.jaxb.request.ObjectFactory;
 import nl.b3p.csw.jaxb.request.OutputSchemaType;
-import nl.b3p.csw.jaxb.request.PropertyIsLikeType;
-import nl.b3p.csw.jaxb.request.PropertyNameType;
 import nl.b3p.csw.jaxb.request.QueryType;
 import nl.b3p.csw.jaxb.request.ResultTypeType;
 import nl.b3p.csw.jaxb.request.ServiceType;
-import nl.b3p.csw.jaxb.request.SpatialOpsType;
 import nl.b3p.csw.jaxb.request.TypeNamesType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +28,11 @@ import org.apache.commons.logging.LogFactory;
 public class CswRequestCreator {
 
     protected static Log log = LogFactory.getLog(CswRequestCreator.class);
+
+    protected static nl.b3p.csw.jaxb.request.ObjectFactory requestFactory =
+            new nl.b3p.csw.jaxb.request.ObjectFactory();
+    protected static nl.b3p.csw.jaxb.filter.ObjectFactory filterFactory =
+            new nl.b3p.csw.jaxb.filter.ObjectFactory();
 
     public static GetRecords createSimpleCswRequest(String queryString) {
         return createCswRequest(queryString, "", "", "", "");
@@ -66,16 +67,14 @@ public class CswRequestCreator {
             resultTypeType = ResultTypeType.fromValue(resultType);
         } catch (Exception e) {}
 
-        ObjectFactory objectFactory = new ObjectFactory();
+        PropertyIsLikeType propertyIsLikeType = filterFactory.createPropertyIsLikeType();
 
-        PropertyIsLikeType propertyIsLikeType = objectFactory.createPropertyIsLikeType();
-
-        LiteralType literalType = objectFactory.createLiteralType();
+        LiteralType literalType = filterFactory.createLiteralType();
         literalType.getContent().add(queryString);
 
         propertyIsLikeType.setLiteral(literalType);
 
-        PropertyNameType propertyNameType = objectFactory.createPropertyNameType();
+        PropertyNameType propertyNameType = filterFactory.createPropertyNameType();
         propertyNameType.setContent(propertyName);
         
         propertyIsLikeType.setPropertyName(propertyNameType);
@@ -84,8 +83,8 @@ public class CswRequestCreator {
         propertyIsLikeType.setSingleChar("?");
         propertyIsLikeType.setEscapeChar("\\");
 
-        FilterType filterType = objectFactory.createFilterType();
-        filterType.setComparisonOps(objectFactory.createComparisonOps(propertyIsLikeType));
+        FilterType filterType = filterFactory.createFilterType();
+        filterType.setComparisonOps(filterFactory.createComparisonOps(propertyIsLikeType));
 
         return createCswRequest(elementSetNameType,
                 outputSchemaType,
@@ -99,21 +98,20 @@ public class CswRequestCreator {
             ResultTypeType resultTypeType,
             FilterType filterType
             ) {
-        ObjectFactory objectFactory = new ObjectFactory();
 
-        GetRecords getRecords = objectFactory.createGetRecords();
+        GetRecords getRecords = requestFactory.createGetRecords();
 
         getRecords.setService(ServiceType.CSW);
         getRecords.setResultType(resultTypeType);
         getRecords.setOutputSchema(outputSchemaType);
         getRecords.setVersion(CswVersionType.Version_2_0_2);
         
-        QueryType query = objectFactory.createQueryType();
+        QueryType query = requestFactory.createQueryType();
 
         query.setElementSetName(elementSetNameType);
         query.setTypeNames(TypeNamesType.GMD_MD_METADATA);
 
-        ConstraintType constraint = objectFactory.createConstraintType();
+        ConstraintType constraint = requestFactory.createConstraintType();
 
         constraint.setVersion(FilterVersionType.Version_1_1_0);
         constraint.setFilter(filterType);
