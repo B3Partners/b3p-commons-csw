@@ -66,6 +66,7 @@ public class CswClient {
 
         JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.request");
         Marshaller marshaller = jaxbContext.createMarshaller();
+        //marshaller.setProperty("jaxb.formatted.output", true);
 
         StringWriter stringWriter = new StringWriter();
         marshaller.marshal(getRecords, stringWriter);
@@ -104,13 +105,12 @@ public class CswClient {
             boolean validateInputXml = true;
             Input input = new Input(inputXmlDoc, validateInputXml);*/
             
-
-            JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.request");
+            /*JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.request");
             Marshaller marshaller = jaxbContext.createMarshaller();
             StringWriter stringWriter = new StringWriter();
 
             marshaller.marshal(input.getGetRecords(), stringWriter);
-            System.out.println(stringWriter.toString());
+            System.out.println(stringWriter.toString());*/
 
             Output output = client.search(input);
 
