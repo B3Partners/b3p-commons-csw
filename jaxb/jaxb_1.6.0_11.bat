@@ -1,0 +1,2 @@
+c:\Progra~1\Java\jdk1.6.0_11\bin\xjc -d ..\src -b .\xsds\csw-request.xjb .\xsds\csw-request.xsd -extension
+c:\Progra~1\Java\jdk1.6.0_11\bin\xjc -d ..\src -b .\xsds\csw-response.xjb .\xsds\csw-response.xsd
