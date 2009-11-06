@@ -134,4 +134,15 @@ public class CswRequestCreator {
 
         return getRecords;
     }
+
+    /*public static GetRecords createGetRecordByIdRequest(String id) {
+        GetRecords getRecords = requestFactory.createGetRecords();
+
+        getRecords.setService(ServiceType.CSW);
+        getRecords.setResultType(ResultTypeType.RESULTS);
+        getRecords.setOutputSchema(OutputSchemaType.CSW_ISO_RECORD);
+        getRecords.setVersion(CswVersionType.Version_2_0_2);
+
+        return getRecords;
+    }*/
 }
