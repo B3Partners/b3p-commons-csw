@@ -7,7 +7,7 @@
 			jaxb:version="2.0" 
 			>
 
-	<!--jaxb:globalBindings generateMixedExtensions="true"/-->
+	<jaxb:globalBindings generateMixedExtensions="true"/>
 
 	<jaxb:bindings schemaLocation="csw-request.xsd"  node="/xs:schema">
 	

@@ -99,7 +99,7 @@ NOTE: This definition allows for a nested structure, i.e. a CompositeSolid may u
 	<!-- =========================================================== -->
 	<!-- complex/composite geometry objects -->
 	<!-- =========================================================== -->
-	<element name="GeometricComplex" type="gml:GeometricComplexType" substitutionGroup="gml:_Geometry"/>
+	<element name="GeometricComplex" type="gml:GeometricComplexType" substitutionGroup="gml:AbstractGeometry"/>
 	<!-- =========================================================== -->
 	<complexType name="GeometricComplexType">
 		<annotation>

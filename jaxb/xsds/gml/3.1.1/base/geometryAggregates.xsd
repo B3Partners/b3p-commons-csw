@@ -11,7 +11,7 @@
 	<!-- aggregate geometry objects -->
 	<!-- =========================================================== -->
 	<!-- =========================================================== -->
-	<element name="_GeometricAggregate" type="gml:AbstractGeometricAggregateType" abstract="true" substitutionGroup="gml:_Geometry">
+	<element name="_GeometricAggregate" type="gml:AbstractGeometricAggregateType" abstract="true" substitutionGroup="gml:AbstractGeometry">
 		<annotation>
 			<documentation>The "_GeometricAggregate" element is the abstract head of the substituition group for all geometric aggremates.</documentation>
 		</annotation>

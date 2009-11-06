@@ -75,7 +75,8 @@ public class CswRequestCreator {
         propertyIsLikeType.setLiteral(literalType);
 
         PropertyNameType propertyNameType = filterFactory.createPropertyNameType();
-        propertyNameType.setContent(propertyName);
+        //propertyNameType.setContent(propertyName);
+        propertyNameType.getContent().add(propertyName);
         
         propertyIsLikeType.setPropertyName(propertyNameType);
 
@@ -84,7 +85,11 @@ public class CswRequestCreator {
         propertyIsLikeType.setEscapeChar("\\");
 
         FilterType filterType = filterFactory.createFilterType();
-        filterType.setComparisonOps(filterFactory.createComparisonOps(propertyIsLikeType));
+        //filterType.setComparisonOps(filterFactory.createPrComparisonOps(propertyIsLikeType));
+        filterType.setPropertyIsLike(propertyIsLikeType);
+
+        // in BinarySpatialOpType-class deze annotatie toevoegen na iedere xjc recompile:
+        //@XmlSeeAlso({AbstractGeometryType.class})
 
         return createCswRequest(elementSetNameType,
                 outputSchemaType,

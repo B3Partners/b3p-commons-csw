@@ -83,7 +83,7 @@ A simple link element can be used to implement pointer functionality, and this f
 	<!-- =========================================================== -->
 	<!-- rings (closed curves for surface boundaries) -->
 	<!-- =========================================================== -->
-	<element name="AbstractRing" type="gml:AbstractRingType" abstract="true" substitutionGroup="gml:_Geometry">
+	<element name="AbstractRing" type="gml:AbstractRingType" abstract="true" substitutionGroup="gml:AbstractGeometry">
 		<annotation>
 			<documentation>The "AbstractRing" element is the abstract head of the substituition group for all closed boundaries of a surface patch.</documentation>
 		</annotation>

@@ -66,11 +66,13 @@ public class CswClient {
 
         JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.request");
         Marshaller marshaller = jaxbContext.createMarshaller();
-        //marshaller.setProperty("jaxb.formatted.output", true);
+        marshaller.setProperty("jaxb.formatted.output", true);
 
         StringWriter stringWriter = new StringWriter();
         marshaller.marshal(getRecords, stringWriter);
         String marshalledCswXml = stringWriter.toString();
+        
+        log.debug("Request:\n" + marshalledCswXml);
         
         String xmlResponse = server.search(marshalledCswXml);
         SAXBuilder builder = new SAXBuilder(VALIDATE_CSW_RESPONSE);
@@ -103,15 +105,8 @@ public class CswClient {
             Document inputXmlDoc = builder.build(new FileInputStream("c:\\dev_erik\\b3p-commons-csw\\jaxb\\testcsw.xml"));
 
             boolean validateInputXml = true;
-            Input input = new Input(inputXmlDoc, validateInputXml);*/
+            input = new Input(inputXmlDoc, validateInputXml);*/
             
-            /*JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.request");
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            StringWriter stringWriter = new StringWriter();
-
-            marshaller.marshal(input.getGetRecords(), stringWriter);
-            System.out.println(stringWriter.toString());*/
-
             Output output = client.search(input);
 
             Document outputXmlDoc = output.getXml();

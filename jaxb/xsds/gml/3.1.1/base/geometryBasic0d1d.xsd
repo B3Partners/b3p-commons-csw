@@ -32,14 +32,14 @@
 	<!-- ============================================================== -->
 	<!-- ===========  abstract supertype for geometry objects =================== -->
 	<!-- ============================================================== -->
-	<element name="_Geometry" type="gml:AbstractGeometryType" abstract="true" substitutionGroup="gml:_GML">
+	<element name="AbstractGeometry" type="gml:AbstractGeometryType" abstract="true" substitutionGroup="gml:_GML">
 		<annotation>
-			<documentation>The "_Geometry" element is the abstract head of the substituition group for all geometry elements of GML 3. This 
+			<documentation>The "AbstractGeometry" element is the abstract head of the substituition group for all geometry elements of GML 3. This 
 			includes pre-defined and user-defined geometry elements. Any geometry element must be a direct or indirect extension/restriction 
-			of AbstractGeometryType and must be directly or indirectly in the substitution group of "_Geometry".</documentation>
+			of AbstractGeometryType and must be directly or indirectly in the substitution group of "AbstractGeometry".</documentation>
 			<appinfo>
 				<sch:pattern name="Check SRS tags">
-					<sch:rule context="gml:_Geometry">
+					<sch:rule context="gml:AbstractGeometry">
 						<sch:extends rule="CRSLabels"/>
 					</sch:rule>
 				</sch:pattern>
@@ -54,7 +54,7 @@
 			the reference or the contained element must be given, but not both or none.</documentation>
 		</annotation>
 		<sequence minOccurs="0">
-			<element ref="gml:_Geometry"/>
+			<element ref="gml:AbstractGeometry"/>
 		</sequence>
 		<attributeGroup ref="gml:AssociationAttributeGroup">
 			<annotation>
@@ -75,7 +75,7 @@
 			referencing geometry elements or arrays of geometry elements is not supported.</documentation>
 		</annotation>
 		<sequence>
-			<element ref="gml:_Geometry" minOccurs="0" maxOccurs="unbounded"/>
+			<element ref="gml:AbstractGeometry" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
 	<!-- ============================================================== -->
@@ -85,7 +85,7 @@
 			have an identifying attribute ("gml:id"), a name (attribute "name") and a description (attribute "description"). It may be associated 
 			with a spatial reference system (attribute "srsName"). The following rules shall be adhered: - Every geometry type shall derive 
 			from this abstract type. - Every geometry element (i.e. an element of a geometry type) shall be directly or indirectly in the 
-			substitution group of _Geometry.</documentation>
+			substitution group of AbstractGeometry.</documentation>
 		</annotation>
 		<complexContent>
 			<extension base="gml:AbstractGMLType">
@@ -148,7 +148,7 @@
 		</attribute>
 	</attributeGroup>
 	<!-- ============================================================== -->
-	<element name="_GeometricPrimitive" type="gml:AbstractGeometricPrimitiveType" abstract="true" substitutionGroup="gml:_Geometry">
+	<element name="_GeometricPrimitive" type="gml:AbstractGeometricPrimitiveType" abstract="true" substitutionGroup="gml:AbstractGeometry">
 		<annotation>
 			<documentation>The "_GeometricPrimitive" element is the abstract head of the substituition group for all (pre- and user-defined) 
 			geometric primitives.</documentation>

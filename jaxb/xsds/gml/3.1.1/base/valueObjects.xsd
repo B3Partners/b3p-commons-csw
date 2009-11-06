@@ -10,7 +10,7 @@
 	For conditions, see OGC Software Notice http://www.opengeospatial.org/about/?page=ipr</documentation>
 	</annotation>
 	<!-- ====================================================================== -->
-	<!-- geometry and temporal included so that _Geometry and _TimeObject can be added to Value choice group -->
+	<!-- geometry and temporal included so that AbstractGeometry and _TimeObject can be added to Value choice group -->
 	<include schemaLocation="geometryBasic0d1d.xsd"/>
 	<include schemaLocation="temporal.xsd"/>
 	<!-- ====================================================================== -->
@@ -24,7 +24,7 @@
 			<!-- <element ref="gml:_Value"/> -->
 			<group ref="gml:ValueObject"/>
 			<element ref="gml:_Object"/>
-			<!--			<element ref="gml:_Geometry"/>
+			<!--			<element ref="gml:AbstractGeometry"/>
 			<element ref="gml:_TimeObject"/> -->
 			<element ref="gml:Null"/>
 		</choice>
