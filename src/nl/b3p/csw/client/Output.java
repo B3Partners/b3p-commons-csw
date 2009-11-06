@@ -4,7 +4,6 @@
  */
 package nl.b3p.csw.client;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -12,8 +11,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Transformer;
@@ -21,8 +20,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import nl.b3p.csw.jaxb.response.GetRecordsResponse;
+import nl.b3p.csw.jaxb.csw.GetRecordsResponseType;
 import nl.b3p.csw.util.OnlineResource;
 import nl.b3p.csw.util.Protocol;
 import org.apache.commons.logging.Log;
@@ -36,11 +34,12 @@ import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
 import org.jdom.transform.JDOMResult;
 import org.jdom.transform.JDOMSource;
-import org.xml.sax.SAXException;
 
 /**
  *
  * @author Erik van de Pol
+ *
+ * TODO: check for return type. make that gettable.
  */
 public class Output {
     
@@ -49,16 +48,16 @@ public class Output {
     protected static final Namespace gmdNameSpace = Namespace.getNamespace("http://www.isotc211.org/2005/gmd");
     protected static final Namespace gcoNameSpace = Namespace.getNamespace("http://www.isotc211.org/2005/gco");
 
-    protected static final String cswResponseXsdPath = "c:\\dev_erik\\b3p-commons-csw\\jaxb\\xsds\\csw-response.xsd";
-    protected static final boolean defaultValidate = false;
-    protected static Schema cswResponseSchema = null;
+    //protected static final String cswResponseXsdPath = "c:\\dev_erik\\b3p-commons-csw\\jaxb\\xsds\\csw-response.xsd";
+    //protected static final boolean defaultValidate = false;
+    //protected static Schema cswResponseSchema = null;
     
     // TODO: deze staat hard op ISO 19139. Andere standaarden toevoegen?
     protected static final ElementFilter resultElementFilter = new ElementFilter("MD_Metadata", gmdNameSpace);
     protected static final ElementFilter resourceElementFilter = new ElementFilter("CI_OnlineResource", gmdNameSpace);
 
     protected Document xmlDocument = null;
-    protected GetRecordsResponse getRecordsResponse = null;
+    protected JAXBElement response = null;
 
 
     public Output(Document xmlDocument) {
@@ -69,7 +68,7 @@ public class Output {
         return xmlDocument;
     }
 
-    protected Schema getResponseSchema() {
+    /*protected Schema getResponseSchema() {
         if (cswResponseSchema == null) {
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             try {
@@ -80,17 +79,17 @@ public class Output {
             }
         }
         return cswResponseSchema;
+    }*/
+
+    public JAXBElement getResponse() throws JDOMException, JAXBException {
+        /*return getGetRecordsResponse(defaultValidate);
     }
 
-    public GetRecordsResponse getGetRecordsResponse() throws JDOMException, JAXBException {
-        return getGetRecordsResponse(defaultValidate);
-    }
+    public GetRecordsResponse getGetRecordsResponse(boolean validate) throws JDOMException, JAXBException {*/
+        if (response == null) {
+            Schema schema = null;//validate ? getResponseSchema() : null;
 
-    public GetRecordsResponse getGetRecordsResponse(boolean validate) throws JDOMException, JAXBException {
-        if (getRecordsResponse == null) {
-            Schema schema = validate ? getResponseSchema() : null;
-
-            JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.response");
+            JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.csw");
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             unmarshaller.setSchema(schema);
 
@@ -98,14 +97,19 @@ public class Output {
             DOMOutputter domOutputter = new DOMOutputter();
             org.w3c.dom.Document w3cDomDoc = domOutputter.output(xmlDocument);
 
-            getRecordsResponse = (GetRecordsResponse)unmarshaller.unmarshal(w3cDomDoc);
+            response = (JAXBElement)unmarshaller.unmarshal(w3cDomDoc);
         }
-        return getRecordsResponse;
+        return response;
+    }
+
+    // TODO: is een beetje lelijk. structuur overdenken.
+    public JAXBElement<GetRecordsResponseType> getGetRecordsResponse() throws JDOMException, JAXBException {
+        return (JAXBElement<GetRecordsResponseType>)getResponse();
     }
 
     public List<org.w3c.dom.Element> getSearchResultsW3C() throws JDOMException, JAXBException {
-        GetRecordsResponse response = getGetRecordsResponse();
-        return response.getSearchResults().getAny();
+        JAXBElement<GetRecordsResponseType> getRecordsResponse = getGetRecordsResponse();
+        return getRecordsResponse.getValue().getSearchResults().getAny();
     }
 
     public List<Element> getSearchResults() throws JDOMException, JAXBException {

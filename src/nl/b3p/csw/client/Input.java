@@ -7,11 +7,12 @@ package nl.b3p.csw.client;
 import java.io.File;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import nl.b3p.csw.jaxb.request.GetRecords;
+import nl.b3p.csw.jaxb.csw.RequestBaseType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
@@ -31,14 +32,14 @@ public class Input {
     protected static Schema cswRequestSchema = null;
     protected static final boolean defaultValidate = true;
 
-    protected GetRecords getRecords = null;
+    protected JAXBElement<? extends RequestBaseType> request = null;
 
     public Input(String queryString) {
-        this.getRecords = CswRequestCreator.createSimpleCswRequest(queryString);
+        this.request = CswRequestCreator.createSimpleCswRequest(queryString);
     }
 
-    public Input(GetRecords getRecords) {
-        this.getRecords = getRecords;
+    public Input(JAXBElement<? extends RequestBaseType> request) {
+        this.request = request;
     }
 
     public Input(Document document) throws JAXBException, JDOMException {
@@ -56,7 +57,7 @@ public class Input {
         DOMOutputter domOutputter = new DOMOutputter();
         org.w3c.dom.Document w3cDomDoc = domOutputter.output(document);
 
-        this.getRecords = (GetRecords)unmarshaller.unmarshal(w3cDomDoc);
+        this.request = (JAXBElement<? extends RequestBaseType>)unmarshaller.unmarshal(w3cDomDoc);
     }
 
     protected Schema getRequestSchema() {
@@ -78,7 +79,7 @@ public class Input {
     /**
      * @return the getRecords
      */
-    public GetRecords getGetRecords() {
-        return getRecords;
+    public JAXBElement<? extends RequestBaseType> getRequest() {
+        return request;
     }
 }

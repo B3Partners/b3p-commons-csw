@@ -4,7 +4,6 @@
  */
 package nl.b3p.csw.client;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -12,11 +11,11 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.TransformerException;
-import nl.b3p.csw.jaxb.request.GetRecords;
-import nl.b3p.csw.jaxb.response.GetRecordsResponse;
+import nl.b3p.csw.jaxb.csw.RequestBaseType;
 import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
 import nl.b3p.csw.util.CswClientFactory;
@@ -25,7 +24,6 @@ import nl.b3p.csw.util.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
@@ -59,12 +57,12 @@ public class CswClient {
 
     public Output search(Input input)
             throws IOException, JDOMException, JAXBException { //, MarshalException, ValidationException {
-        GetRecords getRecords = input.getGetRecords();
+        JAXBElement<? extends RequestBaseType> getRecords = input.getRequest();
         if (getRecords == null) {
             throw new IllegalArgumentException("Csw getRecords not set.");
         }
 
-        JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.request");
+        JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.csw");
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", true);
 

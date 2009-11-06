@@ -8,12 +8,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 import nl.b3p.csw.client.CswClient;
 import nl.b3p.csw.client.Input;
 import nl.b3p.csw.client.Output;
-import nl.b3p.csw.jaxb.request.GetRecords;
+import nl.b3p.csw.jaxb.csw.RequestBaseType;
 import nl.b3p.csw.server.CswServable;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -40,18 +41,18 @@ public class CswClientFactory {
         return output.getTransformedXml(transformPath);
     }
 
-    public static Document searchAsXml(GetRecords getRecords, CswServable server)
+    public static Document searchAsXml(JAXBElement<? extends RequestBaseType> request, CswServable server)
             throws IOException, JDOMException, JAXBException {
         CswClient client = new CswClient(server);
-        Input input = new Input(getRecords);
+        Input input = new Input(request);
         Output output = client.search(input);
         return output.getXml();
     }
 
-    public static Document searchAsTransformedXml(GetRecords getRecords, CswServable server, String transformPath)
+    public static Document searchAsTransformedXml(JAXBElement<? extends RequestBaseType> request, CswServable server, String transformPath)
             throws IOException, JDOMException, TransformerException, JAXBException {
         CswClient client = new CswClient(server);
-        Input input = new Input(getRecords);
+        Input input = new Input(request);
         Output output = client.search(input);
         return output.getTransformedXml(transformPath);
     }
