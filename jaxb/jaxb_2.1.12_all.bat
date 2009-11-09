@@ -1,0 +1,1 @@
+call jaxb-ri-20090708\bin\xjc.bat -d ..\src -b .\xsds\schema_binding.xjb .\xsds\csw\2.0.2\CSW-discovery.xsd
