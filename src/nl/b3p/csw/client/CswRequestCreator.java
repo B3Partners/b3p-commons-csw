@@ -91,8 +91,6 @@ public class CswRequestCreator {
         //filterType.setComparisonOps(filterFactory.createPrComparisonOps(propertyIsLikeType));
         filterType.setPropertyIsLike(propertyIsLikeType);
 
-        // in BinarySpatialOpType-class deze annotatie toevoegen na iedere xjc recompile:
-        //@XmlSeeAlso({AbstractGeometryType.class})
 
         return createCswRequest(elementSetNameType,
                 outputSchema,
@@ -140,7 +138,6 @@ public class CswRequestCreator {
         return cswFactory.createGetRecords(getRecordsType);
     }
 
-    // response is leeg. waarom? outputformat?
     public static JAXBElement<GetRecordByIdType> createGetRecordByIdRequest(String id) {
         GetRecordByIdType getRecordByIdType = cswFactory.createGetRecordByIdType();
 

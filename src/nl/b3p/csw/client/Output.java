@@ -11,10 +11,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -32,7 +30,6 @@ import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.DOMBuilder;
-import org.jdom.output.DOMOutputter;
 import org.jdom.transform.JDOMResult;
 import org.jdom.transform.JDOMSource;
 
@@ -40,9 +37,8 @@ import org.jdom.transform.JDOMSource;
  *
  * @author Erik van de Pol
  *
- * TODO: check for return type. make that gettable.
  */
-public class Output {
+public abstract class Output {
     
     protected static final Log log = LogFactory.getLog(Output.class);
 
@@ -56,55 +52,20 @@ public class Output {
     protected Document xmlDocument = null;
     protected JAXBElement response = null;
 
+    protected Schema schema = null;
+
 
     public Output(Document xmlDocument) {
         this.xmlDocument = xmlDocument;
     }
 
+    public Output(Document xmlDocument, Schema schema) {
+        this(xmlDocument);
+        this.schema = schema;
+    }
+
     public Document getXml() {
         return xmlDocument;
-    }
-
-    public JAXBElement getResponse() throws JDOMException, JAXBException {
-        if (response == null) {
-            response = MarshallUtil.unMarshall(xmlDocument);
-        }
-        return response;
-    }
-
-    // TODO: is een beetje lelijk. structuur overdenken.
-    public JAXBElement<GetRecordsResponseType> getGetRecordsResponse() throws JDOMException, JAXBException {
-        return (JAXBElement<GetRecordsResponseType>)getResponse();
-    }
-
-    public List<org.w3c.dom.Element> getSearchResultsW3C() throws JDOMException, JAXBException {
-        JAXBElement<GetRecordsResponseType> getRecordsResponse = getGetRecordsResponse();
-        return getRecordsResponse.getValue().getSearchResults().getAny();
-    }
-
-    public List<Element> getSearchResults() throws JDOMException, JAXBException {
-        List<org.w3c.dom.Element> w3cList = getSearchResultsW3C();
-        List<Element> jdomList = new ArrayList<Element>(w3cList.size());
-
-        // transform to jdom list
-        DOMBuilder domBuilder = new DOMBuilder();
-        for (org.w3c.dom.Element w3cElem : w3cList) {
-            jdomList.add(domBuilder.build(w3cElem));
-        }
-
-        return jdomList;
-    }
-
-    public List<Document> getSearchResultsAsDocuments() throws JDOMException, JAXBException {
-        List<Element> elemList = getSearchResults();
-        List<Document> docList = new ArrayList<Document>(elemList.size());
-
-        // transform to jdom doc list
-        for (Element elem : elemList) {
-            docList.add(new Document(elem));
-        }
-
-        return docList;
     }
 
     public Document getTransformedXml(String transformPath) throws TransformerException {
@@ -122,79 +83,11 @@ public class Output {
         }
     }
 
-    public Map<URI, List<OnlineResource>> getResourcesMap() {
-        return getResourcesMap(Protocol.WMS);
-    }
-
-    public Map<URI, List<OnlineResource>> getResourcesMap(Protocol protocolFilter) {
-        Map<URI, List<OnlineResource>> services = new HashMap<URI, List<OnlineResource>>();
-        Element rootElement = xmlDocument.getRootElement();
-        if (rootElement != null) {
-
-            Iterator<Element> results = rootElement.getDescendants(resultElementFilter);
-            while (results.hasNext()) {
-                Element resultElem = results.next();
-
-                Iterator<Element> resources = resultElem.getDescendants(resourceElementFilter);
-                while (resources.hasNext()) {
-                    Element resourceElem = resources.next();
-
-                    handleResource(resourceElem, protocolFilter, services);
-                }
-            }
+    protected JAXBElement getResponse() throws JDOMException, JAXBException {
+        if (response == null) {
+            response = MarshallUtil.unMarshall(xmlDocument, schema);
         }
-        return services;
+        return response;
     }
 
-    private void handleResource(Element resourceElem, Protocol protocolFilter, Map<URI, List<OnlineResource>> services) {
-        URI url = null;
-        String protocol = null;
-        String name = null;
-        String desc = null;
-
-        try {
-            Element linkageElem = resourceElem.getChild("linkage", gmdNameSpace);
-            if (linkageElem != null) {
-                Element URLElem = linkageElem.getChild("URL", gmdNameSpace);
-                if (URLElem != null) {
-                    url = new URI(URLElem.getTextTrim());
-                }
-            }
-            Element protocolElem = resourceElem.getChild("protocol", gmdNameSpace);
-            if (protocolElem != null) {
-                Element SV_ServiceTypeElem = protocolElem.getChild("SV_ServiceType", gmdNameSpace);
-                if (SV_ServiceTypeElem != null) {
-                    protocol = SV_ServiceTypeElem.getTextTrim();
-                }
-            }
-            Element nameElem = resourceElem.getChild("name", gmdNameSpace);
-            if (nameElem != null) {
-                Element nameStringElem = nameElem.getChild("CharacterString", gcoNameSpace);
-                if (nameStringElem != null) {
-                    name = nameStringElem.getTextTrim();
-                }
-            }
-            Element descElem = resourceElem.getChild("description", gmdNameSpace);
-            if (descElem != null) {
-                Element descStringElem = descElem.getChild("CharacterString", gcoNameSpace);
-                if (descStringElem != null) {
-                    desc = descStringElem.getTextTrim();
-                }
-            }
-            if (url != null && name != null && (protocol == null || protocol.length() == 0 || protocol.toUpperCase().equals(protocolFilter.getName().toUpperCase()))) {
-                Protocol forcedProtocol = Protocol.WMS;
-                if (services.get(url) == null) {
-                    services.put(url, new ArrayList<OnlineResource>());
-                }
-                OnlineResource onlineResource = new OnlineResource();
-                onlineResource.setUrl(url);
-                onlineResource.setName(name);
-                onlineResource.setDescription(desc);
-                onlineResource.setProtocol(forcedProtocol);
-                services.get(url).add(onlineResource);
-            }
-        } catch (URISyntaxException ex) {
-            // move on to the next item
-        }
-    }
 }

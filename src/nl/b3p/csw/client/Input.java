@@ -4,82 +4,40 @@
  */
 package nl.b3p.csw.client;
 
-import java.io.File;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import nl.b3p.csw.jaxb.csw.RequestBaseType;
+import nl.b3p.csw.util.MarshallUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.JDOMException;
-import org.jdom.output.DOMOutputter;
-import org.xml.sax.SAXException;
 
 
 /**
  *
  * @author Erik van de Pol
  */
-public class Input {
+public abstract class Input {
     protected static final Log log = LogFactory.getLog(Input.class);
-
-    protected static final String cswRequestXsdPath = "c:\\dev_erik\\b3p-commons-csw\\jaxb\\xsds\\csw-request.xsd";
-    protected static Schema cswRequestSchema = null;
-    protected static final boolean defaultValidate = true;
 
     protected JAXBElement<? extends RequestBaseType> request = null;
 
-    public Input(String queryString) {
-        this.request = CswRequestCreator.createSimpleCswRequest(queryString);
+    protected Input() {
+        
     }
 
     public Input(JAXBElement<? extends RequestBaseType> request) {
         this.request = request;
     }
 
-    public Input(Document document) throws JAXBException, JDOMException {
-        this(document, defaultValidate);
+    public Input(Document document, Schema schema) throws JAXBException, JDOMException {
+        this.request = (JAXBElement<? extends RequestBaseType>)MarshallUtil.unMarshall(document, schema);
     }
 
-    public Input(Document document, boolean validate) throws JAXBException, JDOMException {
-        Schema schema = validate ? getRequestSchema() : null;
-        
-        JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.request");
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        unmarshaller.setSchema(schema);
-
-        // transform to w3c dom to be able to use jaxb to unmarshal.
-        DOMOutputter domOutputter = new DOMOutputter();
-        org.w3c.dom.Document w3cDomDoc = domOutputter.output(document);
-
-        this.request = (JAXBElement<? extends RequestBaseType>)unmarshaller.unmarshal(w3cDomDoc);
-    }
-
-    protected Schema getRequestSchema() {
-        if (cswRequestSchema == null) {
-            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            try {
-                cswRequestSchema = sf.newSchema(new File(cswRequestXsdPath));
-            } catch (SAXException saxe) {
-                log.error("No validation possible. File '" + cswRequestXsdPath + "'.", saxe);
-                cswRequestSchema = null;
-            }
-        }
-        return cswRequestSchema;
-    }
-
-
-    // TODO: Wkt input
-
-    /**
-     * @return the getRecords
-     */
-    public JAXBElement<? extends RequestBaseType> getRequest() {
+    protected JAXBElement<? extends RequestBaseType> getRequest() {
         return request;
     }
+    
 }
