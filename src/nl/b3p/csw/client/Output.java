@@ -21,6 +21,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import nl.b3p.csw.jaxb.csw.GetRecordsResponseType;
+import nl.b3p.csw.util.MarshallUtil;
 import nl.b3p.csw.util.OnlineResource;
 import nl.b3p.csw.util.Protocol;
 import org.apache.commons.logging.Log;
@@ -48,10 +49,6 @@ public class Output {
     protected static final Namespace gmdNameSpace = Namespace.getNamespace("http://www.isotc211.org/2005/gmd");
     protected static final Namespace gcoNameSpace = Namespace.getNamespace("http://www.isotc211.org/2005/gco");
 
-    //protected static final String cswResponseXsdPath = "c:\\dev_erik\\b3p-commons-csw\\jaxb\\xsds\\csw-response.xsd";
-    //protected static final boolean defaultValidate = false;
-    //protected static Schema cswResponseSchema = null;
-    
     // TODO: deze staat hard op ISO 19139. Andere standaarden toevoegen?
     protected static final ElementFilter resultElementFilter = new ElementFilter("MD_Metadata", gmdNameSpace);
     protected static final ElementFilter resourceElementFilter = new ElementFilter("CI_OnlineResource", gmdNameSpace);
@@ -68,36 +65,9 @@ public class Output {
         return xmlDocument;
     }
 
-    /*protected Schema getResponseSchema() {
-        if (cswResponseSchema == null) {
-            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            try {
-                cswResponseSchema = sf.newSchema(new File(cswResponseXsdPath));
-            } catch (SAXException saxe) {
-                log.error("No validation possible. File '" + cswResponseXsdPath + "'.", saxe);
-                cswResponseSchema = null;
-            }
-        }
-        return cswResponseSchema;
-    }*/
-
     public JAXBElement getResponse() throws JDOMException, JAXBException {
-        /*return getGetRecordsResponse(defaultValidate);
-    }
-
-    public GetRecordsResponse getGetRecordsResponse(boolean validate) throws JDOMException, JAXBException {*/
         if (response == null) {
-            Schema schema = null;//validate ? getResponseSchema() : null;
-
-            JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.csw");
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            unmarshaller.setSchema(schema);
-
-            // transform to w3c dom to be able to use jaxb to unmarshal.
-            DOMOutputter domOutputter = new DOMOutputter();
-            org.w3c.dom.Document w3cDomDoc = domOutputter.output(xmlDocument);
-
-            response = (JAXBElement)unmarshaller.unmarshal(w3cDomDoc);
+            response = MarshallUtil.unMarshall(xmlDocument);
         }
         return response;
     }

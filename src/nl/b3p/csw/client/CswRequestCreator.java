@@ -140,7 +140,7 @@ public class CswRequestCreator {
         return cswFactory.createGetRecords(getRecordsType);
     }
 
-    // TODO: verder testen. response goed afvangen.
+    // response is leeg. waarom? outputformat?
     public static JAXBElement<GetRecordByIdType> createGetRecordByIdRequest(String id) {
         GetRecordByIdType getRecordByIdType = cswFactory.createGetRecordByIdType();
 
