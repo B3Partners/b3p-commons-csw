@@ -31,27 +31,31 @@ public class MarshallUtil {
 
     protected static Log log = LogFactory.getLog(MarshallUtil.class);
 
-    public static String marshall(JAXBElement<? extends RequestBaseType> request, Schema schema) throws JAXBException {
+    public static String marshall(JAXBElement input, Schema schema) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.csw");
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setSchema(schema);
         marshaller.setProperty("jaxb.formatted.output", true);
 
         StringWriter stringWriter = new StringWriter();
-        marshaller.marshal(request, stringWriter);
+        marshaller.marshal(input, stringWriter);
         return stringWriter.toString();
     }
 
-    public static JAXBElement unMarshall(Document xmlDocument, Schema schema) throws JAXBException, JDOMException {
+    public static JAXBElement unMarshall(org.w3c.dom.Document xmlDocument, Schema schema) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.csw");
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
 
+        return (JAXBElement)unmarshaller.unmarshal(xmlDocument);
+    }
+
+    public static JAXBElement unMarshall(Document xmlDocument, Schema schema) throws JAXBException, JDOMException {
         // transform to w3c dom to be able to use jaxb to unmarshal.
         DOMOutputter domOutputter = new DOMOutputter();
         org.w3c.dom.Document w3cDomDoc = domOutputter.output(xmlDocument);
 
-        return (JAXBElement)unmarshaller.unmarshal(w3cDomDoc);
+        return unMarshall(w3cDomDoc, schema);
     }
 
     public static Schema createSchema(String path) {

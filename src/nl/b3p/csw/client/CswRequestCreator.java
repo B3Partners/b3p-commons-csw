@@ -4,7 +4,10 @@
  */
 package nl.b3p.csw.client;
 
+import java.io.IOException;
+import javax.naming.OperationNotSupportedException;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import nl.b3p.csw.jaxb.csw.ElementSetNameType;
 import nl.b3p.csw.jaxb.csw.ElementSetType;
@@ -19,6 +22,18 @@ import nl.b3p.csw.jaxb.filter.PropertyIsLikeType;
 import nl.b3p.csw.jaxb.filter.PropertyNameType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.geotools.geometry.jts.WKTReader2;
+import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.geom;
+import java.io.StringReader;
+import java.io.StringWriter;
+import nl.b3p.csw.util.MarshallUtil;
+import org.geotools.xml.DocumentWriter;
+import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.DOMOutputter;
+import org.opengis.geometry.Geometry;
 
 /**
  *
@@ -98,13 +113,32 @@ public class CswRequestCreator {
                 filterType);
     }
 
-    public static JAXBElement<GetRecordsType> createCswRequest(FilterType filterType) {
+    public static JAXBElement<GetRecordsType> createCswRequest(String wktFilter) throws JDOMException, IOException, OperationNotSupportedException, JAXBException {
+        // nogal wat omwegen: wkt string -> geotools gml3 object -> xml string -> mijn jaxb gml3 object
+        // check imports: vind com.vividsolution.jts.* !!!!
+        Geometry geom = new WKTReader2().read(wktFilter);
+
+        StringWriter stringWriter = new StringWriter();
+        // schema erbij? (eerste null)
+        DocumentWriter.writeFragment(geom, null, stringWriter, null);
+
+        Document jdomDoc = new SAXBuilder(true).build(new StringReader(stringWriter.toString()));
+        DOMOutputter domOutputter = new DOMOutputter();
+        org.w3c.dom.Document w3cDomDoc = domOutputter.output(jdomDoc);
+
+        JAXBElement<FilterType> filter = MarshallUtil.unMarshall(w3cDomDoc, null); // TODO: unmarshall
+        FilterType gml3Filter = filter.getValue();
+
+        return createCswRequest(gml3Filter);
+    }
+
+    public static JAXBElement<GetRecordsType> createCswRequest(FilterType gml3Filter) {
         ElementSetNameType elementSetNameType = cswFactory.createElementSetNameType();
         elementSetNameType.setValue(ElementSetType.FULL);
         return createCswRequest(elementSetNameType,
                 "csw:IsoRecord",
                 ResultType.RESULTS,
-                filterType);
+                gml3Filter);
     }
 
     public static JAXBElement<GetRecordsType> createCswRequest(
