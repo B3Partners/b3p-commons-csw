@@ -8,36 +8,25 @@
 			>
 
 	<jaxb:globalBindings generateMixedExtensions="true"/>
+	<!-- onderstaande kan erbij, maar vind ik lelijk. Dan beginnen sommige classes namelijk met een underScore. -->
+	<!--jaxb:globalBindings underscoreBinding="asCharInWord"/--> 
+	
+	<!-- Packaging -->
 
 	<jaxb:bindings schemaLocation="csw/2.0.2/CSW-discovery.xsd"  node="/xs:schema">
-	
 		<jaxb:schemaBindings>
 			<jaxb:package name="nl.b3p.csw.jaxb.csw"/>
 		</jaxb:schemaBindings>
-		
 		<!--jaxb:bindings node="./xs:simpleType[@name='filterVersionType']">
 			<jaxb:typesafeEnumClass>
 				<jaxb:typesafeEnumMember value="1.1.0" name="Version_1_1_0"/>
 			</jaxb:typesafeEnumClass>
 		</jaxb:bindings>
-		
 		<jaxb:bindings node="./xs:simpleType[@name='cswVersionType']">
 			<jaxb:typesafeEnumClass>
 				<jaxb:typesafeEnumMember value="2.0.2" name="Version_2_0_2"/>
 			</jaxb:typesafeEnumClass>
 		</jaxb:bindings-->
-		
-		<!--jxb:bindings node="xs:element[@name='class']/xs:complexType">
-			<jxb:bindings node=".//xs:attribute[@name='private']">
-				<jxb:property name="privateAttribute"/>
-			</jxb:bindings>
-		</jxb:bindings>
-		
-		<jxb:bindings node="xs:group[@name='propertyTypes']/xs:sequence/xs:choice/xs:element[@name='point']/xs:complexType">
-			<jxb:class name="PropertyTypePoint"/>    
-			<jxb:property name="PropertyTypePoint"/>
-		</jxb:bindings-->
-
 	</jaxb:bindings>
 	
 	<jaxb:bindings schemaLocation="filter/1.1.0/filter.xsd" node="/xs:schema">
@@ -74,6 +63,41 @@
 		<jaxb:schemaBindings>
 			<jaxb:package name="nl.b3p.csw.jaxb.elements"/>
 		</jaxb:schemaBindings>
+	</jaxb:bindings>
+	
+	
+	<!-- Underscore renames -->
+	
+	<jaxb:bindings schemaLocation="gml/3.1.1/base/geometryPrimitives.xsd" node="/xs:schema">
+	
+		<jaxb:bindings node="./xs:element[@name='_Solid']">
+			<jaxb:class name="AbstractSolid"/>    
+		</jaxb:bindings>
+		
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="gml/3.1.1/base/geometryBasic0d1d.xsd" node="/xs:schema">
+	
+		<jaxb:bindings node="./xs:element[@name='_Curve']">
+			<jaxb:class name="AbstractCurve"/>    
+		</jaxb:bindings>
+		
+		<jaxb:bindings node="./xs:element[@name='_Geometry']">
+			<jaxb:class name="AbstractGeometry"/>    
+		</jaxb:bindings>
+		
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="gml/3.1.1/base/geometryBasic2d.xsd" node="/xs:schema">
+	
+		<jaxb:bindings node="./xs:element[@name='_Ring']">
+			<jaxb:class name="AbstractRing"/>    
+		</jaxb:bindings>
+		
+		<jaxb:bindings node="./xs:element[@name='_Surface']">
+			<jaxb:class name="AbstractSurface"/>    
+		</jaxb:bindings>
+		
 	</jaxb:bindings>
 	
 </jaxb:bindings>

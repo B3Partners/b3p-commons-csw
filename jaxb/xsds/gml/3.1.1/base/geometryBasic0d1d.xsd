@@ -32,14 +32,14 @@
 	<!-- ============================================================== -->
 	<!-- ===========  abstract supertype for geometry objects =================== -->
 	<!-- ============================================================== -->
-	<element name="AbstractGeometry" type="gml:AbstractGeometryType" abstract="true" substitutionGroup="gml:_GML">
+	<element name="_Geometry" type="gml:AbstractGeometryType" abstract="true" substitutionGroup="gml:_GML">
 		<annotation>
-			<documentation>The "AbstractGeometry" element is the abstract head of the substituition group for all geometry elements of GML 3. This 
+			<documentation>The "_Geometry" element is the abstract head of the substituition group for all geometry elements of GML 3. This 
 			includes pre-defined and user-defined geometry elements. Any geometry element must be a direct or indirect extension/restriction 
-			of AbstractGeometryType and must be directly or indirectly in the substitution group of "AbstractGeometry".</documentation>
+			of AbstractGeometryType and must be directly or indirectly in the substitution group of "_Geometry".</documentation>
 			<appinfo>
 				<sch:pattern name="Check SRS tags">
-					<sch:rule context="gml:AbstractGeometry">
+					<sch:rule context="gml:_Geometry">
 						<sch:extends rule="CRSLabels"/>
 					</sch:rule>
 				</sch:pattern>
@@ -54,7 +54,7 @@
 			the reference or the contained element must be given, but not both or none.</documentation>
 		</annotation>
 		<sequence minOccurs="0">
-			<element ref="gml:AbstractGeometry"/>
+			<element ref="gml:_Geometry"/>
 		</sequence>
 		<attributeGroup ref="gml:AssociationAttributeGroup">
 			<annotation>
@@ -75,7 +75,7 @@
 			referencing geometry elements or arrays of geometry elements is not supported.</documentation>
 		</annotation>
 		<sequence>
-			<element ref="gml:AbstractGeometry" minOccurs="0" maxOccurs="unbounded"/>
+			<element ref="gml:_Geometry" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
 	<!-- ============================================================== -->
@@ -85,7 +85,7 @@
 			have an identifying attribute ("gml:id"), a name (attribute "name") and a description (attribute "description"). It may be associated 
 			with a spatial reference system (attribute "srsName"). The following rules shall be adhered: - Every geometry type shall derive 
 			from this abstract type. - Every geometry element (i.e. an element of a geometry type) shall be directly or indirectly in the 
-			substitution group of AbstractGeometry.</documentation>
+			substitution group of _Geometry.</documentation>
 		</annotation>
 		<complexContent>
 			<extension base="gml:AbstractGMLType">
@@ -148,7 +148,7 @@
 		</attribute>
 	</attributeGroup>
 	<!-- ============================================================== -->
-	<element name="_GeometricPrimitive" type="gml:AbstractGeometricPrimitiveType" abstract="true" substitutionGroup="gml:AbstractGeometry">
+	<element name="_GeometricPrimitive" type="gml:AbstractGeometricPrimitiveType" abstract="true" substitutionGroup="gml:_Geometry">
 		<annotation>
 			<documentation>The "_GeometricPrimitive" element is the abstract head of the substituition group for all (pre- and user-defined) 
 			geometric primitives.</documentation>
@@ -280,9 +280,9 @@
 	<!-- =========================================================== -->
 	<!-- primitive geometry objects (1-dimensional) -->
 	<!-- ============================================================== -->
-	<element name="AbstractCurve" type="gml:AbstractCurveType" abstract="true" substitutionGroup="gml:_GeometricPrimitive">
+	<element name="_Curve" type="gml:AbstractCurveType" abstract="true" substitutionGroup="gml:_GeometricPrimitive">
 		<annotation>
-			<documentation>The "AbstractCurve" element is the abstract head of the substituition group for all (continuous) curve elements.</documentation>
+			<documentation>The "_Curve" element is the abstract head of the substituition group for all (continuous) curve elements.</documentation>
 		</annotation>
 	</element>
 	<!-- ============================================================== -->
@@ -307,7 +307,7 @@
 			</appinfo>
 			<documentation>This property element either references a curve via the XLink-attributes or contains the curve element. curveProperty is the 
 			predefined property which can be used by GML Application Schemas whenever a GML Feature has a property with a value that is 
-			substitutable for AbstractCurve.</documentation>
+			substitutable for _Curve.</documentation>
 		</annotation>
 	</element>
 	<!-- ============================================================== -->
@@ -318,7 +318,7 @@
 			in the same document). Either the reference or the contained element must be given, but neither both nor none.</documentation>
 		</annotation>
 		<sequence minOccurs="0">
-			<element ref="gml:AbstractCurve"/>
+			<element ref="gml:_Curve"/>
 		</sequence>
 		<attributeGroup ref="gml:AssociationAttributeGroup">
 			<annotation>
@@ -340,11 +340,11 @@
 			or arrays of geometry elements is not supported.</documentation>
 		</annotation>
 		<sequence>
-			<element ref="gml:AbstractCurve" minOccurs="0" maxOccurs="unbounded"/>
+			<element ref="gml:_Curve" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
 	<!-- =========================================================== -->
-	<element name="LineString" type="gml:LineStringType" substitutionGroup="gml:AbstractCurve"/>
+	<element name="LineString" type="gml:LineStringType" substitutionGroup="gml:_Curve"/>
 	<!-- =========================================================== -->
 	<complexType name="LineStringType">
 		<annotation>

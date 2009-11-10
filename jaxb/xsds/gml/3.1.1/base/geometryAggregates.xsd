@@ -11,7 +11,7 @@
 	<!-- aggregate geometry objects -->
 	<!-- =========================================================== -->
 	<!-- =========================================================== -->
-	<element name="_GeometricAggregate" type="gml:AbstractGeometricAggregateType" abstract="true" substitutionGroup="gml:AbstractGeometry">
+	<element name="_GeometricAggregate" type="gml:AbstractGeometricAggregateType" abstract="true" substitutionGroup="gml:_Geometry">
 		<annotation>
 			<documentation>The "_GeometricAggregate" element is the abstract head of the substituition group for all geometric aggremates.</documentation>
 		</annotation>
@@ -372,7 +372,7 @@ A simple link element can be used to implement pointer functionality, and this f
 	</element>
 	<element name="surfaceMember" type="gml:SurfacePropertyType">
 		<annotation>
-			<documentation>This property element either references a surface via the XLink-attributes or contains the surface element. A surface element is any element which is substitutable for "AbstractSurface".</documentation>
+			<documentation>This property element either references a surface via the XLink-attributes or contains the surface element. A surface element is any element which is substitutable for "_Surface".</documentation>
 		</annotation>
 	</element>
 	<element name="surfaceMembers" type="gml:SurfaceArrayPropertyType">
@@ -382,7 +382,7 @@ A simple link element can be used to implement pointer functionality, and this f
 	</element>
 	<element name="solidMember" type="gml:SolidPropertyType">
 		<annotation>
-			<documentation>This property element either references a solid via the XLink-attributes or contains the solid element. A solid element is any element which is substitutable for "AbstractSolid".</documentation>
+			<documentation>This property element either references a solid via the XLink-attributes or contains the solid element. A solid element is any element which is substitutable for "_Solid".</documentation>
 		</annotation>
 	</element>
 	<element name="solidMembers" type="gml:SolidArrayPropertyType">

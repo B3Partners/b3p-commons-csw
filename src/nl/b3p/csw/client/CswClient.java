@@ -11,10 +11,8 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.transform.TransformerException;
 import javax.xml.validation.Schema;
 import nl.b3p.csw.jaxb.csw.GetRecordsType;
-import nl.b3p.csw.jaxb.csw.RequestBaseType;
 import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
 import nl.b3p.csw.util.CswClientFactory;
@@ -29,7 +27,6 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.xml.sax.SAXException;
-//import org.geotools.referencing.wkt.Parser;
 
 /**
  *

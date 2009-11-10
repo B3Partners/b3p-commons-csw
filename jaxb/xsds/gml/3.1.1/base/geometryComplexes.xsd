@@ -8,7 +8,7 @@
 	</annotation>
 	<include schemaLocation="geometryAggregates.xsd"/>
 	<!-- =========================================================== -->
-	<element name="CompositeCurve" type="gml:CompositeCurveType" substitutionGroup="gml:AbstractCurve"/>
+	<element name="CompositeCurve" type="gml:CompositeCurveType" substitutionGroup="gml:_Curve"/>
 	<!-- =========================================================== -->
 	<complexType name="CompositeCurveType">
 		<annotation>
@@ -35,7 +35,7 @@ NOTE: This definition allows for a nested structure, i.e. a CompositeCurve may u
 		<attributeGroup ref="gml:AssociationAttributeGroup"/>
 	</complexType>
 	<!-- =========================================================== -->
-	<element name="CompositeSurface" type="gml:CompositeSurfaceType" substitutionGroup="gml:AbstractSurface"/>
+	<element name="CompositeSurface" type="gml:CompositeSurfaceType" substitutionGroup="gml:_Surface"/>
 	<!-- =========================================================== -->
 	<complexType name="CompositeSurfaceType">
 		<annotation>
@@ -62,7 +62,7 @@ NOTE: This definition allows for a nested structure, i.e. a CompositeSurface may
 		<attributeGroup ref="gml:AssociationAttributeGroup"/>
 	</complexType>
 	<!-- =========================================================== -->
-	<element name="CompositeSolid" type="gml:CompositeSolidType" substitutionGroup="gml:AbstractSolid"/>
+	<element name="CompositeSolid" type="gml:CompositeSolidType" substitutionGroup="gml:_Solid"/>
 	<!-- =========================================================== -->
 	<complexType name="CompositeSolidType">
 		<annotation>
@@ -99,7 +99,7 @@ NOTE: This definition allows for a nested structure, i.e. a CompositeSolid may u
 	<!-- =========================================================== -->
 	<!-- complex/composite geometry objects -->
 	<!-- =========================================================== -->
-	<element name="GeometricComplex" type="gml:GeometricComplexType" substitutionGroup="gml:AbstractGeometry"/>
+	<element name="GeometricComplex" type="gml:GeometricComplexType" substitutionGroup="gml:_Geometry"/>
 	<!-- =========================================================== -->
 	<complexType name="GeometricComplexType">
 		<annotation>

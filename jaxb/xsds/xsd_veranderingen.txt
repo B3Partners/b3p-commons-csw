@@ -21,6 +21,3 @@ Veranderingen t.o.v. de originele xsds:
 		</xsd:complexContent>
 	</xsd:complexType>
   
-- In gml/** en andere dirs: elementen beginnend met een underscore "_Foo" verandert in "AbstractFoo"
-
-TODO: preciezere documentatie

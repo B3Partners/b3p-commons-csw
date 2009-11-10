@@ -11,9 +11,9 @@
 	<!-- =========================================================== -->
 	<!-- primitive geometry objects (2-dimensional) -->
 	<!-- =========================================================== -->
-	<element name="AbstractSurface" type="gml:AbstractSurfaceType" abstract="true" substitutionGroup="gml:_GeometricPrimitive">
+	<element name="_Surface" type="gml:AbstractSurfaceType" abstract="true" substitutionGroup="gml:_GeometricPrimitive">
 		<annotation>
-			<documentation>The "AbstractSurface" element is the abstract head of the substituition group for all (continuous) surface elements.</documentation>
+			<documentation>The "_Surface" element is the abstract head of the substituition group for all (continuous) surface elements.</documentation>
 		</annotation>
 	</element>
 	<!-- =========================================================== -->
@@ -35,7 +35,7 @@
 					</sch:rule>
 				</sch:pattern>
 			</appinfo>
-			<documentation>This property element either references a surface via the XLink-attributes or contains the surface element. surfaceProperty is the predefined property which can be used by GML Application Schemas whenever a GML Feature has a property with a value that is substitutable for AbstractSurface.</documentation>
+			<documentation>This property element either references a surface via the XLink-attributes or contains the surface element. surfaceProperty is the predefined property which can be used by GML Application Schemas whenever a GML Feature has a property with a value that is substitutable for _Surface.</documentation>
 		</annotation>
 	</element>
 	<!-- =========================================================== -->
@@ -44,7 +44,7 @@
 			<documentation>A property that has a surface as its value domain can either be an appropriate geometry element encapsulated in an element of this type or an XLink reference to a remote geometry element (where remote includes geometry elements located elsewhere in the same document). Either the reference or the contained element must be given, but neither both nor none.</documentation>
 		</annotation>
 		<sequence minOccurs="0">
-			<element ref="gml:AbstractSurface"/>
+			<element ref="gml:_Surface"/>
 		</sequence>
 		<attributeGroup ref="gml:AssociationAttributeGroup">
 			<annotation>
@@ -61,11 +61,11 @@ A simple link element can be used to implement pointer functionality, and this f
 			<documentation>A container for an array of surfaces. The elements are always contained in the array property, referencing geometry elements or arrays of geometry elements is not supported.</documentation>
 		</annotation>
 		<sequence>
-			<element ref="gml:AbstractSurface" minOccurs="0" maxOccurs="unbounded"/>
+			<element ref="gml:_Surface" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
 	<!-- =========================================================== -->
-	<element name="Polygon" type="gml:PolygonType" substitutionGroup="gml:AbstractSurface"/>
+	<element name="Polygon" type="gml:PolygonType" substitutionGroup="gml:_Surface"/>
 	<!-- =========================================================== -->
 	<complexType name="PolygonType">
 		<annotation>
@@ -83,9 +83,9 @@ A simple link element can be used to implement pointer functionality, and this f
 	<!-- =========================================================== -->
 	<!-- rings (closed curves for surface boundaries) -->
 	<!-- =========================================================== -->
-	<element name="AbstractRing" type="gml:AbstractRingType" abstract="true" substitutionGroup="gml:AbstractGeometry">
+	<element name="_Ring" type="gml:AbstractRingType" abstract="true" substitutionGroup="gml:_Geometry">
 		<annotation>
-			<documentation>The "AbstractRing" element is the abstract head of the substituition group for all closed boundaries of a surface patch.</documentation>
+			<documentation>The "_Ring" element is the abstract head of the substituition group for all closed boundaries of a surface patch.</documentation>
 		</annotation>
 	</element>
 	<!-- =========================================================== -->
@@ -124,11 +124,11 @@ A simple link element can be used to implement pointer functionality, and this f
 			<documentation>Encapsulates a ring to represent the surface boundary property of a surface.</documentation>
 		</annotation>
 		<sequence>
-			<element ref="gml:AbstractRing"/>
+			<element ref="gml:_Ring"/>
 		</sequence>
 	</complexType>
 	<!-- =========================================================== -->
-	<element name="LinearRing" type="gml:LinearRingType" substitutionGroup="gml:AbstractRing"/>
+	<element name="LinearRing" type="gml:LinearRingType" substitutionGroup="gml:_Ring"/>
 	<!-- =========================================================== -->
 	<complexType name="LinearRingType">
 		<annotation>

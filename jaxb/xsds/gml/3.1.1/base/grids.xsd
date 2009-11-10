@@ -16,7 +16,7 @@
 	<!-- ==============================================================
        global elements
 	============================================================== -->
-	<element name="_ImplicitGeometry" type="gml:AbstractGeometryType" abstract="true" substitutionGroup="gml:AbstractGeometry"/>
+	<element name="_ImplicitGeometry" type="gml:AbstractGeometryType" abstract="true" substitutionGroup="gml:_Geometry"/>
 	<!-- =========================================================== -->
 	<element name="Grid" type="gml:GridType" substitutionGroup="gml:_ImplicitGeometry"/>
 	<!-- =========================================================== -->

@@ -38,7 +38,7 @@
 		<sequence minOccurs="0">
 			<choice>
 				<element ref="gml:_Feature"/>
-				<element ref="gml:AbstractGeometry"/>
+				<element ref="gml:_Geometry"/>
 			</choice>
 		</sequence>
 		<attributeGroup ref="gml:AssociationAttributeGroup"/>

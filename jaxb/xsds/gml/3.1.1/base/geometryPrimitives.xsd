@@ -10,7 +10,7 @@
 	<!-- =========================================================== -->
 	<include schemaLocation="geometryBasic2d.xsd"/>
 	<!-- =========================================================== -->
-	<element name="Curve" type="gml:CurveType" substitutionGroup="gml:AbstractCurve"/>
+	<element name="Curve" type="gml:CurveType" substitutionGroup="gml:_Curve"/>
 	<!-- =========================================================== -->
 	<complexType name="CurveType">
 		<annotation>
@@ -40,15 +40,15 @@
 					</sch:rule>
 				</sch:pattern>
 			</appinfo>
-			<documentation>This property element either references a curve via the XLink-attributes or contains the curve element. A curve element is any element which is substitutable for "AbstractCurve".</documentation>
+			<documentation>This property element either references a curve via the XLink-attributes or contains the curve element. A curve element is any element which is substitutable for "_Curve".</documentation>
 		</annotation>
 	</element>
 	<!-- =========================================================== -->
-	<element name="OrientableCurve" type="gml:OrientableCurveType" substitutionGroup="gml:AbstractCurve"/>
+	<element name="OrientableCurve" type="gml:OrientableCurveType" substitutionGroup="gml:_Curve"/>
 	<!-- =========================================================== -->
 	<complexType name="OrientableCurveType">
 		<annotation>
-			<documentation>OrientableCurve consists of a curve and an orientation. If the orientation is "+", then the OrientableCurve is identical to the baseCurve. If the orientation is "-", then the OrientableCurve is related to another AbstractCurve with a parameterization that reverses the sense of the curve traversal.</documentation>
+			<documentation>OrientableCurve consists of a curve and an orientation. If the orientation is "+", then the OrientableCurve is identical to the baseCurve. If the orientation is "-", then the OrientableCurve is related to another _Curve with a parameterization that reverses the sense of the curve traversal.</documentation>
 		</annotation>
 		<complexContent>
 			<extension base="gml:AbstractCurveType">
@@ -62,7 +62,7 @@ NOTE: This definition allows for a nested structure, i.e. an OrientableCurve may
 				</sequence>
 				<attribute name="orientation" type="gml:SignType" default="+">
 					<annotation>
-						<documentation>If the orientation is "+", then the OrientableCurve is identical to the baseCurve. If the orientation is "-", then the OrientableCurve is related to another AbstractCurve with a parameterization that reverses the sense of the curve traversal. "+" is the default value.</documentation>
+						<documentation>If the orientation is "+", then the OrientableCurve is identical to the baseCurve. If the orientation is "-", then the OrientableCurve is related to another _Curve with a parameterization that reverses the sense of the curve traversal. "+" is the default value.</documentation>
 					</annotation>
 				</attribute>
 			</extension>
@@ -918,7 +918,7 @@ uses the control points and control parameters to determine the position of this
 		</complexContent>
 	</complexType>
 	<!-- =========================================================== -->
-	<element name="Surface" type="gml:SurfaceType" substitutionGroup="gml:AbstractSurface"/>
+	<element name="Surface" type="gml:SurfaceType" substitutionGroup="gml:_Surface"/>
 	<!-- =========================================================== -->
 	<complexType name="SurfaceType">
 		<annotation>
@@ -947,11 +947,11 @@ uses the control points and control parameters to determine the position of this
 					</sch:rule>
 				</sch:pattern>
 			</appinfo>
-			<documentation>This property element either references a surface via the XLink-attributes or contains the surface element. A surface element is any element which is substitutable for "AbstractSurface".</documentation>
+			<documentation>This property element either references a surface via the XLink-attributes or contains the surface element. A surface element is any element which is substitutable for "_Surface".</documentation>
 		</annotation>
 	</element>
 	<!-- =========================================================== -->
-	<element name="OrientableSurface" type="gml:OrientableSurfaceType" substitutionGroup="gml:AbstractSurface"/>
+	<element name="OrientableSurface" type="gml:OrientableSurfaceType" substitutionGroup="gml:_Surface"/>
 	<!-- =========================================================== -->
 	<complexType name="OrientableSurfaceType">
 		<annotation>
@@ -1077,11 +1077,11 @@ uses the control points and control parameters to determine the position of this
 	<!-- =========================================================== -->
 	<element name="curveMember" type="gml:CurvePropertyType">
 		<annotation>
-			<documentation>This property element either references a curve via the XLink-attributes or contains the curve element. A curve element is any element which is substitutable for "AbstractCurve".</documentation>
+			<documentation>This property element either references a curve via the XLink-attributes or contains the curve element. A curve element is any element which is substitutable for "_Curve".</documentation>
 		</annotation>
 	</element>
 	<!-- =========================================================== -->
-	<element name="Ring" type="gml:RingType" substitutionGroup="gml:AbstractRing"/>
+	<element name="Ring" type="gml:RingType" substitutionGroup="gml:_Ring"/>
 	<!-- =========================================================== -->
 	<complexType name="RingType">
 		<annotation>
@@ -1459,9 +1459,9 @@ NOTE: This definition allows for a nested structure, i.e. a CompositeCurve may u
 	<!-- primitive geometry objects (3-dimensional) -->
 	<!-- =========================================================== -->
 	<!-- =========================================================== -->
-	<element name="AbstractSolid" type="gml:AbstractSolidType" abstract="true" substitutionGroup="gml:_GeometricPrimitive">
+	<element name="_Solid" type="gml:AbstractSolidType" abstract="true" substitutionGroup="gml:_GeometricPrimitive">
 		<annotation>
-			<documentation>The "AbstractSolid" element is the abstract head of the substituition group for all (continuous) solid elements.</documentation>
+			<documentation>The "_Solid" element is the abstract head of the substituition group for all (continuous) solid elements.</documentation>
 		</annotation>
 	</element>
 	<!-- =========================================================== -->
@@ -1483,7 +1483,7 @@ NOTE: This definition allows for a nested structure, i.e. a CompositeCurve may u
 					</sch:rule>
 				</sch:pattern>
 			</appinfo>
-			<documentation>This property element either references a solid via the XLink-attributes or contains the solid element. solidProperty is the predefined property which can be used by GML Application Schemas whenever a GML Feature has a property with a value that is substitutable for AbstractSolid.</documentation>
+			<documentation>This property element either references a solid via the XLink-attributes or contains the solid element. solidProperty is the predefined property which can be used by GML Application Schemas whenever a GML Feature has a property with a value that is substitutable for _Solid.</documentation>
 		</annotation>
 	</element>
 	<!-- =========================================================== -->
@@ -1492,7 +1492,7 @@ NOTE: This definition allows for a nested structure, i.e. a CompositeCurve may u
 			<documentation>A property that has a solid as its value domain can either be an appropriate geometry element encapsulated in an element of this type or an XLink reference to a remote geometry element (where remote includes geometry elements located elsewhere in the same document). Either the reference or the contained element must be given, but neither both nor none.</documentation>
 		</annotation>
 		<sequence minOccurs="0">
-			<element ref="gml:AbstractSolid"/>
+			<element ref="gml:_Solid"/>
 		</sequence>
 		<attributeGroup ref="gml:AssociationAttributeGroup">
 			<annotation>
@@ -1509,11 +1509,11 @@ A simple link element can be used to implement pointer functionality, and this f
 			<documentation>A container for an array of solids. The elements are always contained in the array property, referencing geometry elements or arrays of geometry elements is not supported.</documentation>
 		</annotation>
 		<sequence minOccurs="0" maxOccurs="unbounded">
-			<element ref="gml:AbstractSolid"/>
+			<element ref="gml:_Solid"/>
 		</sequence>
 	</complexType>
 	<!-- =========================================================== -->
-	<element name="Solid" type="gml:SolidType" substitutionGroup="gml:AbstractSolid"/>
+	<element name="Solid" type="gml:SolidType" substitutionGroup="gml:_Solid"/>
 	<!-- =========================================================== -->
 	<complexType name="SolidType">
 		<annotation>

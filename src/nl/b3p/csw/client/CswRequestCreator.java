@@ -24,6 +24,7 @@ import nl.b3p.csw.jaxb.filter.PropertyNameType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import nl.b3p.csw.jaxb.filter.BinarySpatialOpType;
+import nl.b3p.csw.jaxb.gml.AbstractGeometry;
 import nl.b3p.csw.jaxb.gml.AbstractGeometryType;
 import nl.b3p.csw.util.Util;
 import org.jdom.JDOMException;
@@ -110,7 +111,8 @@ public class CswRequestCreator {
             String propertyName,
             String wktFilter) throws JDOMException, IOException, OperationNotSupportedException, JAXBException, ParseException {
 
-        JAXBElement<? extends AbstractGeometryType> geom = Util.readWkt(wktFilter);
+        //AbstractGeometry geom = Util.readWkt(wktFilter);
+        JAXBElement<AbstractGeometryType> geom = Util.readWkt(wktFilter);
 
         PropertyNameType propertyNameType = filterFactory.createPropertyNameType();
         propertyNameType.getContent().add(propertyName);
@@ -118,7 +120,7 @@ public class CswRequestCreator {
         // BinarySpatialOpType is er eigenlijk al:
         BinarySpatialOpType binarySpatialOpType = filterFactory.createBinarySpatialOpType();
         binarySpatialOpType.setPropertyName(propertyNameType);
-        binarySpatialOpType.setAbstractGeometry(geom);
+        binarySpatialOpType.setGeometry(geom);
 
         binarySpatialOp.setValue(binarySpatialOpType);
 

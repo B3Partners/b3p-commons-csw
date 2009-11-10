@@ -119,7 +119,7 @@
 				<xsd:sequence>
 					<xsd:element ref="ogc:PropertyName"/>
 					<xsd:choice>
-						<xsd:element ref="gml:AbstractGeometry"/>
+						<xsd:element ref="gml:_Geometry"/>
 						<xsd:element ref="gml:Envelope"/>
 					</xsd:choice>
 				</xsd:sequence>
@@ -141,7 +141,7 @@
 			<xsd:extension base="ogc:SpatialOpsType">
 				<xsd:sequence>
 					<xsd:element ref="ogc:PropertyName"/>
-					<xsd:element ref="gml:AbstractGeometry"/>
+					<xsd:element ref="gml:_Geometry"/>
 					<xsd:element name="Distance" type="ogc:DistanceType"/>
 				</xsd:sequence>
 			</xsd:extension>
