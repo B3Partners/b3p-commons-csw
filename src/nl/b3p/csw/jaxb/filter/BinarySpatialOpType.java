@@ -73,6 +73,7 @@ import nl.b3p.csw.jaxb.gml.TriangulatedSurfaceType;
     "abstractGeometry",
     "envelope"
 })
+@XmlSeeAlso({AbstractGeometryType.class})
 public class BinarySpatialOpType
     extends SpatialOpsType
 {
