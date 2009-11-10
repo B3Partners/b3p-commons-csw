@@ -13,6 +13,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 import javax.xml.validation.Schema;
+import nl.b3p.csw.jaxb.csw.GetRecordsType;
 import nl.b3p.csw.jaxb.csw.RequestBaseType;
 import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
@@ -20,12 +21,14 @@ import nl.b3p.csw.util.CswClientFactory;
 import nl.b3p.csw.util.MarshallUtil;
 import nl.b3p.csw.util.OnlineResource;
 import nl.b3p.csw.util.Protocol;
+import nl.b3p.csw.util.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.xml.sax.SAXException;
 //import org.geotools.referencing.wkt.Parser;
 
 /**
@@ -56,7 +59,7 @@ public class CswClient {
         this.setServer(server);
     }
 
-    public CswClient(CswServable server, String cswSchemaPath) {
+    public CswClient(CswServable server, String cswSchemaPath) throws SAXException {
         this(server);
         this.setCswSchema(cswSchemaPath);
     }
@@ -78,8 +81,8 @@ public class CswClient {
         this.cswSchema = schema;
     }
 
-    public void setCswSchema(String validationPath) {
-        this.cswSchema = MarshallUtil.createSchema(validationPath);
+    public void setCswSchema(String validationPath) throws SAXException {
+        this.cswSchema = Util.createSchema(validationPath);
     }
 
 
@@ -117,14 +120,23 @@ public class CswClient {
 
         String cswValidationPath  = "c:\\dev_erik\\b3p-commons-csw\\jaxb\\xsds\\csw\\2.0.2\\CSW-discovery.xsd";
 
-        CswClient client = new CswClient(server, cswValidationPath);
-
-        InputBySearch inputBySearch = new InputBySearch("archeo*");
-
-
-        XMLOutputter outputter = new XMLOutputter();
+        //String testWktInput = "POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2, 3 2, 3 3, 2 3,2 2))";
+        String testWktInput = "POLYGON ((280 380, 280 200, 60 200, 60 380, 180 220, 280 380),(40 160, 260 160, 240 60, 20 80, 40 160))";
 
         try {
+            JAXBElement<GetRecordsType> getRecords = CswRequestCreator.createCswRequest(
+                    new nl.b3p.csw.jaxb.filter.ObjectFactory().createWithin(new nl.b3p.csw.jaxb.filter.ObjectFactory().createBinarySpatialOpType()),
+                    "anyText",
+                    testWktInput);
+            System.out.println(MarshallUtil.marshall(getRecords, null));
+
+            CswClient client = new CswClient(server, cswValidationPath);
+
+            InputBySearch inputBySearch = new InputBySearch("archeo*");
+
+
+            XMLOutputter outputter = new XMLOutputter();
+
             //Schema schema = MarshallUtil.createSchema(cswValidationPath);
             System.out.println(MarshallUtil.marshall(inputBySearch.getRequest(), null));
             /*SAXBuilder builder = new SAXBuilder(VALIDATE_CSW_RESPONSE);
@@ -194,13 +206,7 @@ public class CswClient {
                 }
             }
 
-        } catch (JDOMException ex) {
-            ex.printStackTrace(System.err);
-        } catch (IOException ex) {
-            ex.printStackTrace(System.err);
-        } catch (TransformerException ex) {
-            ex.printStackTrace(System.err);
-        } catch (JAXBException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
     }

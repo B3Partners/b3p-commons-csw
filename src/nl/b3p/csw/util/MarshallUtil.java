@@ -5,23 +5,18 @@
 
 package nl.b3p.csw.util;
 
-import java.io.File;
 import java.io.StringWriter;
-import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import nl.b3p.csw.jaxb.csw.RequestBaseType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.output.DOMOutputter;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -47,7 +42,7 @@ public class MarshallUtil {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
 
-        return (JAXBElement)unmarshaller.unmarshal(xmlDocument);
+        return (JAXBElement)unmarshaller.unmarshal(xmlDocument, JAXBElement.class);
     }
 
     public static JAXBElement unMarshall(Document xmlDocument, Schema schema) throws JAXBException, JDOMException {
@@ -56,16 +51,6 @@ public class MarshallUtil {
         org.w3c.dom.Document w3cDomDoc = domOutputter.output(xmlDocument);
 
         return unMarshall(w3cDomDoc, schema);
-    }
-
-    public static Schema createSchema(String path) {
-        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        try {
-            return sf.newSchema(new File(path));
-        } catch (SAXException saxe) {
-            log.error("No validation possible. File '" + path + "'.", saxe);
-            return null;
-        }
     }
 
 }

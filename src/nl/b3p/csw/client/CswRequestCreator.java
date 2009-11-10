@@ -4,7 +4,6 @@
  */
 package nl.b3p.csw.client;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import java.io.IOException;
 import javax.naming.OperationNotSupportedException;
@@ -24,17 +23,10 @@ import nl.b3p.csw.jaxb.filter.PropertyIsLikeType;
 import nl.b3p.csw.jaxb.filter.PropertyNameType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.geotools.geometry.jts.WKTReader2;
-import com.vividsolutions.jts.io.WKTReader;
-//import com.vividsolutions.jts.geom;
-import java.io.StringReader;
-import java.io.StringWriter;
-import nl.b3p.csw.util.MarshallUtil;
-import org.geotools.xml.DocumentWriter;
-import org.jdom.Document;
+import nl.b3p.csw.jaxb.filter.BinarySpatialOpType;
+import nl.b3p.csw.jaxb.gml.AbstractGeometryType;
+import nl.b3p.csw.util.Util;
 import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.DOMOutputter;
 
 /**
  *
@@ -113,20 +105,25 @@ public class CswRequestCreator {
                 filterType);
     }
 
-    public static JAXBElement<GetRecordsType> createCswRequest(String wktFilter) throws JDOMException, IOException, OperationNotSupportedException, JAXBException, ParseException {
-        // nogal wat omwegen: wkt string -> geotools gml3 object -> xml string -> mijn jaxb gml3 object
-        Geometry geom = new WKTReader2().read(wktFilter);
+    public static JAXBElement<GetRecordsType> createCswRequest(
+            JAXBElement<BinarySpatialOpType> binarySpatialOp,
+            String propertyName,
+            String wktFilter) throws JDOMException, IOException, OperationNotSupportedException, JAXBException, ParseException {
 
-        StringWriter stringWriter = new StringWriter();
-        // schema erbij? (eerste null)
-        DocumentWriter.writeFragment(geom, null, stringWriter, null);
+        JAXBElement<? extends AbstractGeometryType> geom = Util.readWkt(wktFilter);
 
-        Document jdomDoc = new SAXBuilder(true).build(new StringReader(stringWriter.toString()));
-        DOMOutputter domOutputter = new DOMOutputter();
-        org.w3c.dom.Document w3cDomDoc = domOutputter.output(jdomDoc);
+        PropertyNameType propertyNameType = filterFactory.createPropertyNameType();
+        propertyNameType.getContent().add(propertyName);
 
-        JAXBElement<FilterType> filter = MarshallUtil.unMarshall(w3cDomDoc, null);
-        FilterType gml3Filter = filter.getValue();
+        // BinarySpatialOpType is er eigenlijk al:
+        BinarySpatialOpType binarySpatialOpType = filterFactory.createBinarySpatialOpType();
+        binarySpatialOpType.setPropertyName(propertyNameType);
+        binarySpatialOpType.setAbstractGeometry(geom);
+
+        binarySpatialOp.setValue(binarySpatialOpType);
+
+        FilterType gml3Filter = filterFactory.createFilterType();
+        gml3Filter.setSpatialOps(binarySpatialOp);
 
         return createCswRequest(gml3Filter);
     }
