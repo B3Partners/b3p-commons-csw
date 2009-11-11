@@ -10,6 +10,7 @@ import javax.naming.OperationNotSupportedException;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
+import javax.xml.transform.TransformerException;
 import nl.b3p.csw.jaxb.csw.ElementSetNameType;
 import nl.b3p.csw.jaxb.csw.ElementSetType;
 import nl.b3p.csw.jaxb.csw.GetRecordByIdType;
@@ -24,10 +25,11 @@ import nl.b3p.csw.jaxb.filter.PropertyNameType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import nl.b3p.csw.jaxb.filter.BinarySpatialOpType;
-import nl.b3p.csw.jaxb.gml.AbstractGeometry;
-import nl.b3p.csw.jaxb.gml.AbstractGeometryType;
 import nl.b3p.csw.util.Util;
 import org.jdom.JDOMException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -109,15 +111,14 @@ public class CswRequestCreator {
     public static JAXBElement<GetRecordsType> createCswRequest(
             JAXBElement<BinarySpatialOpType> binarySpatialOp,
             String propertyName,
-            String wktFilter) throws JDOMException, IOException, OperationNotSupportedException, JAXBException, ParseException {
+            String wktFilter) throws JDOMException, IOException, OperationNotSupportedException, JAXBException, ParseException, NoSuchAuthorityCodeException, FactoryException, SAXException, TransformerException {
 
-        //AbstractGeometry geom = Util.readWkt(wktFilter);
-        JAXBElement<AbstractGeometryType> geom = Util.readWkt(wktFilter);
+        JAXBElement geom = Util.readWkt(wktFilter);
+        log.debug("wkt-type: " + geom.getValue().toString());
 
         PropertyNameType propertyNameType = filterFactory.createPropertyNameType();
         propertyNameType.getContent().add(propertyName);
 
-        // BinarySpatialOpType is er eigenlijk al:
         BinarySpatialOpType binarySpatialOpType = filterFactory.createBinarySpatialOpType();
         binarySpatialOpType.setPropertyName(propertyNameType);
         binarySpatialOpType.setGeometry(geom);
