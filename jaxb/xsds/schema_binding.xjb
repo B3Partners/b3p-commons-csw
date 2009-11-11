@@ -10,7 +10,6 @@
 	<jaxb:globalBindings 
 		generateMixedExtensions="true"
 		generateElementClass="true"
-		generateValueClass="false"
 	/>
 	<!-- onderstaande kan bij globalBindings, maar vind ik lelijk. Dan beginnen sommige classes namelijk met een underScore. -->
 	<!-- underscoreBinding="asCharInWord" --> 

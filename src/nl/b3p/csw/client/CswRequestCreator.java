@@ -11,6 +11,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
+import nl.b3p.csw.jaxb.csw.Constraint;
+import nl.b3p.csw.jaxb.csw.ElementSetName;
 import nl.b3p.csw.jaxb.csw.ElementSetNameType;
 import nl.b3p.csw.jaxb.csw.ElementSetType;
 import nl.b3p.csw.jaxb.csw.GetRecordByIdType;
@@ -25,6 +27,8 @@ import nl.b3p.csw.jaxb.filter.PropertyNameType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import nl.b3p.csw.jaxb.filter.BinarySpatialOpType;
+import nl.b3p.csw.jaxb.filter.Filter;
+import nl.b3p.csw.jaxb.filter.Literal;
 import nl.b3p.csw.jaxb.filter.PropertyName;
 import nl.b3p.csw.util.Util;
 import org.jdom.JDOMException;
@@ -87,13 +91,13 @@ public class CswRequestCreator {
         LiteralType literalType = filterFactory.createLiteralType();
         literalType.getContent().add(queryString);
 
-        propertyIsLikeType.setLiteral(literalType);
+        propertyIsLikeType.setLiteral(new Literal(literalType));
 
         PropertyNameType propertyNameType = filterFactory.createPropertyNameType();
         //propertyNameType.setContent(propertyName);
         propertyNameType.getContent().add(propertyName);
         
-        propertyIsLikeType.setPropertyName(propertyNameType);
+        propertyIsLikeType.setPropertyName(new PropertyName(propertyNameType));
 
         propertyIsLikeType.setWildCard("*");
         propertyIsLikeType.setSingleChar("?");
@@ -150,22 +154,22 @@ public class CswRequestCreator {
 
         GetRecordsType getRecordsType = cswFactory.createGetRecordsType();
 
-        getRecordsType.setService("CSW");//ServiceType.CSW);
+        getRecordsType.setService("CSW");
         getRecordsType.setResultType(resultType);
         getRecordsType.setOutputSchema(outputSchemaType);
-        getRecordsType.setVersion("2.0.2");//CswVersionType.Version_2_0_2);
+        getRecordsType.setVersion("2.0.2");
         
         QueryType queryType = cswFactory.createQueryType();
 
-        queryType.setElementSetName(elementSetNameType);
+        queryType.setElementSetName(new ElementSetName(elementSetNameType));
         queryType.getTypeNames().add(QName.valueOf("gmd:MD_Metadata"));
 
-        QueryConstraintType constraint = cswFactory.createQueryConstraintType();
+        QueryConstraintType constraintType = cswFactory.createQueryConstraintType();
 
-        constraint.setVersion("1.1.0");//FilterVersionType.Version_1_1_0);
-        constraint.setFilter(filterType);
+        constraintType.setVersion("1.1.0");
+        constraintType.setFilter(new Filter(filterType));
         
-        queryType.setConstraint(constraint);
+        queryType.setConstraint(new Constraint(constraintType));
 
         getRecordsType.setAbstractQuery(cswFactory.createQuery(queryType));
 
@@ -183,7 +187,7 @@ public class CswRequestCreator {
         ElementSetNameType elementSetNameType = cswFactory.createElementSetNameType();
         elementSetNameType.setValue(ElementSetType.FULL);
         
-        getRecordByIdType.setElementSetName(elementSetNameType);
+        getRecordByIdType.setElementSetName(new ElementSetName(elementSetNameType));
         getRecordByIdType.getId().add(id);
         
         return cswFactory.createGetRecordById(getRecordByIdType);
