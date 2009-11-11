@@ -7,9 +7,13 @@
 			jaxb:version="2.0" 
 			>
 
-	<jaxb:globalBindings generateMixedExtensions="true"/>
-	<!-- onderstaande kan erbij, maar vind ik lelijk. Dan beginnen sommige classes namelijk met een underScore. -->
-	<!--jaxb:globalBindings underscoreBinding="asCharInWord"/--> 
+	<jaxb:globalBindings 
+		generateMixedExtensions="true"
+		generateElementClass="true"
+		generateValueClass="false"
+	/>
+	<!-- onderstaande kan bij globalBindings, maar vind ik lelijk. Dan beginnen sommige classes namelijk met een underScore. -->
+	<!-- underscoreBinding="asCharInWord" --> 
 	
 	<!-- Packaging -->
 

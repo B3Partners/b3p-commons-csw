@@ -25,6 +25,7 @@ import nl.b3p.csw.jaxb.filter.PropertyNameType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import nl.b3p.csw.jaxb.filter.BinarySpatialOpType;
+import nl.b3p.csw.jaxb.filter.PropertyName;
 import nl.b3p.csw.util.Util;
 import org.jdom.JDOMException;
 import org.opengis.referencing.FactoryException;
@@ -120,7 +121,7 @@ public class CswRequestCreator {
         propertyNameType.getContent().add(propertyName);
 
         BinarySpatialOpType binarySpatialOpType = filterFactory.createBinarySpatialOpType();
-        binarySpatialOpType.setPropertyName(propertyNameType);
+        binarySpatialOpType.setPropertyName(new PropertyName(propertyNameType));
         binarySpatialOpType.setGeometry(geom);
 
         binarySpatialOp.setValue(binarySpatialOpType);

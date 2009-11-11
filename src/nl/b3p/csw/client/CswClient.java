@@ -13,6 +13,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 import nl.b3p.csw.jaxb.csw.GetRecordsType;
+import nl.b3p.csw.jaxb.filter.Within;
 import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
 import nl.b3p.csw.util.CswClientFactory;
@@ -122,9 +123,7 @@ public class CswClient {
 
         try {
             JAXBElement<GetRecordsType> getRecords = CswRequestCreator.createCswRequest(
-                    new nl.b3p.csw.jaxb.filter.ObjectFactory().createWithin(new nl.b3p.csw.jaxb.filter.ObjectFactory().createBinarySpatialOpType()),
-                    "anyText",
-                    testWktInput);
+                    new Within(), "anyText", testWktInput);
             System.out.println(MarshallUtil.marshall(getRecords, null));
 
             CswClient client = new CswClient(server, cswValidationPath);
