@@ -98,7 +98,9 @@ public class OutputBySearch extends Output {
     public List<OnlineResource> getResourcesFlattened(List<Protocol> allowedProtocols) {
         List<OnlineResource> resources = new ArrayList<OnlineResource>();
 
-        for (List<OnlineResource> list : getResourcesMap().values()) {
+        Map<URI, List<OnlineResource>> resourcesMap = getResourcesMap(allowedProtocols);
+
+        for (List<OnlineResource> list : resourcesMap.values()) {
             resources.addAll(list);
         }
 
@@ -164,15 +166,7 @@ public class OutputBySearch extends Output {
             }
             Element protocolElem = resourceElem.getChild("protocol", gmdNameSpace);
             if (protocolElem != null) {
-                Element SV_ServiceTypeElem = protocolElem.getChild("SV_ServiceType", gmdNameSpace);
-                if (SV_ServiceTypeElem != null) {
-                    String protocolText = SV_ServiceTypeElem.getTextTrim();
-                    try {
-                        protocol = Protocol.fromValue(protocolText);
-                    } catch (Exception e) {
-                        protocol = defaultProtocol;
-                    }
-                }
+                protocol = getProtocol(protocolElem);
             }
             Element nameElem = resourceElem.getChild("name", gmdNameSpace);
             if (nameElem != null) {
@@ -205,6 +199,31 @@ public class OutputBySearch extends Output {
             log.error(ex);
         }
         return null;
+    }
+
+    private Protocol getProtocol(Element protocolElem) {
+        Protocol protocol = null;
+        
+        Element SV_ServiceTypeElem = protocolElem.getChild("SV_ServiceType", gmdNameSpace);
+        // onderstaand element is voor compatibiliteit. Is eigenlijk niet correct.
+        Element protocolStringElem = protocolElem.getChild("CharacterString", gcoNameSpace);
+
+        if (SV_ServiceTypeElem != null) {
+            String protocolText = SV_ServiceTypeElem.getTextTrim();
+            try {
+                protocol = Protocol.fromValue(protocolText);
+            } catch (Exception e) {}
+        } else if (protocolStringElem != null) {
+            String protocolText = protocolStringElem.getTextTrim();
+            try {
+                protocol = Protocol.fromValue(protocolText);
+            } catch (Exception e) {}
+        }
+
+        if (protocol == null) {
+            protocol = defaultProtocol;
+        }
+        return protocol;
     }
 
 }
