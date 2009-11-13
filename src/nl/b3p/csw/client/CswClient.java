@@ -33,20 +33,6 @@ import org.xml.sax.SAXException;
  *
  * @author Erik van de Pol
  *
- * // in filter.BinarySpatialOpType-class deze annotatie toevoegen boven klasse-beschrijving na iedere xjc recompile:
- * //@XmlSeeAlso({AbstractGeometryType.class})
- *
- * In csw.DCMIRecordType wordt het:
- * @XmlSeeAlso({
-    RecordType.class,
-    SimpleLiteral.class
-    })
- *
- * In csw.QueryType
- * @XmlSeeAlso({SortByType.class})
- *
- * Als com.sun.xml.bind.v2.runtime.IllegalAnnotationsException:
- * Voor alle soortgelijke fouten: Als Xyz.class niet gevonden wordt, voeg @XmlSeeAlso({XyzType.class}) toe boven de klasse-beschrijving, als deze bestaat of iets soortgelijks kijkend naar de superclass.
  */
 public class CswClient {
 

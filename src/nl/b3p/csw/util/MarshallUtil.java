@@ -26,8 +26,27 @@ public class MarshallUtil {
 
     protected static Log log = LogFactory.getLog(MarshallUtil.class);
 
+    protected final static String CSW_PACKAGE =      "nl.b3p.csw.jaxb.csw";
+    protected final static String ELEMENTS_PACKAGE = "nl.b3p.csw.jaxb.elements";
+    protected final static String FILTER_PACKAGE =   "nl.b3p.csw.jaxb.filter";
+    protected final static String GML_PACKAGE =      "nl.b3p.csw.jaxb.gml";
+    protected final static String OWS_PACKAGE =      "nl.b3p.csw.jaxb.ows";
+    protected final static String TERMS_PACKAGE =    "nl.b3p.csw.jaxb.terms";
+    protected final static String SEPARATOR =        ":";
+
+    protected static String JAXB_PACKAGES;
+
+    static {
+        JAXB_PACKAGES = CSW_PACKAGE + SEPARATOR +
+                        ELEMENTS_PACKAGE + SEPARATOR +
+                        FILTER_PACKAGE + SEPARATOR +
+                        GML_PACKAGE + SEPARATOR +
+                        OWS_PACKAGE + SEPARATOR +
+                        TERMS_PACKAGE + SEPARATOR;
+    }
+
     public static String marshall(JAXBElement input, Schema schema) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.csw");
+        JAXBContext jaxbContext = JAXBContext.newInstance(JAXB_PACKAGES);
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setSchema(schema);
         marshaller.setProperty("jaxb.formatted.output", true);
@@ -38,7 +57,7 @@ public class MarshallUtil {
     }
 
     public static JAXBElement unMarshall(org.w3c.dom.Document xmlDocument, Schema schema) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance("nl.b3p.csw.jaxb.csw");
+        JAXBContext jaxbContext = JAXBContext.newInstance(JAXB_PACKAGES);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
 
