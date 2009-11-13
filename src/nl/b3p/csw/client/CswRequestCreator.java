@@ -16,7 +16,9 @@ import nl.b3p.csw.jaxb.csw.ElementSetName;
 import nl.b3p.csw.jaxb.csw.ElementSetNameType;
 import nl.b3p.csw.jaxb.csw.ElementSetType;
 import nl.b3p.csw.jaxb.csw.GetRecordByIdType;
+import nl.b3p.csw.jaxb.csw.GetRecords;
 import nl.b3p.csw.jaxb.csw.GetRecordsType;
+import nl.b3p.csw.jaxb.csw.Query;
 import nl.b3p.csw.jaxb.csw.QueryConstraintType;
 import nl.b3p.csw.jaxb.csw.QueryType;
 import nl.b3p.csw.jaxb.csw.ResultType;
@@ -152,28 +154,32 @@ public class CswRequestCreator {
             FilterType filterType
             ) {
 
-        GetRecordsType getRecordsType = cswFactory.createGetRecordsType();
+        //GetRecordsType getRecordsType = cswFactory.createGetRecordsType();
+        GetRecordsType getRecordsType = new GetRecordsType();
 
         getRecordsType.setService("CSW");
         getRecordsType.setResultType(resultType);
         getRecordsType.setOutputSchema(outputSchemaType);
         getRecordsType.setVersion("2.0.2");
         
-        QueryType queryType = cswFactory.createQueryType();
+        //QueryType queryType = cswFactory.createQueryType();
+        QueryType queryType = new QueryType();
 
         queryType.setElementSetName(new ElementSetName(elementSetNameType));
         queryType.getTypeNames().add(QName.valueOf("gmd:MD_Metadata"));
 
-        QueryConstraintType constraintType = cswFactory.createQueryConstraintType();
+        //QueryConstraintType constraintType = cswFactory.createQueryConstraintType();
+        QueryConstraintType constraintType = new QueryConstraintType();
 
         constraintType.setVersion("1.1.0");
         constraintType.setFilter(new Filter(filterType));
         
         queryType.setConstraint(new Constraint(constraintType));
 
-        getRecordsType.setAbstractQuery(cswFactory.createQuery(queryType));
+        getRecordsType.setAbstractQuery(new Query(queryType));
 
-        return cswFactory.createGetRecords(getRecordsType);
+        //return cswFactory.createGetRecords(getRecordsType);
+        return new GetRecords(getRecordsType);
     }
 
     public static JAXBElement<GetRecordByIdType> createGetRecordByIdRequest(String id) {

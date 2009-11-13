@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import nl.b3p.csw.jaxb.elements.Identifier;
 import nl.b3p.csw.jaxb.elements.SimpleLiteral;

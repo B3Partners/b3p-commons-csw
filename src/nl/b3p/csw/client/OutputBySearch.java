@@ -28,6 +28,13 @@ import org.jdom.input.DOMBuilder;
  * @author Erik van de Pol
  */
 public class OutputBySearch extends Output {
+    protected final static Protocol defaultProtocol = Protocol.WMS;
+    protected final static List<Protocol> defaultAllowedProtocols;
+
+    static {
+        defaultAllowedProtocols = new ArrayList<Protocol>();
+        defaultAllowedProtocols.add(defaultProtocol);
+    }
 
     public OutputBySearch(Document xmlDocument) {
         super(xmlDocument);
@@ -72,11 +79,47 @@ public class OutputBySearch extends Output {
         return docList;
     }
 
-    public Map<URI, List<OnlineResource>> getResourcesMap() {
-        return getResourcesMap(Protocol.WMS);
+    /**
+     * List of OnlineResource's. If the same resource-URL is included in more result-metadata,
+     * all are included in this list.
+     * @return List of OnlineResource's.
+     */
+    public List<OnlineResource> getResourcesFlattened() {
+        return getResourcesFlattened(defaultAllowedProtocols);
     }
 
-    public Map<URI, List<OnlineResource>> getResourcesMap(Protocol protocolFilter) {
+    /**
+     * List of OnlineResource's. If the same resource-URL is included in more result-metadata,
+     * all are included in this list.
+     * @param allowedProtocols Online resource protocols that are allowed in the search results.
+     * An empty list indicates all Protocol's are allowed.
+     * @return List of OnlineResource's.
+     */
+    public List<OnlineResource> getResourcesFlattened(List<Protocol> allowedProtocols) {
+        List<OnlineResource> resources = new ArrayList<OnlineResource>();
+
+        for (List<OnlineResource> list : getResourcesMap().values()) {
+            resources.addAll(list);
+        }
+
+        return resources;
+    }
+
+    /**
+     * List of OnlineResource's grouped by URI.
+     * @return List of OnlineResource's grouped by URI.
+     */
+    public Map<URI, List<OnlineResource>> getResourcesMap() {
+        return getResourcesMap(defaultAllowedProtocols);
+    }
+
+    /**
+     * List of OnlineResource's grouped by URI.
+     * @param allowedProtocols Online resource protocols that are allowed in the search results.
+     * An empty list indicates all Protocol's are allowed.
+     * @return List of OnlineResource's grouped by URI.
+     */
+    public Map<URI, List<OnlineResource>> getResourcesMap(List<Protocol> allowedProtocols) {
         Map<URI, List<OnlineResource>> services = new HashMap<URI, List<OnlineResource>>();
         Element rootElement = xmlDocument.getRootElement();
         if (rootElement != null) {
@@ -89,16 +132,25 @@ public class OutputBySearch extends Output {
                 while (resources.hasNext()) {
                     Element resourceElem = resources.next();
 
-                    handleResource(resourceElem, protocolFilter, services);
+                    OnlineResource onlineResource = getResource(resourceElem, allowedProtocols);
+
+                    if (onlineResource != null) {
+                        URI url = onlineResource.getUrl();
+                        if (services.get(url) == null) {
+                            services.put(url, new ArrayList<OnlineResource>());
+                        }
+
+                        services.get(url).add(onlineResource);
+                    }
                 }
             }
         }
         return services;
     }
 
-    private void handleResource(Element resourceElem, Protocol protocolFilter, Map<URI, List<OnlineResource>> services) {
+    private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols) {
         URI url = null;
-        String protocol = null;
+        Protocol protocol = null;
         String name = null;
         String desc = null;
 
@@ -114,7 +166,12 @@ public class OutputBySearch extends Output {
             if (protocolElem != null) {
                 Element SV_ServiceTypeElem = protocolElem.getChild("SV_ServiceType", gmdNameSpace);
                 if (SV_ServiceTypeElem != null) {
-                    protocol = SV_ServiceTypeElem.getTextTrim();
+                    String protocolText = SV_ServiceTypeElem.getTextTrim();
+                    try {
+                        protocol = Protocol.fromValue(protocolText);
+                    } catch (Exception e) {
+                        protocol = defaultProtocol;
+                    }
                 }
             }
             Element nameElem = resourceElem.getChild("name", gmdNameSpace);
@@ -131,21 +188,23 @@ public class OutputBySearch extends Output {
                     desc = descStringElem.getTextTrim();
                 }
             }
-            if (url != null && name != null && (protocol == null || protocol.length() == 0 || protocol.toUpperCase().equals(protocolFilter.getName().toUpperCase()))) {
-                Protocol forcedProtocol = Protocol.WMS;
-                if (services.get(url) == null) {
-                    services.put(url, new ArrayList<OnlineResource>());
-                }
+            if (url != null && name != null && 
+                    (allowedProtocols.isEmpty() || allowedProtocols.contains(protocol))
+                ) {
+
                 OnlineResource onlineResource = new OnlineResource();
+
                 onlineResource.setUrl(url);
                 onlineResource.setName(name);
                 onlineResource.setDescription(desc);
-                onlineResource.setProtocol(forcedProtocol);
-                services.get(url).add(onlineResource);
+                onlineResource.setProtocol(protocol);
+
+                return onlineResource;
             }
         } catch (URISyntaxException ex) {
-            // move on to the next item
+            log.error(ex);
         }
+        return null;
     }
 
 }

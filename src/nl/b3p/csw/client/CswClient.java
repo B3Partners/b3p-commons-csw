@@ -33,9 +33,20 @@ import org.xml.sax.SAXException;
  *
  * @author Erik van de Pol
  *
- * // in BinarySpatialOpType-class deze annotatie toevoegen na iedere xjc recompile:
+ * // in filter.BinarySpatialOpType-class deze annotatie toevoegen boven klasse-beschrijving na iedere xjc recompile:
  * //@XmlSeeAlso({AbstractGeometryType.class})
  *
+ * In csw.DCMIRecordType wordt het:
+ * @XmlSeeAlso({
+    RecordType.class,
+    SimpleLiteral.class
+    })
+ *
+ * In csw.QueryType
+ * @XmlSeeAlso({SortByType.class})
+ *
+ * Als com.sun.xml.bind.v2.runtime.IllegalAnnotationsException:
+ * Voor alle soortgelijke fouten: Als Xyz.class niet gevonden wordt, voeg @XmlSeeAlso({XyzType.class}) toe boven de klasse-beschrijving, als deze bestaat of iets soortgelijks kijkend naar de superclass.
  */
 public class CswClient {
 
@@ -122,9 +133,9 @@ public class CswClient {
         String testWktInput = "POLYGON ((280 380, 280 200, 60 200, 60 380, 180 220, 280 380),(40 160, 260 160, 240 60, 20 80, 40 160))";
 
         try {
-            JAXBElement<GetRecordsType> getRecords = CswRequestCreator.createCswRequest(
+            /*JAXBElement<GetRecordsType> getRecords = CswRequestCreator.createCswRequest(
                     new Within(), "anyText", testWktInput);
-            System.out.println(MarshallUtil.marshall(getRecords, null));
+            System.out.println(MarshallUtil.marshall(getRecords, null));*/
 
             CswClient client = new CswClient(server, cswValidationPath);
 
@@ -179,7 +190,7 @@ public class CswClient {
             Document xmlDoc2 = CswClientFactory.searchSimpleAsXml("*eologie", server);
             outputter.output(xmlDoc2, System.out);
 
-            Map<URI, List<OnlineResource>> map = outputBySearch.getResourcesMap(Protocol.WMS);
+            Map<URI, List<OnlineResource>> map = outputBySearch.getResourcesMap();
             for (List<OnlineResource> resourceList : map.values()) {
                 for (OnlineResource resource : resourceList) {
                     URI url = resource.getUrl();

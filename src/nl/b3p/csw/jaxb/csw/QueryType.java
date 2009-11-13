@@ -15,9 +15,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import nl.b3p.csw.jaxb.filter.SortBy;
+import nl.b3p.csw.jaxb.filter.SortByType;
 
 
 /**
@@ -62,6 +64,7 @@ import nl.b3p.csw.jaxb.filter.SortBy;
     "constraint",
     "sortBy"
 })
+@XmlSeeAlso({SortByType.class})
 public class QueryType
     extends AbstractQueryType
 {

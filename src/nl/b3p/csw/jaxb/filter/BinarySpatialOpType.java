@@ -12,6 +12,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import nl.b3p.csw.jaxb.gml.AbstractCurve;
 import nl.b3p.csw.jaxb.gml.AbstractGeometry;
@@ -73,6 +74,7 @@ import nl.b3p.csw.jaxb.gml.TriangulatedSurface;
     "geometry",
     "envelope"
 })
+@XmlSeeAlso({AbstractGeometryType.class})
 public class BinarySpatialOpType
     extends SpatialOpsType
 {
