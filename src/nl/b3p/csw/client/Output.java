@@ -48,6 +48,7 @@ public abstract class Output {
     // TODO: deze staat hard op ISO 19139. Andere standaarden toevoegen?
     protected static final ElementFilter resultElementFilter = new ElementFilter("MD_Metadata", gmdNameSpace);
     protected static final ElementFilter resourceElementFilter = new ElementFilter("CI_OnlineResource", gmdNameSpace);
+    protected static final ElementFilter fileIdentifierElementFilter = new ElementFilter("fileIdentifier", gmdNameSpace);
 
     protected Document xmlDocument = null;
     protected JAXBElement response = null;

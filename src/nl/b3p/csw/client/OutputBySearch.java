@@ -130,24 +130,46 @@ public class OutputBySearch extends Output {
             while (results.hasNext()) {
                 Element resultElem = results.next();
 
-                Iterator<Element> resources = resultElem.getDescendants(resourceElementFilter);
-                while (resources.hasNext()) {
-                    Element resourceElem = resources.next();
-
-                    OnlineResource onlineResource = getResource(resourceElem, allowedProtocols);
-
-                    if (onlineResource != null) {
-                        URI url = onlineResource.getUrl();
-                        if (services.get(url) == null) {
-                            services.put(url, new ArrayList<OnlineResource>());
-                        }
-
-                        services.get(url).add(onlineResource);
-                    }
-                }
+                Map<URI, List<OnlineResource>> resultServices = getResourcesMap(resultElem, allowedProtocols);
+                services.putAll(resultServices);
             }
         }
         return services;
+    }
+
+    protected Map<URI, List<OnlineResource>> getResourcesMap(Element resultElem, List<Protocol> allowedProtocols) throws UnsupportedOperationException {
+        Map<URI, List<OnlineResource>> services = new HashMap<URI, List<OnlineResource>>();
+
+        int resourceId = 0;
+        String uuid = getUUID(resultElem);
+
+        Iterator<Element> resources = resultElem.getDescendants(resourceElementFilter);
+        while (resources.hasNext()) {
+            Element resourceElem = resources.next();
+
+            OnlineResource onlineResource = getResource(resourceElem, allowedProtocols);
+            onlineResource.setUUID(uuid + "_" + resourceId);
+
+            if (onlineResource != null) {
+                URI url = onlineResource.getUrl();
+                if (services.get(url) == null) {
+                    services.put(url, new ArrayList<OnlineResource>());
+                }
+                services.get(url).add(onlineResource);
+            }
+            resourceId++;
+        }
+
+        return services;
+    }
+
+    protected String getUUID(Element rootElement) throws UnsupportedOperationException {
+        Iterator<Element> fileIdentifierResult = rootElement.getDescendants(fileIdentifierElementFilter);
+        if (!fileIdentifierResult.hasNext()) {
+            throw new UnsupportedOperationException("No UUID found for metadata.");
+        }
+        Element fileIdentifier = fileIdentifierResult.next();
+        return fileIdentifier.getChildTextTrim("CharacterString", gcoNameSpace);
     }
 
     private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols) {

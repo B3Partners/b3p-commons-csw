@@ -46,10 +46,15 @@ public class CswRequestCreator {
 
     protected static Log log = LogFactory.getLog(CswRequestCreator.class);
 
-    protected static nl.b3p.csw.jaxb.csw.ObjectFactory cswFactory =
+    protected static final nl.b3p.csw.jaxb.csw.ObjectFactory cswFactory =
             new nl.b3p.csw.jaxb.csw.ObjectFactory();
-    protected static nl.b3p.csw.jaxb.filter.ObjectFactory filterFactory =
+    protected static final nl.b3p.csw.jaxb.filter.ObjectFactory filterFactory =
             new nl.b3p.csw.jaxb.filter.ObjectFactory();
+
+    protected static final String defaultWildCard = "*";
+    protected static final String defaultSingleChar = "?";
+    protected static final String defaultEscapeChar = "\\";
+
 
     public static JAXBElement<GetRecordsType> createSimpleCswRequest(String queryString) {
         return createCswRequest(queryString, "", "", "", "");
@@ -61,8 +66,26 @@ public class CswRequestCreator {
             String elementSetName,
             String outputSchema,
             String resultTypeString) {
+        return createCswRequest(queryString, propertyName, elementSetName, outputSchema, resultTypeString, true);
+    }
+
+    public static JAXBElement<GetRecordsType> createCswRequest(
+            String queryString,
+            String propertyName,
+            String elementSetName,
+            String outputSchema,
+            String resultTypeString,
+            boolean forceSearchUsingPartialWords) {
         if (queryString == null || queryString.trim().length() == 0) {
             return null;
+        }
+        if (forceSearchUsingPartialWords) {
+            if (!queryString.startsWith(defaultWildCard)) {
+                queryString = defaultWildCard + queryString;
+            }
+            if (!queryString.endsWith(defaultWildCard)) {
+                queryString = queryString + defaultWildCard;
+            }
         }
 
         if (propertyName == null || propertyName.trim().length() == 0) {
@@ -101,9 +124,9 @@ public class CswRequestCreator {
         
         propertyIsLikeType.setPropertyName(new PropertyName(propertyNameType));
 
-        propertyIsLikeType.setWildCard("*");
-        propertyIsLikeType.setSingleChar("?");
-        propertyIsLikeType.setEscapeChar("\\");
+        propertyIsLikeType.setWildCard(defaultWildCard);
+        propertyIsLikeType.setSingleChar(defaultSingleChar);
+        propertyIsLikeType.setEscapeChar(defaultEscapeChar);
 
         FilterType filterType = filterFactory.createFilterType();
         filterType.setComparisonOps(filterFactory.createPropertyIsLike(propertyIsLikeType));

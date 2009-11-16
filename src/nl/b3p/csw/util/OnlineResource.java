@@ -12,12 +12,21 @@ import java.net.URI;
  */
 public class OnlineResource {
 
-    private URI url;
-    private Protocol protocol;
-    private String name;
-    private String description;
+    private String UUID = null;
+    private URI url = null;
+    private Protocol protocol = null;
+    private String name = null;
+    private String description = null;
 
     public OnlineResource() {
+    }
+
+    public String getUUID() {
+        return UUID;
+    }
+
+    public void setUUID(String uuid) {
+        this.UUID = uuid;
     }
 
     public URI getUrl() {
