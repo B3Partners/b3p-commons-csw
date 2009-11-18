@@ -148,9 +148,10 @@ public class OutputBySearch extends Output {
             Element resourceElem = resources.next();
 
             OnlineResource onlineResource = getResource(resourceElem, allowedProtocols);
-            onlineResource.setUUID(uuid + "_" + resourceId);
-
+            
             if (onlineResource != null) {
+                onlineResource.setUUID(uuid + ";" + resourceId);
+                
                 URI url = onlineResource.getUrl();
                 if (services.get(url) == null) {
                     services.put(url, new ArrayList<OnlineResource>());
