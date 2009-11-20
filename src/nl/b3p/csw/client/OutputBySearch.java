@@ -22,6 +22,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
+import org.jdom.output.XMLOutputter;
 
 /**
  *
@@ -140,17 +141,17 @@ public class OutputBySearch extends Output {
     protected Map<URI, List<OnlineResource>> getResourcesMap(Element resultElem, List<Protocol> allowedProtocols) throws UnsupportedOperationException {
         Map<URI, List<OnlineResource>> services = new HashMap<URI, List<OnlineResource>>();
 
-        int resourceId = 0;
-        String uuid = getUUID(resultElem);
+        //int resourceId = 0;
+        //String uuid = getUUID(resultElem);
 
         Iterator<Element> resources = resultElem.getDescendants(resourceElementFilter);
         while (resources.hasNext()) {
             Element resourceElem = resources.next();
 
-            OnlineResource onlineResource = getResource(resourceElem, allowedProtocols);
+            OnlineResource onlineResource = getResource(resourceElem, allowedProtocols, resultElem);
             
             if (onlineResource != null) {
-                onlineResource.setUUID(uuid + ";" + resourceId);
+                //onlineResource.setUUID(uuid + ";" + resourceId);
                 
                 URI url = onlineResource.getUrl();
                 if (services.get(url) == null) {
@@ -158,7 +159,7 @@ public class OutputBySearch extends Output {
                 }
                 services.get(url).add(onlineResource);
             }
-            resourceId++;
+            //resourceId++;
         }
 
         return services;
@@ -173,7 +174,7 @@ public class OutputBySearch extends Output {
         return fileIdentifier.getChildTextTrim("CharacterString", gcoNameSpace);
     }
 
-    private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols) {
+    private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {
         URI url = null;
         Protocol protocol = null;
         String name = null;
@@ -215,6 +216,8 @@ public class OutputBySearch extends Output {
                 onlineResource.setName(name);
                 onlineResource.setDescription(desc);
                 onlineResource.setProtocol(protocol);
+                log.debug("md:\n" + new XMLOutputter().outputString(metadataElement));
+                onlineResource.setMetadata(metadataElement);
 
                 return onlineResource;
             }
