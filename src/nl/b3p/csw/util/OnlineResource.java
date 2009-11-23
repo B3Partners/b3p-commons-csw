@@ -83,7 +83,7 @@ public class OnlineResource {
                 TransformerFactory.newInstance().newTransformer(new StreamSource(xslDocPath));
 
         if (transformer == null) {
-            throw new Exception("Transformer could not be created. Wrong xslDocPath?");
+            throw new Exception("Transformer could not be created. Wrong xslDocPath? Error in xslDoc?");
         }
 
         JDOMSource in = new JDOMSource(metadata);
@@ -93,8 +93,16 @@ public class OnlineResource {
         List result = out.getResult();
 
         if (result.size() > 0) {
-            Text text = (Text)result.get(0);
-            this.metadataDescription = text.getTextTrim();
+            Object o = result.get(0);
+            if (o instanceof Text) {
+                Text text = (Text)result.get(0);
+                this.metadataDescription = text.getTextTrim();
+            } else if (o instanceof Element) {
+                Element elem = (Element)result.get(0);
+                this.metadataDescription = new XMLOutputter().outputString(elem);
+            } else {
+                this.metadataDescription = "";
+            }
         } else {
             this.metadataDescription = "";
         }
