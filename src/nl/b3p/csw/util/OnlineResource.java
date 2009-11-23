@@ -23,10 +23,10 @@ public class OnlineResource {
 
     private URI url = null;
     private Protocol protocol = null;
-    private String name = null;
-    private String description = null;
+    private String name = "";
+    private String description = "";
     private Element metadata = null;
-    private String metadataDescription = null;
+    private String metadataDescription = "";
 
     public OnlineResource() {
     }
