@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
+import nl.b3p.csw.jaxb.csw.GetRecordsResponse;
 import nl.b3p.csw.jaxb.csw.GetRecordsResponseType;
 import nl.b3p.csw.util.OnlineResource;
 import nl.b3p.csw.util.Protocol;
@@ -46,8 +47,8 @@ public class OutputBySearch extends Output {
     }
 
     @Override
-    public JAXBElement<GetRecordsResponseType> getResponse() throws JDOMException, JAXBException {
-        return super.getResponse();
+    public GetRecordsResponse getResponse() throws JDOMException, JAXBException {
+        return new GetRecordsResponse((GetRecordsResponseType)super.getResponse().getValue());
     }
 
     public List<org.w3c.dom.Element> getSearchResultsW3C() throws JDOMException, JAXBException {

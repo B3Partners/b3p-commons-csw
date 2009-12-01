@@ -4,13 +4,6 @@
  */
 package nl.b3p.csw.client;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.Transformer;
@@ -18,18 +11,13 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-import nl.b3p.csw.jaxb.csw.GetRecordsResponseType;
 import nl.b3p.csw.util.MarshallUtil;
-import nl.b3p.csw.util.OnlineResource;
-import nl.b3p.csw.util.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.filter.ElementFilter;
-import org.jdom.input.DOMBuilder;
 import org.jdom.transform.JDOMResult;
 import org.jdom.transform.JDOMSource;
 

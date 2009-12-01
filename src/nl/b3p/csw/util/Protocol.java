@@ -9,8 +9,6 @@ package nl.b3p.csw.util;
  * @author Erik van de Pol
  */
 public enum Protocol {
-    // TODO: make protocols binary addable (|). check met (&)
-
     WMS("OGC:WMS-1.1.1-http-get-map");
 
     private String name;

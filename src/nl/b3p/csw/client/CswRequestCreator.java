@@ -15,6 +15,7 @@ import nl.b3p.csw.jaxb.csw.Constraint;
 import nl.b3p.csw.jaxb.csw.ElementSetName;
 import nl.b3p.csw.jaxb.csw.ElementSetNameType;
 import nl.b3p.csw.jaxb.csw.ElementSetType;
+import nl.b3p.csw.jaxb.csw.GetRecordById;
 import nl.b3p.csw.jaxb.csw.GetRecordByIdType;
 import nl.b3p.csw.jaxb.csw.GetRecords;
 import nl.b3p.csw.jaxb.csw.GetRecordsType;
@@ -31,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import nl.b3p.csw.jaxb.filter.BinarySpatialOpType;
 import nl.b3p.csw.jaxb.filter.Filter;
 import nl.b3p.csw.jaxb.filter.Literal;
+import nl.b3p.csw.jaxb.filter.PropertyIsLike;
 import nl.b3p.csw.jaxb.filter.PropertyName;
 import nl.b3p.csw.util.Util;
 import org.jdom.JDOMException;
@@ -56,11 +58,11 @@ public class CswRequestCreator {
     protected static final String defaultEscapeChar = "\\";
 
 
-    public static JAXBElement<GetRecordsType> createSimpleCswRequest(String queryString) {
+    public static GetRecords createSimpleCswRequest(String queryString) {
         return createCswRequest(queryString, "", "", "", "");
     }
 
-    public static JAXBElement<GetRecordsType> createCswRequest(
+    public static GetRecords createCswRequest(
             String queryString,
             String propertyName,
             String elementSetName,
@@ -69,7 +71,7 @@ public class CswRequestCreator {
         return createCswRequest(queryString, propertyName, elementSetName, outputSchema, resultTypeString, true);
     }
 
-    public static JAXBElement<GetRecordsType> createCswRequest(
+    public static GetRecords createCswRequest(
             String queryString,
             String propertyName,
             String elementSetName,
@@ -92,7 +94,7 @@ public class CswRequestCreator {
             propertyName = "anyText";
         }
 
-        ElementSetNameType elementSetNameType = cswFactory.createElementSetNameType();
+        ElementSetNameType elementSetNameType = new ElementSetNameType();
         elementSetNameType.setValue(ElementSetType.FULL);
         try {
             elementSetNameType.setValue(ElementSetType.fromValue(elementSetName));
@@ -111,14 +113,14 @@ public class CswRequestCreator {
             resultType = ResultType.fromValue(resultTypeString);
         } catch (Exception e) {}
 
-        PropertyIsLikeType propertyIsLikeType = filterFactory.createPropertyIsLikeType();
+        PropertyIsLikeType propertyIsLikeType = new PropertyIsLikeType();
 
-        LiteralType literalType = filterFactory.createLiteralType();
+        LiteralType literalType = new LiteralType();
         literalType.getContent().add(queryString);
 
         propertyIsLikeType.setLiteral(new Literal(literalType));
 
-        PropertyNameType propertyNameType = filterFactory.createPropertyNameType();
+        PropertyNameType propertyNameType = new PropertyNameType();
         //propertyNameType.setContent(propertyName);
         propertyNameType.getContent().add(propertyName);
         
@@ -128,8 +130,8 @@ public class CswRequestCreator {
         propertyIsLikeType.setSingleChar(defaultSingleChar);
         propertyIsLikeType.setEscapeChar(defaultEscapeChar);
 
-        FilterType filterType = filterFactory.createFilterType();
-        filterType.setComparisonOps(filterFactory.createPropertyIsLike(propertyIsLikeType));
+        FilterType filterType = new FilterType();
+        filterType.setComparisonOps(new PropertyIsLike(propertyIsLikeType));
 
 
         return createCswRequest(elementSetNameType,
@@ -138,7 +140,7 @@ public class CswRequestCreator {
                 filterType);
     }
 
-    public static JAXBElement<GetRecordsType> createCswRequest(
+    public static GetRecords createCswRequest(
             JAXBElement<BinarySpatialOpType> binarySpatialOp,
             String propertyName,
             String wktFilter) throws JDOMException, IOException, OperationNotSupportedException, JAXBException, ParseException, NoSuchAuthorityCodeException, FactoryException, SAXException, TransformerException {
@@ -146,23 +148,23 @@ public class CswRequestCreator {
         JAXBElement geom = Util.readWkt(wktFilter);
         log.debug("wkt-type: " + geom.getValue().toString());
 
-        PropertyNameType propertyNameType = filterFactory.createPropertyNameType();
+        PropertyNameType propertyNameType = new PropertyNameType();
         propertyNameType.getContent().add(propertyName);
 
-        BinarySpatialOpType binarySpatialOpType = filterFactory.createBinarySpatialOpType();
+        BinarySpatialOpType binarySpatialOpType = new BinarySpatialOpType();
         binarySpatialOpType.setPropertyName(new PropertyName(propertyNameType));
         binarySpatialOpType.setGeometry(geom);
 
         binarySpatialOp.setValue(binarySpatialOpType);
 
-        FilterType gml3Filter = filterFactory.createFilterType();
+        FilterType gml3Filter = new FilterType();
         gml3Filter.setSpatialOps(binarySpatialOp);
 
         return createCswRequest(gml3Filter);
     }
 
-    public static JAXBElement<GetRecordsType> createCswRequest(FilterType gml3Filter) {
-        ElementSetNameType elementSetNameType = cswFactory.createElementSetNameType();
+    public static GetRecords createCswRequest(FilterType gml3Filter) {
+        ElementSetNameType elementSetNameType = new ElementSetNameType();
         elementSetNameType.setValue(ElementSetType.FULL);
         return createCswRequest(elementSetNameType,
                 "csw:IsoRecord",
@@ -170,14 +172,13 @@ public class CswRequestCreator {
                 gml3Filter);
     }
 
-    public static JAXBElement<GetRecordsType> createCswRequest(
+    public static GetRecords createCswRequest(
             ElementSetNameType elementSetNameType,
             String outputSchemaType,
             ResultType resultType,
             FilterType filterType
             ) {
 
-        //GetRecordsType getRecordsType = cswFactory.createGetRecordsType();
         GetRecordsType getRecordsType = new GetRecordsType();
 
         getRecordsType.setService("CSW");
@@ -185,13 +186,11 @@ public class CswRequestCreator {
         getRecordsType.setOutputSchema(outputSchemaType);
         getRecordsType.setVersion("2.0.2");
         
-        //QueryType queryType = cswFactory.createQueryType();
         QueryType queryType = new QueryType();
 
         queryType.setElementSetName(new ElementSetName(elementSetNameType));
         queryType.getTypeNames().add(QName.valueOf("gmd:MD_Metadata"));
 
-        //QueryConstraintType constraintType = cswFactory.createQueryConstraintType();
         QueryConstraintType constraintType = new QueryConstraintType();
 
         constraintType.setVersion("1.1.0");
@@ -201,24 +200,23 @@ public class CswRequestCreator {
 
         getRecordsType.setAbstractQuery(new Query(queryType));
 
-        //return cswFactory.createGetRecords(getRecordsType);
         return new GetRecords(getRecordsType);
     }
 
-    public static JAXBElement<GetRecordByIdType> createGetRecordByIdRequest(String id) {
-        GetRecordByIdType getRecordByIdType = cswFactory.createGetRecordByIdType();
+    public static GetRecordById createGetRecordByIdRequest(String id) {
+        GetRecordByIdType getRecordByIdType = new GetRecordByIdType();
 
         getRecordByIdType.setService("CSW");
         getRecordByIdType.setOutputSchema("http://www.opengis.net/cat/csw/2.0.2");
         getRecordByIdType.setOutputFormat("application/xml");
         getRecordByIdType.setVersion("2.0.2");
 
-        ElementSetNameType elementSetNameType = cswFactory.createElementSetNameType();
+        ElementSetNameType elementSetNameType = new ElementSetNameType();
         elementSetNameType.setValue(ElementSetType.FULL);
         
         getRecordByIdType.setElementSetName(new ElementSetName(elementSetNameType));
         getRecordByIdType.getId().add(id);
         
-        return cswFactory.createGetRecordById(getRecordByIdType);
+        return new GetRecordById(getRecordByIdType);
     }
 }

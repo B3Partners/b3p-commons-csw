@@ -5,9 +5,9 @@
 
 package nl.b3p.csw.client;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
+import nl.b3p.csw.jaxb.csw.GetRecordByIdResponse;
 import nl.b3p.csw.jaxb.csw.GetRecordByIdResponseType;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -27,8 +27,8 @@ public class OutputById extends Output {
     }
 
     @Override
-    public JAXBElement<GetRecordByIdResponseType> getResponse() throws JDOMException, JAXBException {
-        return super.getResponse();
+    public GetRecordByIdResponse getResponse() throws JDOMException, JAXBException {
+        return new GetRecordByIdResponse((GetRecordByIdResponseType)super.getResponse().getValue());
     }
 
 }

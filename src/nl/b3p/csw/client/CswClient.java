@@ -9,10 +9,9 @@ import java.io.StringReader;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
-import nl.b3p.csw.jaxb.csw.GetRecordsType;
+import nl.b3p.csw.jaxb.csw.GetRecords;
 import nl.b3p.csw.jaxb.filter.Within;
 import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
@@ -113,15 +112,15 @@ public class CswClient {
                 "http://dev.b3p.nl/geonetwork/srv/en/csw",
                 "admin", "admin");
 
-        String cswValidationPath  = "c:\\dev_erik\\b3p-commons-csw\\jaxb\\xsds\\csw\\2.0.2\\CSW-discovery.xsd";
+        String cswValidationPath  = "c:\\dev_erik\\b3p-commons\\b3p-commons-csw\\jaxb\\xsds\\csw\\2.0.2\\CSW-discovery.xsd";
 
         //String testWktInput = "POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2, 3 2, 3 3, 2 3,2 2))";
         String testWktInput = "POLYGON ((280 380, 280 200, 60 200, 60 380, 180 220, 280 380),(40 160, 260 160, 240 60, 20 80, 40 160))";
 
         try {
-            /*JAXBElement<GetRecordsType> getRecords = CswRequestCreator.createCswRequest(
+            GetRecords getRecords = CswRequestCreator.createCswRequest(
                     new Within(), "anyText", testWktInput);
-            System.out.println(MarshallUtil.marshall(getRecords, null));*/
+            System.out.println(MarshallUtil.marshall(getRecords, null));
 
             CswClient client = new CswClient(server, cswValidationPath);
 
@@ -170,7 +169,7 @@ public class CswClient {
             //outputter.output(xmlDoc, System.out);
 
             Document transformedXmlDoc = outputBySearch.getTransformedXml(
-                    "C:/dev_erik/b3p-commons-csw/xml/md-response.xsl");
+                    "C:/dev_erik/b3p-commons/b3p-commons-csw/xml/md-response.xsl");
             outputter.output(transformedXmlDoc, System.out);
 
             Document xmlDoc2 = CswClientFactory.searchSimpleAsXml("*eologie", server);
