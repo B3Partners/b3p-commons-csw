@@ -1,0 +1,1 @@
+Wanneer je dit project include in Netbeans, MOET je ook de "JAXB" Netbeans library (dedicated libs) toevoegen aan je libs in je Netbeans (web-)project.
