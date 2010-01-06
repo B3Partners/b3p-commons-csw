@@ -74,9 +74,11 @@ public abstract class Output {
 
     protected JAXBElement getResponse() throws JDOMException, JAXBException {
         if (response == null) {
-            response = MarshallUtil.unMarshall(xmlDocument, schema);
+            response = MarshallUtil.unMarshall(xmlDocument, schema, getTargetType());
         }
         return response;
     }
+
+    protected abstract Class getTargetType();
 
 }

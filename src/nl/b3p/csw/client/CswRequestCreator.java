@@ -82,12 +82,7 @@ public class CswRequestCreator {
             return null;
         }
         if (forceSearchUsingPartialWords) {
-            if (!queryString.startsWith(defaultWildCard)) {
-                queryString = defaultWildCard + queryString;
-            }
-            if (!queryString.endsWith(defaultWildCard)) {
-                queryString = queryString + defaultWildCard;
-            }
+            queryString = surroundWithWildCards(queryString);
         }
 
         if (propertyName == null || propertyName.trim().length() == 0) {
@@ -182,9 +177,10 @@ public class CswRequestCreator {
         GetRecordsType getRecordsType = new GetRecordsType();
 
         getRecordsType.setService("CSW");
+        getRecordsType.setVersion("2.0.2");
         getRecordsType.setResultType(resultType);
         getRecordsType.setOutputSchema(outputSchemaType);
-        getRecordsType.setVersion("2.0.2");
+        //getRecordsType.setOutputFormat("application/xml");
         
         QueryType queryType = new QueryType();
 
@@ -207,9 +203,10 @@ public class CswRequestCreator {
         GetRecordByIdType getRecordByIdType = new GetRecordByIdType();
 
         getRecordByIdType.setService("CSW");
-        getRecordByIdType.setOutputSchema("http://www.opengis.net/cat/csw/2.0.2");
-        getRecordByIdType.setOutputFormat("application/xml");
         getRecordByIdType.setVersion("2.0.2");
+        //getRecordByIdType.setOutputSchema("http://www.opengis.net/cat/csw/2.0.2");
+        getRecordByIdType.setOutputSchema("csw:IsoRecord");
+        //getRecordByIdType.setOutputFormat("application/xml");
 
         ElementSetNameType elementSetNameType = new ElementSetNameType();
         elementSetNameType.setValue(ElementSetType.FULL);
@@ -218,5 +215,15 @@ public class CswRequestCreator {
         getRecordByIdType.getId().add(id);
         
         return new GetRecordById(getRecordByIdType);
+    }
+
+    protected static String surroundWithWildCards(String queryString) {
+        if (!queryString.startsWith(defaultWildCard)) {
+            queryString = defaultWildCard + queryString;
+        }
+        if (!queryString.endsWith(defaultWildCard)) {
+            queryString = queryString + defaultWildCard;
+        }
+        return queryString;
     }
 }

@@ -23,6 +23,7 @@ import nl.b3p.csw.util.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
+import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
@@ -96,14 +97,18 @@ public class CswClient {
         String xmlResponse = server.search(marshalledCswXml);
         SAXBuilder builder = new SAXBuilder(VALIDATE_CSW_RESPONSE);
         try {
+            if (xmlResponse == null)
+                throw new IOException();
+            
             return builder.build(new StringReader(xmlResponse));
+
         } catch (JDOMException ex) {
             throw new JDOMException("Could not build an xml document from the csw response.\nResponse: " + xmlResponse, ex);
         } catch (IOException ex) {
             throw new IOException("Could not build an xml document from the csw response.\nResponse: " + xmlResponse, ex);
         }
     }
-
+    
 
     // for testing purposes:
     public static void main(String[] args) {
@@ -124,7 +129,7 @@ public class CswClient {
 
             CswClient client = new CswClient(server, cswValidationPath);
 
-            InputBySearch inputBySearch = new InputBySearch("archeo*");
+            InputBySearch inputBySearch = new InputBySearch("archeo");
 
 
             XMLOutputter outputter = new XMLOutputter();
@@ -159,11 +164,11 @@ public class CswClient {
             Document outputXmlDoc = outputBySearch.getXml();
             outputter.output(outputXmlDoc, System.out);
 
-            /*List<Element> mdList = output.getSearchResults();
+            List<Element> mdList = outputBySearch.getSearchResults();
             System.out.println("mdList size: " + mdList.size());
             for (Element elem : mdList) {
                 System.out.println("elem: " + elem.toString());
-            }*/
+            }
 
             //Document xmlDoc = output.getXml();
             //outputter.output(xmlDoc, System.out);

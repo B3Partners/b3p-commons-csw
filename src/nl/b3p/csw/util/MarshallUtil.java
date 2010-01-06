@@ -12,6 +12,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
+import nl.b3p.csw.jaxb.csw.GetRecordsResponse;
+import nl.b3p.csw.jaxb.csw.GetRecordsResponseType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
@@ -56,20 +58,20 @@ public class MarshallUtil {
         return stringWriter.toString();
     }
 
-    public static JAXBElement unMarshall(org.w3c.dom.Document xmlDocument, Schema schema) throws JAXBException {
+    public static JAXBElement unMarshall(org.w3c.dom.Document xmlDocument, Schema schema, Class clazz) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(JAXB_PACKAGES);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
 
-        return (JAXBElement)unmarshaller.unmarshal(xmlDocument, JAXBElement.class);
+        return unmarshaller.unmarshal(xmlDocument, clazz);
     }
 
-    public static JAXBElement unMarshall(Document xmlDocument, Schema schema) throws JAXBException, JDOMException {
+    public static JAXBElement unMarshall(Document xmlDocument, Schema schema, Class clazz) throws JAXBException, JDOMException {
         // transform to w3c dom to be able to use jaxb to unmarshal.
         DOMOutputter domOutputter = new DOMOutputter();
         org.w3c.dom.Document w3cDomDoc = domOutputter.output(xmlDocument);
 
-        return unMarshall(w3cDomDoc, schema);
+        return unMarshall(w3cDomDoc, schema, clazz);
     }
 
 }

@@ -32,12 +32,14 @@ public abstract class Input {
         this.request = request;
     }
 
-    public Input(Document document, Schema schema) throws JAXBException, JDOMException {
-        this.request = (JAXBElement<? extends RequestBaseType>)MarshallUtil.unMarshall(document, schema);
-    }
+    /*public Input(Document document, Schema schema) throws JAXBException, JDOMException {
+        this.request = MarshallUtil.unMarshall(document, schema, getTargetType());
+    }*/
 
     protected JAXBElement<? extends RequestBaseType> getRequest() {
         return request;
     }
+
+    protected abstract Class getTargetType();
     
 }

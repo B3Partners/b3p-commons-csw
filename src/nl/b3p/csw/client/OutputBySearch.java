@@ -48,12 +48,17 @@ public class OutputBySearch extends Output {
 
     @Override
     public GetRecordsResponse getResponse() throws JDOMException, JAXBException {
-        return new GetRecordsResponse((GetRecordsResponseType)super.getResponse().getValue());
+        JAXBElement<GetRecordsResponseType> jaxbElement = super.getResponse();
+        return new GetRecordsResponse(jaxbElement.getValue());
+    }
+
+    @Override
+    protected Class getTargetType() {
+        return GetRecordsResponseType.class;
     }
 
     public List<org.w3c.dom.Element> getSearchResultsW3C() throws JDOMException, JAXBException {
-        JAXBElement<GetRecordsResponseType> getRecordsResponse = getResponse();
-        return getRecordsResponse.getValue().getSearchResults().getAny();
+        return getResponse().getValue().getSearchResults().getAny();
     }
 
     public List<Element> getSearchResults() throws JDOMException, JAXBException {
@@ -69,17 +74,17 @@ public class OutputBySearch extends Output {
         return jdomList;
     }
 
-    public List<Document> getSearchResultsAsDocuments() throws JDOMException, JAXBException {
+    /*public List<Document> getSearchResultsAsDocuments() throws JDOMException, JAXBException {
         List<Element> elemList = getSearchResults();
         List<Document> docList = new ArrayList<Document>(elemList.size());
 
         // transform to jdom doc list
         for (Element elem : elemList) {
-            docList.add(new Document(elem));
+            docList.add(new Document(elem));// werkt niet als niet detached. detachen is niet handig voor algehele consistentie van deze klasse.
         }
 
         return docList;
-    }
+    }*/
 
     /**
      * List of OnlineResource's. If the same resource-URL is included in more result-metadata,
@@ -217,7 +222,7 @@ public class OutputBySearch extends Output {
                 onlineResource.setName(name);
                 onlineResource.setDescription(desc);
                 onlineResource.setProtocol(protocol);
-                log.debug("md:\n" + new XMLOutputter().outputString(metadataElement));
+                //log.debug("md:\n" + new XMLOutputter().outputString(metadataElement));
                 onlineResource.setMetadata(metadataElement);
 
                 return onlineResource;

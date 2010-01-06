@@ -29,7 +29,7 @@ public class InputBySearch extends Input {
 
     public InputBySearch(Document document, Schema schema) throws JAXBException, JDOMException {
         try {
-            this.request = (JAXBElement<GetRecordsType>)MarshallUtil.unMarshall(document, schema);
+            this.request = (JAXBElement<GetRecordsType>)MarshallUtil.unMarshall(document, schema, getTargetType());
         } catch (ClassCastException e) {
             throw new ClassCastException("Root element of input document is not of type JAXBElement<GetRecordsType>, as expected.");
         }
@@ -39,6 +39,11 @@ public class InputBySearch extends Input {
     @Override
     public JAXBElement<GetRecordsType> getRequest() {
         return (JAXBElement<GetRecordsType>)super.getRequest();
+    }
+
+    @Override
+    protected Class getTargetType() {
+        return GetRecordsType.class;
     }
 
 }

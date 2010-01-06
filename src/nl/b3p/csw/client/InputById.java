@@ -29,7 +29,7 @@ public class InputById extends Input {
 
     public InputById(Document document, Schema schema) throws JAXBException, JDOMException {
         try {
-            this.request = (JAXBElement<GetRecordByIdType>)MarshallUtil.unMarshall(document, schema);
+            this.request = (JAXBElement<GetRecordByIdType>)MarshallUtil.unMarshall(document, schema, getTargetType());
         } catch (ClassCastException e) {
             throw new ClassCastException("Root element of input document is not of type JAXBElement<GetRecordByIdType>, as expected.");
         }
@@ -39,6 +39,11 @@ public class InputById extends Input {
     @Override
     public JAXBElement<GetRecordByIdType> getRequest() {
         return (JAXBElement<GetRecordByIdType>)super.getRequest();
+    }
+
+    @Override
+    protected Class getTargetType() {
+        return GetRecordByIdType.class;
     }
 
 }
