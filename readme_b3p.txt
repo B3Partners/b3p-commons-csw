@@ -1,1 +1,3 @@
-Wanneer je dit project include in Netbeans, MOET je ook de "JAXB" Netbeans library (dedicated libs) toevoegen aan je libs in je Netbeans (web-)project.
+- Wanneer je dit project include in Netbeans, MOET je ook de "JAXB" Netbeans library (dedicated libs) toevoegen aan je libs in je Netbeans (web-)project.
+
+- Wanneer je een JRE gebruikt die JAXB ook mee packaged (>= Java 1.6) zet dan "jaxb-api.jar" in de endorsed dir van tomcat of de jre (hier zijn we nog niet helemaal uit. Probeer eerst die van tomcat) aangezien je nu een systeem jar moet overriden.
