@@ -23,6 +23,7 @@ import nl.b3p.csw.jaxb.csw.Query;
 import nl.b3p.csw.jaxb.csw.QueryConstraintType;
 import nl.b3p.csw.jaxb.csw.QueryType;
 import nl.b3p.csw.jaxb.csw.ResultType;
+import nl.b3p.csw.jaxb.filter.BinaryComparisonOpType;
 import nl.b3p.csw.jaxb.filter.FilterType;
 import nl.b3p.csw.jaxb.filter.LiteralType;
 import nl.b3p.csw.jaxb.filter.PropertyIsLikeType;
@@ -30,8 +31,11 @@ import nl.b3p.csw.jaxb.filter.PropertyNameType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import nl.b3p.csw.jaxb.filter.BinarySpatialOpType;
+import nl.b3p.csw.jaxb.filter.ComparisonOps;
+import nl.b3p.csw.jaxb.filter.ComparisonOpsType;
 import nl.b3p.csw.jaxb.filter.Filter;
 import nl.b3p.csw.jaxb.filter.Literal;
+import nl.b3p.csw.jaxb.filter.PropertyIsEqualTo;
 import nl.b3p.csw.jaxb.filter.PropertyIsLike;
 import nl.b3p.csw.jaxb.filter.PropertyName;
 import nl.b3p.csw.util.Util;
@@ -43,10 +47,12 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author Erik van de Pol
+ *
+ * Creates csw request using default values for oft used stuff.
  */
 public class CswRequestCreator {
 
-    protected static Log log = LogFactory.getLog(CswRequestCreator.class);
+    private static Log log = LogFactory.getLog(CswRequestCreator.class);
 
     protected static final nl.b3p.csw.jaxb.csw.ObjectFactory cswFactory =
             new nl.b3p.csw.jaxb.csw.ObjectFactory();
@@ -56,6 +62,50 @@ public class CswRequestCreator {
     protected static final String defaultWildCard = "*";
     protected static final String defaultSingleChar = "?";
     protected static final String defaultEscapeChar = "\\";
+
+    public static String createQueryString(String queryString, boolean forceSearchUsingPartialWords) {
+        if (queryString == null || queryString.trim().length() == 0) {
+            return null;
+        } else {
+            if (forceSearchUsingPartialWords) {
+                queryString = surroundWithWildCards(queryString);
+            }
+            return queryString;
+        }
+    }
+
+    public static String createOutputSchema(String outputSchema) {
+        if (outputSchema == null || outputSchema.trim().length() == 0) {
+            outputSchema = "csw:IsoRecord";
+        }
+        return outputSchema;
+    }
+
+    public static String createPropertyName(String propertyName) {
+        if (propertyName == null || propertyName.trim().length() == 0) {
+            propertyName = "anyText";
+        }
+        return propertyName;
+    }
+
+    public static ResultType createResultType(String resultTypeString) {
+        ResultType resultType = ResultType.RESULTS;
+        try {
+            resultType = ResultType.fromValue(resultTypeString);
+        } catch (Exception e) {
+        }
+        return resultType;
+    }
+
+    public static ElementSetNameType createElementSetNameType(String elementSetName) {
+        ElementSetNameType elementSetNameType = new ElementSetNameType();
+        elementSetNameType.setValue(ElementSetType.FULL);
+        try {
+            elementSetNameType.setValue(ElementSetType.fromValue(elementSetName));
+        } catch (Exception e) {
+        }
+        return elementSetNameType;
+    }
 
 
     public static GetRecords createSimpleCswRequest(String queryString) {
@@ -71,6 +121,16 @@ public class CswRequestCreator {
         return createCswRequest(queryString, propertyName, elementSetName, outputSchema, resultTypeString, true);
     }
 
+    /**
+     * Defaults to simple PropertyIsLike filter
+     * @param queryString
+     * @param propertyName
+     * @param elementSetName
+     * @param outputSchema
+     * @param resultTypeString
+     * @param forceSearchUsingPartialWords
+     * @return
+     */
     public static GetRecords createCswRequest(
             String queryString,
             String propertyName,
@@ -78,61 +138,43 @@ public class CswRequestCreator {
             String outputSchema,
             String resultTypeString,
             boolean forceSearchUsingPartialWords) {
-        if (queryString == null || queryString.trim().length() == 0) {
-            return null;
-        }
-        if (forceSearchUsingPartialWords) {
-            queryString = surroundWithWildCards(queryString);
-        }
-
-        if (propertyName == null || propertyName.trim().length() == 0) {
-            propertyName = "anyText";
-        }
-
-        ElementSetNameType elementSetNameType = new ElementSetNameType();
-        elementSetNameType.setValue(ElementSetType.FULL);
-        try {
-            elementSetNameType.setValue(ElementSetType.fromValue(elementSetName));
-        } catch (Exception e) {}
-
-        /*OutputSchemaType outputSchemaType = OutputSchemaType.CSW_ISO_RECORD;
-        try {
-            outputSchemaType = OutputSchemaType.fromValue(outputSchema);
-        } catch (Exception e) {}*/
-        if (outputSchema == null || outputSchema.trim().length() == 0) {
-            outputSchema = "csw:IsoRecord";
-        }
-
-        ResultType resultType = ResultType.RESULTS;
-        try {
-            resultType = ResultType.fromValue(resultTypeString);
-        } catch (Exception e) {}
-
-        PropertyIsLikeType propertyIsLikeType = new PropertyIsLikeType();
-
-        LiteralType literalType = new LiteralType();
-        literalType.getContent().add(queryString);
-
-        propertyIsLikeType.setLiteral(new Literal(literalType));
-
-        PropertyNameType propertyNameType = new PropertyNameType();
-        //propertyNameType.setContent(propertyName);
-        propertyNameType.getContent().add(propertyName);
         
-        propertyIsLikeType.setPropertyName(new PropertyName(propertyNameType));
+        queryString = createQueryString(queryString, forceSearchUsingPartialWords);
+        if (queryString == null) return null;
 
-        propertyIsLikeType.setWildCard(defaultWildCard);
-        propertyIsLikeType.setSingleChar(defaultSingleChar);
-        propertyIsLikeType.setEscapeChar(defaultEscapeChar);
+        propertyName = createPropertyName(propertyName);
 
         FilterType filterType = new FilterType();
-        filterType.setComparisonOps(new PropertyIsLike(propertyIsLikeType));
+        filterType.setComparisonOps(FilterCreator.createPropertyIsLike(queryString, propertyName));
 
-
-        return createCswRequest(elementSetNameType,
+        return createCswRequest(filterType,
+                elementSetName,
                 outputSchema,
-                resultType,
-                filterType);
+                resultTypeString
+                );
+    }
+
+    public static GetRecords createCswRequestPropertyIsEqual(
+            String queryString,
+            String propertyName,
+            String elementSetName,
+            String outputSchema,
+            String resultTypeString,
+            boolean forceSearchUsingPartialWords) {
+
+        queryString = createQueryString(queryString, forceSearchUsingPartialWords);
+        if (queryString == null) return null;
+
+        propertyName = createPropertyName(propertyName);
+
+        FilterType filterType = new FilterType();
+        filterType.setComparisonOps(FilterCreator.createPropertyIsEqualTo(propertyName, queryString));
+
+        return createCswRequest(filterType,
+                elementSetName,
+                outputSchema,
+                resultTypeString
+                );
     }
 
     public static GetRecords createCswRequest(
@@ -158,24 +200,31 @@ public class CswRequestCreator {
         return createCswRequest(gml3Filter);
     }
 
-    public static GetRecords createCswRequest(FilterType gml3Filter) {
+    /*public static GetRecords createCswRequest(FilterType gml3Filter) {
         ElementSetNameType elementSetNameType = new ElementSetNameType();
         elementSetNameType.setValue(ElementSetType.FULL);
         return createCswRequest(elementSetNameType,
                 "csw:IsoRecord",
                 ResultType.RESULTS,
                 gml3Filter);
+    }*/
+
+    public static GetRecords createCswRequest(FilterType filterType) {
+            return createCswRequest(filterType, null, null, null);
     }
 
     public static GetRecords createCswRequest(
-            ElementSetNameType elementSetNameType,
-            String outputSchemaType,
-            ResultType resultType,
-            FilterType filterType
+            FilterType filterType,
+            String elementSetName,
+            String outputSchema,
+            String resultTypeString
             ) {
 
-        GetRecordsType getRecordsType = new GetRecordsType();
+        ElementSetNameType elementSetNameType = createElementSetNameType(elementSetName);
+        String outputSchemaType = createOutputSchema(outputSchema);
+        ResultType resultType = createResultType(resultTypeString);
 
+        GetRecordsType getRecordsType = new GetRecordsType();
         getRecordsType.setService("CSW");
         getRecordsType.setVersion("2.0.2");
         getRecordsType.setResultType(resultType);
@@ -183,12 +232,10 @@ public class CswRequestCreator {
         //getRecordsType.setOutputFormat("application/xml");
         
         QueryType queryType = new QueryType();
-
         queryType.setElementSetName(new ElementSetName(elementSetNameType));
         queryType.getTypeNames().add(QName.valueOf("gmd:MD_Metadata"));
 
         QueryConstraintType constraintType = new QueryConstraintType();
-
         constraintType.setVersion("1.1.0");
         constraintType.setFilter(new Filter(filterType));
         
@@ -205,7 +252,7 @@ public class CswRequestCreator {
         getRecordByIdType.setService("CSW");
         getRecordByIdType.setVersion("2.0.2");
         //getRecordByIdType.setOutputSchema("http://www.opengis.net/cat/csw/2.0.2");
-        getRecordByIdType.setOutputSchema("csw:IsoRecord");
+        getRecordByIdType.setOutputSchema(createOutputSchema(null));
         //getRecordByIdType.setOutputFormat("application/xml");
 
         ElementSetNameType elementSetNameType = new ElementSetNameType();
