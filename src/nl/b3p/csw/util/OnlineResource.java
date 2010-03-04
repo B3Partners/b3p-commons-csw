@@ -107,5 +107,10 @@ public class OnlineResource {
             this.metadataDescription = "";
         }
     }
+
+    @Override
+    public String toString() {
+        return url + "; " + name + "; " + protocol;
+    }
     
 }

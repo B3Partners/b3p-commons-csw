@@ -42,7 +42,7 @@ public class FilterCreator extends CswRequestCreator {
         return new PropertyIsLike(propertyIsLikeType);
     }
 
-    public static PropertyIsEqualTo createPropertyIsEqualTo(String propertyName, String queryString) {
+    public static PropertyIsEqualTo createPropertyIsEqualTo(String queryString, String propertyName) {
         PropertyNameType propertyNameType = new PropertyNameType();
         propertyNameType.getContent().add(propertyName);
 

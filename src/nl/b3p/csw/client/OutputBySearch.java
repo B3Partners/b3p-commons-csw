@@ -138,7 +138,16 @@ public class OutputBySearch extends Output {
                 Element resultElem = results.next();
 
                 Map<URI, List<OnlineResource>> resultServices = getResourcesMap(resultElem, allowedProtocols);
-                services.putAll(resultServices);
+                for (Map.Entry<URI, List<OnlineResource>> resultService : resultServices.entrySet()) {
+                    URI key = resultService.getKey();
+                    List<OnlineResource> value = resultService.getValue();
+                    // TODO: Dit moet een Set worden ipv een List! (duplicaten eruit). OnlineResource als Comparable? implementeren op url en name.
+                    if (services.containsKey(key)) {
+                        services.get(key).addAll(value);
+                    } else {
+                        services.putAll(resultServices);
+                    }
+                }
             }
         }
         return services;
@@ -224,6 +233,7 @@ public class OutputBySearch extends Output {
                 onlineResource.setProtocol(protocol);
                 //log.debug("md:\n" + new XMLOutputter().outputString(metadataElement));
                 onlineResource.setMetadata(metadataElement);
+                //log.debug(onlineResource);
 
                 return onlineResource;
             }

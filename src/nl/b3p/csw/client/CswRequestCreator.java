@@ -168,7 +168,7 @@ public class CswRequestCreator {
         propertyName = createPropertyName(propertyName);
 
         FilterType filterType = new FilterType();
-        filterType.setComparisonOps(FilterCreator.createPropertyIsEqualTo(propertyName, queryString));
+        filterType.setComparisonOps(FilterCreator.createPropertyIsEqualTo(queryString, propertyName));
 
         return createCswRequest(filterType,
                 elementSetName,

@@ -92,7 +92,7 @@ public class CswClient {
     protected Document searchGeneral(Input input) throws IOException, JDOMException, JAXBException {
         String marshalledCswXml = MarshallUtil.marshall(input.getRequest(), null);
 
-        log.debug("Request:\n" + marshalledCswXml);
+        //log.debug("Request:\n" + marshalledCswXml);
         
         String xmlResponse = server.search(marshalledCswXml);
         SAXBuilder builder = new SAXBuilder(VALIDATE_CSW_RESPONSE);

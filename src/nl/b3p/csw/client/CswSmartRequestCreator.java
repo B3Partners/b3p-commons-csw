@@ -30,6 +30,10 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 public class CswSmartRequestCreator extends CswRequestCreator {
     private static Log log = LogFactory.getLog(CswSmartRequestCreator.class);
 
+    public static GetRecords createSmartCswRequest(String queryString) {
+        return createSmartCswRequest(queryString, null);
+    }
+
     public static GetRecords createSmartCswRequest(
             String queryString,
             String propertyName) {
