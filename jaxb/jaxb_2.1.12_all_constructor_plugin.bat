@@ -1,1 +1,1 @@
-call jaxb-ri-20090708\bin\xjc.bat -d ..\src -b .\xsds\schema_binding.xjb -classpath .\plugins\jaxb-2.0-xjc-value-constructor-plugin-20071126-1834.jar -Xvalue-constructor .\xsds\csw\2.0.2\CSW-discovery.xsd
+call jaxb-ri-20090708\bin\xjc.bat -d ..\src -b .\xsds\schema_binding.xjb -classpath .\plugins\jaxb-2.0-xjc-value-constructor-plugin-20071126-1834.jar -Xvalue-constructor .\xsds\csw\2.0.2\CSW-publication.xsd

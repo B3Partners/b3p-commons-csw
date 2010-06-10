@@ -16,20 +16,10 @@
 	
 	<!-- Packaging -->
 
-	<jaxb:bindings schemaLocation="csw/2.0.2/CSW-discovery.xsd"  node="/xs:schema">
+	<jaxb:bindings schemaLocation="csw/2.0.2/CSW-publication.xsd"  node="/xs:schema">
 		<jaxb:schemaBindings>
 			<jaxb:package name="nl.b3p.csw.jaxb.csw"/>
 		</jaxb:schemaBindings>
-		<!--jaxb:bindings node="./xs:simpleType[@name='filterVersionType']">
-			<jaxb:typesafeEnumClass>
-				<jaxb:typesafeEnumMember value="1.1.0" name="Version_1_1_0"/>
-			</jaxb:typesafeEnumClass>
-		</jaxb:bindings>
-		<jaxb:bindings node="./xs:simpleType[@name='cswVersionType']">
-			<jaxb:typesafeEnumClass>
-				<jaxb:typesafeEnumMember value="2.0.2" name="Version_2_0_2"/>
-			</jaxb:typesafeEnumClass>
-		</jaxb:bindings-->
 	</jaxb:bindings>
 	
 	<jaxb:bindings schemaLocation="filter/1.1.0/filter.xsd" node="/xs:schema">
