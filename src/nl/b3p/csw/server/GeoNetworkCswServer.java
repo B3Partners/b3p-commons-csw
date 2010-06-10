@@ -49,7 +49,7 @@ public class GeoNetworkCswServer implements CswServable {
         cswRequestCreator = new CswRequestCreator();
     }
 
-    public String search(String cswRequestXml) throws IOException {
+    public String doRequest(String cswRequestXml) throws IOException {
         try {
             if (login(loginUrl, cswUser, cswPassword)) {
                 return httpPostCswRequest(cswRequestXml, cswUrl);

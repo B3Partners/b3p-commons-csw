@@ -9,9 +9,22 @@ import java.io.StringReader;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
+import nl.b3p.csw.jaxb.csw.Constraint;
+import nl.b3p.csw.jaxb.csw.DeleteType;
 import nl.b3p.csw.jaxb.csw.GetRecords;
+import nl.b3p.csw.jaxb.csw.Harvest;
+import nl.b3p.csw.jaxb.csw.HarvestResponse;
+import nl.b3p.csw.jaxb.csw.HarvestResponseType;
+import nl.b3p.csw.jaxb.csw.HarvestType;
+import nl.b3p.csw.jaxb.csw.InsertType;
+import nl.b3p.csw.jaxb.csw.Transaction;
+import nl.b3p.csw.jaxb.csw.TransactionResponse;
+import nl.b3p.csw.jaxb.csw.TransactionResponseType;
+import nl.b3p.csw.jaxb.csw.TransactionType;
+import nl.b3p.csw.jaxb.csw.UpdateType;
 import nl.b3p.csw.jaxb.filter.Within;
 import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
@@ -82,19 +95,19 @@ public class CswClient {
 
 
     public OutputById search(InputById input) throws IOException, JDOMException, JAXBException {
-        return new OutputById(searchGeneral(input));
+        return new OutputById(doRequest(input.getRequest()));
     }
 
     public OutputBySearch search(InputBySearch input) throws IOException, JDOMException, JAXBException {
-        return new OutputBySearch(searchGeneral(input));
+        return new OutputBySearch(doRequest(input.getRequest()));
     }
 
-    protected Document searchGeneral(Input input) throws IOException, JDOMException, JAXBException {
-        String marshalledCswXml = MarshallUtil.marshall(input.getRequest(), null);
+    protected Document doRequest(JAXBElement jaxbElement) throws IOException, JDOMException, JAXBException {
+        String marshalledCswXml = MarshallUtil.marshall(jaxbElement, null);
 
         //log.debug("Request:\n" + marshalledCswXml);
         
-        String xmlResponse = server.search(marshalledCswXml);
+        String xmlResponse = server.doRequest(marshalledCswXml);
         SAXBuilder builder = new SAXBuilder(VALIDATE_CSW_RESPONSE);
         try {
             if (xmlResponse == null)
@@ -108,7 +121,68 @@ public class CswClient {
             throw new IOException("Could not build an xml document from the csw response.\nResponse: " + xmlResponse, ex);
         }
     }
-    
+
+    protected Transaction createTransaction(Object object) {
+        TransactionType transactionType = new TransactionType();
+        transactionType.getInsertOrUpdateOrDelete().add(object);
+
+        return new Transaction(transactionType);
+    }
+
+    protected TransactionResponse createTransactionResponse(Document responseDocument) throws JDOMException, JAXBException {
+        JAXBElement<TransactionResponseType> transactionResponse = (JAXBElement<TransactionResponseType>)
+                MarshallUtil.unMarshall(responseDocument, cswSchema, TransactionResponseType.class);
+
+        return new TransactionResponse(transactionResponse.getValue());
+    }
+
+    public TransactionResponse insert(Document document) throws IOException, JDOMException, JAXBException {
+        InsertType insertType = new InsertType();
+        insertType.getAny().add(new XMLOutputter().outputString(document));
+
+        return insert(insertType);
+    }
+
+    public TransactionResponse insert(InsertType insertType) throws IOException, JDOMException, JAXBException {
+        Document responseDocument = doRequest(createTransaction(insertType));
+
+        return createTransactionResponse(responseDocument);
+    }
+
+    public TransactionResponse update(Document document) throws IOException, JDOMException, JAXBException {
+        UpdateType updateType = new UpdateType();
+        updateType.setAny(new XMLOutputter().outputString(document));
+
+        return update(updateType);
+    }
+
+    public TransactionResponse update(UpdateType updateType) throws IOException, JDOMException, JAXBException {
+        Document responseDocument = doRequest(createTransaction(updateType));
+
+        return createTransactionResponse(responseDocument);
+    }
+
+    public TransactionResponse delete(Constraint constraint) throws IOException, JDOMException, JAXBException {
+        DeleteType deleteType = new DeleteType();
+        deleteType.setConstraint(constraint);
+
+        return delete(deleteType);
+    }
+
+    public TransactionResponse delete(DeleteType deleteType) throws IOException, JDOMException, JAXBException {
+        Document responseDocument = doRequest(createTransaction(deleteType));
+
+        return createTransactionResponse(responseDocument);
+    }
+
+    public HarvestResponse harvest(HarvestType harvestType) throws IOException, JDOMException, JAXBException {
+        Document responseDocument = doRequest(new Harvest(harvestType));
+
+        JAXBElement<HarvestResponseType> harvestResponse = (JAXBElement<HarvestResponseType>)
+                MarshallUtil.unMarshall(responseDocument, cswSchema, HarvestResponseType.class);
+
+        return new HarvestResponse(harvestResponse.getValue());
+    }
 
     // for testing purposes:
     public static void main(String[] args) {
