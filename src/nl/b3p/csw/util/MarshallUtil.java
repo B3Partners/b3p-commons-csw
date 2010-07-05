@@ -6,14 +6,16 @@
 package nl.b3p.csw.util;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
-import nl.b3p.csw.jaxb.csw.GetRecordsResponse;
-import nl.b3p.csw.jaxb.csw.GetRecordsResponseType;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
@@ -37,14 +39,27 @@ public class MarshallUtil {
     protected final static String SEPARATOR =        ":";
 
     protected static String JAXB_PACKAGES;
+    protected static List<String> JAXB_PACKAGES_LIST;
 
     static {
-        JAXB_PACKAGES = CSW_PACKAGE + SEPARATOR +
-                        ELEMENTS_PACKAGE + SEPARATOR +
-                        FILTER_PACKAGE + SEPARATOR +
-                        GML_PACKAGE + SEPARATOR +
-                        OWS_PACKAGE + SEPARATOR +
-                        TERMS_PACKAGE + SEPARATOR;
+        JAXB_PACKAGES_LIST = new ArrayList<String>(Arrays.asList(
+            CSW_PACKAGE,
+            ELEMENTS_PACKAGE,
+            FILTER_PACKAGE,
+            GML_PACKAGE,
+            OWS_PACKAGE,
+            TERMS_PACKAGE
+        ));
+        JAXB_PACKAGES = createPackagesString(JAXB_PACKAGES_LIST);
+    }
+
+    public static void addPackage(String packageName) {
+        JAXB_PACKAGES_LIST.add(packageName);
+        JAXB_PACKAGES = createPackagesString(JAXB_PACKAGES_LIST);
+    }
+
+    private static String createPackagesString(List<String> packagesList) {
+        return StringUtils.join(packagesList, SEPARATOR);
     }
 
     public static String marshall(JAXBElement input, Schema schema) throws JAXBException {

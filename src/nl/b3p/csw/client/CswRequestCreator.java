@@ -6,6 +6,7 @@ package nl.b3p.csw.client;
 
 import com.vividsolutions.jts.io.ParseException;
 import java.io.IOException;
+import java.math.BigInteger;
 import javax.naming.OperationNotSupportedException;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -23,20 +24,12 @@ import nl.b3p.csw.jaxb.csw.Query;
 import nl.b3p.csw.jaxb.csw.QueryConstraintType;
 import nl.b3p.csw.jaxb.csw.QueryType;
 import nl.b3p.csw.jaxb.csw.ResultType;
-import nl.b3p.csw.jaxb.filter.BinaryComparisonOpType;
 import nl.b3p.csw.jaxb.filter.FilterType;
-import nl.b3p.csw.jaxb.filter.LiteralType;
-import nl.b3p.csw.jaxb.filter.PropertyIsLikeType;
 import nl.b3p.csw.jaxb.filter.PropertyNameType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import nl.b3p.csw.jaxb.filter.BinarySpatialOpType;
-import nl.b3p.csw.jaxb.filter.ComparisonOps;
-import nl.b3p.csw.jaxb.filter.ComparisonOpsType;
 import nl.b3p.csw.jaxb.filter.Filter;
-import nl.b3p.csw.jaxb.filter.Literal;
-import nl.b3p.csw.jaxb.filter.PropertyIsEqualTo;
-import nl.b3p.csw.jaxb.filter.PropertyIsLike;
 import nl.b3p.csw.jaxb.filter.PropertyName;
 import nl.b3p.csw.util.Util;
 import org.jdom.JDOMException;
@@ -230,6 +223,9 @@ public class CswRequestCreator {
         getRecordsType.setResultType(resultType);
         getRecordsType.setOutputSchema(outputSchemaType);
         //getRecordsType.setOutputFormat("application/xml");
+        
+        //getRecordsType.setStartPosition(BigInteger.ZERO);
+        //getRecordsType.setMaxRecords(BigInteger.valueOf(10));
         
         QueryType queryType = new QueryType();
         queryType.setElementSetName(new ElementSetName(elementSetNameType));
