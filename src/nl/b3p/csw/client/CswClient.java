@@ -93,13 +93,29 @@ public class CswClient {
         this.cswSchema = Util.createSchema(validationPath);
     }
 
-
     public OutputById search(InputById input) throws IOException, JDOMException, JAXBException {
         return new OutputById(doRequest(input.getRequest()));
     }
 
     public OutputBySearch search(InputBySearch input) throws IOException, JDOMException, JAXBException {
         return new OutputBySearch(doRequest(input.getRequest()));
+    }
+
+    /**
+     * Only use this method if you know exactly which class you expect as a response.
+     * Try to use one the shortcut methods in this class if applicable.
+     * @param jaxbElement
+     * @param clazz Response type. Use the "Type"-variant of your return class here. E.g. GetRecordsResponseType.class.
+     * @return JAXBElement. See OutputBySearch.getResponse() for an example of how to extract the correct class.
+     * @throws JAXBException
+     * @throws IOException
+     * @throws JDOMException
+     */
+    public JAXBElement doRequest(JAXBElement jaxbElement, Class clazz) throws JAXBException, IOException, JDOMException {
+        Document resultDocument = doRequest(jaxbElement);
+
+        JAXBElement resultJAXBELement = MarshallUtil.unMarshall(resultDocument, null, clazz);
+        return resultJAXBELement;
     }
 
     protected Document doRequest(JAXBElement jaxbElement) throws IOException, JDOMException, JAXBException {
