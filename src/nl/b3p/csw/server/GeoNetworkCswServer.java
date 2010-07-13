@@ -5,8 +5,10 @@
 package nl.b3p.csw.server;
 
 import java.io.IOException;
+import java.io.InputStream;
 
-import nl.b3p.csw.client.CswRequestCreator;
+import nl.b3p.csw.client.ResponseListenable;
+import nl.b3p.csw.client.StandardResponseListener;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
@@ -19,6 +21,8 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jdom.Document;
+import org.jdom.JDOMException;
 
 /**
  *
@@ -35,9 +39,22 @@ public class GeoNetworkCswServer implements CswServable {
     protected String loginUrl;
     protected String cswUser;
     protected String cswPassword;
-    protected CswRequestCreator cswRequestCreator = null;
+
+    protected ResponseListenable responseListenable = null;
+
+    public ResponseListenable getResponseListenable() {
+        return responseListenable;
+    }
+
+    public void setResponseListenable(ResponseListenable responseListenable) {
+        this.responseListenable = responseListenable;
+    }
 
     public GeoNetworkCswServer(String loginUrl, String cswUrl, String cswUser, String cswPassword) {
+        this(loginUrl, cswUrl, cswUser, cswPassword, new StandardResponseListener());
+    }
+
+    public GeoNetworkCswServer(String loginUrl, String cswUrl, String cswUser, String cswPassword, ResponseListenable responseListenable) {
         log = LogFactory.getLog(this.getClass());
         log.info("Initializing " + this.getClass().getSimpleName());
 
@@ -46,10 +63,10 @@ public class GeoNetworkCswServer implements CswServable {
         this.cswUser = cswUser;
         this.cswPassword = cswPassword;
 
-        cswRequestCreator = new CswRequestCreator();
+        this.responseListenable = responseListenable;
     }
 
-    public String doRequest(String cswRequestXml) throws IOException {
+    public Document doRequest(String cswRequestXml) throws IOException, JDOMException {
         try {
             if (login(loginUrl, cswUser, cswPassword)) {
                 return httpPostCswRequest(cswRequestXml, cswUrl);
@@ -61,7 +78,7 @@ public class GeoNetworkCswServer implements CswServable {
         }
     }
 
-    protected boolean login(String url, String username, String password) throws IOException {
+    protected boolean login(String url, String username, String password) throws IOException, JDOMException {
         if (url == null || username == null || password == null) {
             return false;
         }
@@ -77,7 +94,7 @@ public class GeoNetworkCswServer implements CswServable {
         loginMessage.append("</password>");
         loginMessage.append("</request>");
 
-        String responseMessage = null;
+        Document responseMessage = null;
         try {
             responseMessage = httpPostCswRequest(loginMessage.toString(), url);
         } catch (IOException ex) {
@@ -89,11 +106,11 @@ public class GeoNetworkCswServer implements CswServable {
         return loginSuccess;
     }
 
-    protected String httpPostCswRequest(String request, String url) throws IOException {
+    protected Document httpPostCswRequest(String request, String url) throws IOException, JDOMException {
         return httpPostCswRequest(request, url, null, null);
     }
 
-    protected String httpPostCswRequest(String request, String url, String username, String password) throws IOException {
+    protected Document httpPostCswRequest(String request, String url, String username, String password) throws IOException, JDOMException {
         HttpState initialState = new HttpState();
         if (cookies != null) {
             for (int i = 0; i < cookies.length; i++) {
@@ -120,7 +137,7 @@ public class GeoNetworkCswServer implements CswServable {
         method.setRequestHeader("Accept", "text/xml");
         method.setRequestEntity(new StringRequestEntity(request, "text/xml", "UTF-8"));
 
-        String responseString = null;
+        InputStream responseStream = null;
         try {
             int statusCode = client.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
@@ -135,12 +152,13 @@ public class GeoNetworkCswServer implements CswServable {
                 log.debug(" - " + cookies[i].toExternalForm());
             }
 
-            responseString = method.getResponseBodyAsString();
+            responseStream = method.getResponseBodyAsStream();
 
+            return responseListenable.handleResponse(responseStream);
         } finally {
             // Release the connection.
             method.releaseConnection();
-            return responseString;
+            //return responseStream;
         }
 
     }

@@ -49,7 +49,6 @@ import org.xml.sax.SAXException;
  */
 public class CswClient {
 
-    protected final static boolean VALIDATE_CSW_RESPONSE = false;
 
     protected static Log log = LogFactory.getLog(CswClient.class);
     
@@ -126,19 +125,7 @@ public class CswClient {
 
         //log.debug("Request:\n" + marshalledCswXml);
         
-        String xmlResponse = server.doRequest(marshalledCswXml);
-        SAXBuilder builder = new SAXBuilder(VALIDATE_CSW_RESPONSE);
-        try {
-            if (xmlResponse == null)
-                throw new IOException();
-            
-            return builder.build(new StringReader(xmlResponse));
-
-        } catch (JDOMException ex) {
-            throw new JDOMException("Could not build an xml document from the csw response.\nResponse: " + xmlResponse, ex);
-        } catch (IOException ex) {
-            throw new IOException("Could not build an xml document from the csw response.\nResponse: " + xmlResponse, ex);
-        }
+        return server.doRequest(marshalledCswXml);
     }
 
     protected Transaction createTransaction(Object object) {

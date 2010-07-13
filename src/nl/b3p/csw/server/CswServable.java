@@ -5,6 +5,8 @@
 package nl.b3p.csw.server;
 
 import java.io.IOException;
+import org.jdom.Document;
+import org.jdom.JDOMException;
 
 /**
  *
@@ -18,5 +20,5 @@ public interface CswServable {
      * @param cswRequestXml
      * @return The response from the server as a String. The String should contain xml.
      */
-    public String doRequest(String cswRequestXml) throws IOException;
+    public Document doRequest(String cswRequestXml) throws IOException, JDOMException;
 }
