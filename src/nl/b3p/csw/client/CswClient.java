@@ -99,23 +99,6 @@ public class CswClient {
         return new OutputBySearch(doRequest(input.getRequest()));
     }
 
-    /**
-     * Only use this method if you know exactly which class you expect as a response.
-     * Try to use one the shortcut methods in this class if applicable.
-     * @param jaxbElement
-     * @param clazz Response type. Use the "Type"-variant of your return class here. E.g. GetRecordsResponseType.class.
-     * @return JAXBElement. See OutputBySearch.getResponse() for an example of how to extract the correct class.
-     * @throws JAXBException
-     * @throws IOException
-     * @throws JDOMException
-     */
-    public JAXBElement doRequest(JAXBElement jaxbElement, Class clazz) throws JAXBException, IOException, JDOMException {
-        Document resultDocument = doRequest(jaxbElement);
-
-        JAXBElement resultJAXBELement = MarshallUtil.unMarshall(resultDocument, null, clazz);
-        return resultJAXBELement;
-    }
-
     protected Document doRequest(JAXBElement jaxbElement) throws IOException, JDOMException, JAXBException {
         if (jaxbElement == null)
             throw new IllegalArgumentException("Provided jaxbElement must be non-null.");
