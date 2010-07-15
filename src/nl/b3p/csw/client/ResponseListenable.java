@@ -7,14 +7,12 @@ package nl.b3p.csw.client;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.jdom.Document;
-import org.jdom.JDOMException;
 
 /**
  *
  * @author Erik van de Pol
  */
-public interface ResponseListenable {
+public interface ResponseListenable<T> {
 
-    public Document handleResponse(InputStream response) throws IOException, JDOMException;
+    public T handleResponse(InputStream response) throws IOException;
 }

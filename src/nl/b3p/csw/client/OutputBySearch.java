@@ -22,6 +22,7 @@ import nl.b3p.csw.util.Protocol;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
+import org.jdom.Namespace;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.XMLOutputter;
 
@@ -44,6 +45,17 @@ public class OutputBySearch extends Output {
 
     public OutputBySearch(Document xmlDocument, Schema schema) {
         super(xmlDocument, schema);
+    }
+
+    public boolean isEmpty() {
+        try {
+            return xmlDocument.getRootElement()
+                    .getChild("SearchResults", cswNameSpace)
+                    .getAttribute("numberOfRecordsReturned")
+                    .getIntValue() == 0;
+        } catch(Exception ex) {
+            return true;
+        }
     }
 
     @Override

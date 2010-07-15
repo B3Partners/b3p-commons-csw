@@ -15,10 +15,10 @@ import org.jdom.input.SAXBuilder;
  *
  * @author Erik van de Pol
  */
-public class StandardResponseListener implements ResponseListenable {
+public class JDOMResponseListener implements ResponseListenable<Document> {
     protected final static boolean VALIDATE_CSW_RESPONSE = false;
 
-    public Document handleResponse(InputStream response) throws IOException, JDOMException {
+    public Document handleResponse(InputStream response) throws IOException {
         SAXBuilder builder = new SAXBuilder(VALIDATE_CSW_RESPONSE);
         try {
             if (response == null)
@@ -26,7 +26,7 @@ public class StandardResponseListener implements ResponseListenable {
 
             return builder.build(response);
         } catch (JDOMException ex) {
-            throw new JDOMException("Could not build an xml document from the csw response.\nResponse: " + response, ex);
+            throw new IOException("Could not build an xml document from the csw response.\nResponse: " + response, ex);
         } catch (IOException ex) {
             throw new IOException("Could not build an xml document from the csw response.\nResponse: " + response, ex);
         }

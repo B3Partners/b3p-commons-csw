@@ -12,7 +12,7 @@ import org.jdom.JDOMException;
  *
  * @author Erik van de Pol
  */
-public interface CswServable {
+public interface CswServable<T> {
 
     /**
      * Posts cswRequestXml to the server.
@@ -20,5 +20,5 @@ public interface CswServable {
      * @param cswRequestXml
      * @return The response from the server as a String. The String should contain xml.
      */
-    public Document doRequest(String cswRequestXml) throws IOException, JDOMException;
+    public T doRequest(String cswRequestXml) throws IOException, JDOMException;
 }

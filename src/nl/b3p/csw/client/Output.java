@@ -30,6 +30,7 @@ public abstract class Output {
     
     protected static final Log log = LogFactory.getLog(Output.class);
 
+    protected static final Namespace cswNameSpace = Namespace.getNamespace("http://www.opengis.net/cat/csw/2.0.2");
     protected static final Namespace gmdNameSpace = Namespace.getNamespace("http://www.isotc211.org/2005/gmd");
     protected static final Namespace gcoNameSpace = Namespace.getNamespace("http://www.isotc211.org/2005/gco");
 

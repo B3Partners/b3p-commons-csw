@@ -6,9 +6,9 @@ package nl.b3p.csw.server;
 
 import java.io.IOException;
 import java.io.InputStream;
+import nl.b3p.csw.client.JDOMResponseListener;
 
 import nl.b3p.csw.client.ResponseListenable;
-import nl.b3p.csw.client.StandardResponseListener;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
@@ -28,7 +28,7 @@ import org.jdom.JDOMException;
  *
  * @author Erik van de Pol. Most of this class by Chris van Lith.
  */
-public class GeoNetworkCswServer implements CswServable {
+public class GeoNetworkCswServer implements CswServable<Document> {
 
     protected static Log log;
     protected static final String host = AuthScope.ANY_HOST;
@@ -40,7 +40,7 @@ public class GeoNetworkCswServer implements CswServable {
     protected String cswUser;
     protected String cswPassword;
 
-    protected ResponseListenable responseListenable = null;
+    protected ResponseListenable<Document> responseListenable = null;
 
     public ResponseListenable getResponseListenable() {
         return responseListenable;
@@ -51,7 +51,7 @@ public class GeoNetworkCswServer implements CswServable {
     }
 
     public GeoNetworkCswServer(String loginUrl, String cswUrl, String cswUser, String cswPassword) {
-        this(loginUrl, cswUrl, cswUser, cswPassword, new StandardResponseListener());
+        this(loginUrl, cswUrl, cswUser, cswPassword, new JDOMResponseListener());
     }
 
     public GeoNetworkCswServer(String loginUrl, String cswUrl, String cswUser, String cswPassword, ResponseListenable responseListenable) {
@@ -113,8 +113,8 @@ public class GeoNetworkCswServer implements CswServable {
     protected Document httpPostCswRequest(String request, String url, String username, String password) throws IOException, JDOMException {
         HttpState initialState = new HttpState();
         if (cookies != null) {
-            for (int i = 0; i < cookies.length; i++) {
-                initialState.addCookie(cookies[i]);
+            for (Cookie cookie : cookies) {
+                initialState.addCookie(cookie);
             }
         }
 
@@ -148,8 +148,8 @@ public class GeoNetworkCswServer implements CswServable {
 
             // Display the cookies
             log.debug("Present cookies: ");
-            for (int i = 0; i < cookies.length; i++) {
-                log.debug(" - " + cookies[i].toExternalForm());
+            for (Cookie cookie : cookies) {
+                log.debug(" - " + cookie.toExternalForm());
             }
 
             responseStream = method.getResponseBodyAsStream();

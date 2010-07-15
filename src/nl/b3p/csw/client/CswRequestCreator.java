@@ -261,9 +261,10 @@ public class CswRequestCreator {
     }
 
     protected static String surroundWithWildCards(String queryString) {
-        if (!queryString.startsWith(defaultWildCard)) {
+        // enabling this sometimes yields 0 results in Geonetwork
+        /*if (!queryString.startsWith(defaultWildCard)) {
             queryString = defaultWildCard + queryString;
-        }
+        }*/
         if (!queryString.endsWith(defaultWildCard)) {
             queryString = queryString + defaultWildCard;
         }

@@ -49,7 +49,6 @@ import org.xml.sax.SAXException;
  */
 public class CswClient {
 
-
     protected static Log log = LogFactory.getLog(CswClient.class);
     
     protected CswServable server;
@@ -124,8 +123,10 @@ public class CswClient {
         String marshalledCswXml = MarshallUtil.marshall(jaxbElement, null);
 
         //log.debug("Request:\n" + marshalledCswXml);
-        
-        return server.doRequest(marshalledCswXml);
+
+        // door expliciet te casten naar org.jdom.Document wordt het niet echt een algemene API
+        // We zitten nu voor deze client altijd op JDOM.
+        return (Document)server.doRequest(marshalledCswXml);
     }
 
     protected Transaction createTransaction(Object object) {
@@ -195,7 +196,7 @@ public class CswClient {
         CswServable server = new GeoNetworkCswServer(
                 "http://dev.b3p.nl/geonetwork/srv/en/xml.user.login",
                 "http://dev.b3p.nl/geonetwork/srv/en/csw",
-                "admin", "admin");
+                "admin", "***REMOVED***");
 
         String cswValidationPath  = "c:\\dev_erik\\b3p-commons\\b3p-commons-csw\\jaxb\\xsds\\csw\\2.0.2\\CSW-discovery.xsd";
 
@@ -223,7 +224,7 @@ public class CswClient {
             boolean validateInputXml = true;
             input = new Input(inputXmlDoc, validateInputXml);*/
 
-            InputById inputById = new InputById(
+            /*InputById inputById = new InputById(
                     //"75e2306e-a8e4-4763-a7e3-c5837dad5a94"
                     "b9026a4c-962f-4826-b4f1-8ddf5c81c0f3"
                     //"1bb0eb5c-2ff9-434b-b32b-d6c47be52737"
@@ -235,11 +236,12 @@ public class CswClient {
             OutputById outputById = client.search(inputById);
 
             Document getIdOutputXmlDoc = outputById.getXml();
-            outputter.output(getIdOutputXmlDoc, System.out);
+            outputter.output(getIdOutputXmlDoc, System.out);*/
             
 
 
             OutputBySearch outputBySearch = client.search(inputBySearch);
+            System.out.println("searchresults empty: " + outputBySearch.isEmpty());
 
             Document outputXmlDoc = outputBySearch.getXml();
             outputter.output(outputXmlDoc, System.out);
