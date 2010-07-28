@@ -2,7 +2,6 @@
  * Copyright 2009 B3Partners BV
  * 
  */
-
 package nl.b3p.csw.client;
 
 import java.net.URI;
@@ -22,15 +21,15 @@ import nl.b3p.csw.util.Protocol;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.Namespace;
+import org.jdom.Text;
 import org.jdom.input.DOMBuilder;
-import org.jdom.output.XMLOutputter;
 
 /**
  *
  * @author Erik van de Pol
  */
 public class OutputBySearch extends Output {
+
     protected final static Protocol defaultProtocol = Protocol.WMS;
     protected final static List<Protocol> defaultAllowedProtocols;
 
@@ -49,11 +48,8 @@ public class OutputBySearch extends Output {
 
     public boolean isEmpty() {
         try {
-            return xmlDocument.getRootElement()
-                    .getChild("SearchResults", cswNameSpace)
-                    .getAttribute("numberOfRecordsReturned")
-                    .getIntValue() == 0;
-        } catch(Exception ex) {
+            return xmlDocument.getRootElement().getChild("SearchResults", cswNameSpace).getAttribute("numberOfRecordsReturned").getIntValue() == 0;
+        } catch (Exception ex) {
             return true;
         }
     }
@@ -87,17 +83,16 @@ public class OutputBySearch extends Output {
     }
 
     /*public List<Document> getSearchResultsAsDocuments() throws JDOMException, JAXBException {
-        List<Element> elemList = getSearchResults();
-        List<Document> docList = new ArrayList<Document>(elemList.size());
+    List<Element> elemList = getSearchResults();
+    List<Document> docList = new ArrayList<Document>(elemList.size());
 
-        // transform to jdom doc list
-        for (Element elem : elemList) {
-            docList.add(new Document(elem));// werkt niet als niet detached. detachen is niet handig voor algehele consistentie van deze klasse.
-        }
+    // transform to jdom doc list
+    for (Element elem : elemList) {
+    docList.add(new Document(elem));// werkt niet als niet detached. detachen is niet handig voor algehele consistentie van deze klasse.
+    }
 
-        return docList;
+    return docList;
     }*/
-
     /**
      * List of OnlineResource's. If the same resource-URL is included in more result-metadata,
      * all are included in this list.
@@ -176,10 +171,10 @@ public class OutputBySearch extends Output {
             Element resourceElem = resources.next();
 
             OnlineResource onlineResource = getResource(resourceElem, allowedProtocols, resultElem);
-            
+
             if (onlineResource != null) {
                 //onlineResource.setUUID(uuid + ";" + resourceId);
-                
+
                 URI url = onlineResource.getUrl();
                 if (services.get(url) == null) {
                     services.put(url, new ArrayList<OnlineResource>());
@@ -192,13 +187,29 @@ public class OutputBySearch extends Output {
         return services;
     }
 
-    protected String getUUID(Element rootElement) throws UnsupportedOperationException {
+    public String getUUID(Element rootElement) throws UnsupportedOperationException {
         Iterator<Element> fileIdentifierResult = rootElement.getDescendants(fileIdentifierElementFilter);
         if (!fileIdentifierResult.hasNext()) {
             throw new UnsupportedOperationException("No UUID found for metadata.");
         }
         Element fileIdentifier = fileIdentifierResult.next();
         return fileIdentifier.getChildTextTrim("CharacterString", gcoNameSpace);
+    }
+
+    public String getTitle(Element recordElement) throws JDOMException {
+        return titleJdomXPath.valueOf(recordElement);
+    }
+
+    public List<Text> getKeyWords(Element recordElement) throws JDOMException {
+        return (List<Text>) keywordsJdomXPath.selectNodes(recordElement);
+    }
+
+    public String getIdentificationDate(Element recordElement) throws JDOMException {
+        return identificationDateJdomXPath.valueOf(recordElement);
+    }
+
+    public String getResponsibleOrganisationName(Element recordElement) throws JDOMException {
+        return responsibleOrganisationNameJdomXPath.valueOf(recordElement);
     }
 
     private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {
@@ -233,9 +244,8 @@ public class OutputBySearch extends Output {
                     desc = descStringElem.getTextTrim();
                 }
             }
-            if (url != null && name != null && 
-                    (allowedProtocols.isEmpty() || allowedProtocols.contains(protocol))
-                ) {
+            if (url != null && name != null
+                    && (allowedProtocols.isEmpty() || allowedProtocols.contains(protocol))) {
 
                 OnlineResource onlineResource = new OnlineResource();
 
@@ -257,7 +267,7 @@ public class OutputBySearch extends Output {
 
     private Protocol getProtocol(Element protocolElem) {
         Protocol protocol = null;
-        
+
         Element SV_ServiceTypeElem = protocolElem.getChild("SV_ServiceType", gmdNameSpace);
         // onderstaand element is voor compatibiliteit. Is eigenlijk niet correct.
         Element protocolStringElem = protocolElem.getChild("CharacterString", gcoNameSpace);
@@ -266,12 +276,14 @@ public class OutputBySearch extends Output {
             String protocolText = SV_ServiceTypeElem.getTextTrim();
             try {
                 protocol = Protocol.fromValue(protocolText);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         } else if (protocolStringElem != null) {
             String protocolText = protocolStringElem.getTextTrim();
             try {
                 protocol = Protocol.fromValue(protocolText);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
 
         if (protocol == null) {
@@ -279,5 +291,4 @@ public class OutputBySearch extends Output {
         }
         return protocol;
     }
-
 }
