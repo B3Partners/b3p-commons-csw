@@ -100,18 +100,38 @@ public class CswRequestCreator {
         return elementSetNameType;
     }
 
+    public static void addStartPosition(GetRecordsType getRecordsType, BigInteger startPosition) {
+        if (startPosition != null) {
+            getRecordsType.setStartPosition(startPosition);
+        }
+    }
+
+    public static void addMaxRecords(GetRecordsType getRecordsType, BigInteger maxRecords) {
+        if (maxRecords != null) {
+            getRecordsType.setMaxRecords(maxRecords);
+        }
+    }
 
     public static GetRecords createSimpleCswRequest(String queryString) {
-        return createCswRequest(queryString, "", "", "", "");
+        return createCswRequest(queryString, "", null, null, "", "", "");
+    }
+
+    public static GetRecords createSimpleCswRequest(
+            String queryString,
+            BigInteger startPosition,
+            BigInteger maxRecords) {
+        return createCswRequest(queryString, "", startPosition, maxRecords, "", "", "");
     }
 
     public static GetRecords createCswRequest(
             String queryString,
             String propertyName,
+            BigInteger startPosition,
+            BigInteger maxRecords,
             String elementSetName,
             String outputSchema,
             String resultTypeString) {
-        return createCswRequest(queryString, propertyName, elementSetName, outputSchema, resultTypeString, true);
+        return createCswRequest(queryString, propertyName, startPosition, maxRecords, elementSetName, outputSchema, resultTypeString, true);
     }
 
     /**
@@ -127,6 +147,8 @@ public class CswRequestCreator {
     public static GetRecords createCswRequest(
             String queryString,
             String propertyName,
+            BigInteger startPosition,
+            BigInteger maxRecords,
             String elementSetName,
             String outputSchema,
             String resultTypeString,
@@ -141,6 +163,8 @@ public class CswRequestCreator {
         filterType.setComparisonOps(FilterCreator.createPropertyIsLike(queryString, propertyName));
 
         return createCswRequest(filterType,
+                startPosition,
+                maxRecords,
                 elementSetName,
                 outputSchema,
                 resultTypeString
@@ -150,6 +174,8 @@ public class CswRequestCreator {
     public static GetRecords createCswRequestPropertyIsEqual(
             String queryString,
             String propertyName,
+            BigInteger startPosition,
+            BigInteger maxRecords,
             String elementSetName,
             String outputSchema,
             String resultTypeString,
@@ -164,6 +190,8 @@ public class CswRequestCreator {
         filterType.setComparisonOps(FilterCreator.createPropertyIsEqualTo(queryString, propertyName));
 
         return createCswRequest(filterType,
+                startPosition,
+                maxRecords,
                 elementSetName,
                 outputSchema,
                 resultTypeString
@@ -203,11 +231,17 @@ public class CswRequestCreator {
     }*/
 
     public static GetRecords createCswRequest(FilterType filterType) {
-            return createCswRequest(filterType, null, null, null);
+        return createCswRequest(filterType, null, null, null, null, null);
+    }
+
+    public static GetRecords createCswRequest(FilterType filterType, BigInteger startPosition, BigInteger maxRecords) {
+        return createCswRequest(filterType, startPosition, maxRecords, null, null, null);
     }
 
     public static GetRecords createCswRequest(
             FilterType filterType,
+            BigInteger startPosition,
+            BigInteger maxRecords,
             String elementSetName,
             String outputSchema,
             String resultTypeString
@@ -224,8 +258,8 @@ public class CswRequestCreator {
         getRecordsType.setOutputSchema(outputSchemaType);
         //getRecordsType.setOutputFormat("application/xml");
         
-        //getRecordsType.setStartPosition(BigInteger.ZERO);
-        //getRecordsType.setMaxRecords(BigInteger.valueOf(10));
+        addStartPosition(getRecordsType, startPosition);
+        addMaxRecords(getRecordsType, maxRecords);
         
         QueryType queryType = new QueryType();
         queryType.setElementSetName(new ElementSetName(elementSetNameType));

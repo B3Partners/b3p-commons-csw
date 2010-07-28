@@ -7,6 +7,7 @@ package nl.b3p.csw.client;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigInteger;
 import nl.b3p.csw.jaxb.csw.GetRecords;
 import nl.b3p.csw.jaxb.filter.BinaryLogicOpType;
 import nl.b3p.csw.jaxb.filter.FilterType;
@@ -31,12 +32,24 @@ public class CswSmartRequestCreator extends CswRequestCreator {
     private static Log log = LogFactory.getLog(CswSmartRequestCreator.class);
 
     public static GetRecords createSmartCswRequest(String queryString) {
-        return createSmartCswRequest(queryString, null);
+        return createSmartCswRequest(queryString, null, null, null);
+    }
+
+    public static GetRecords createSmartCswRequest(String queryString, BigInteger startPosition, BigInteger maxRecords) {
+        return createSmartCswRequest(queryString, null, startPosition, maxRecords);
     }
 
     public static GetRecords createSmartCswRequest(
             String queryString,
             String propertyName) {
+        return createSmartCswRequest(queryString, propertyName, null, null);
+    }
+
+    public static GetRecords createSmartCswRequest(
+            String queryString,
+            String propertyName,
+            BigInteger startPosition,
+            BigInteger maxRecords) {
 
         queryString = createQueryString(queryString, false);
         if (queryString == null) return null;
@@ -69,7 +82,7 @@ public class CswSmartRequestCreator extends CswRequestCreator {
         FilterType filterType = new FilterType();
         filterType.setLogicOps(or);
 
-        return createCswRequest(filterType);
+        return createCswRequest(filterType, startPosition, maxRecords);
     }
 
 }
