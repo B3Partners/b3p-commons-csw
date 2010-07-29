@@ -4,6 +4,7 @@
  */
 package nl.b3p.csw.client;
 
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 import nl.b3p.csw.jaxb.csw.GetRecordsResponse;
 import nl.b3p.csw.jaxb.csw.GetRecordsResponseType;
+import nl.b3p.csw.jaxb.csw.SearchResultsType;
 import nl.b3p.csw.util.OnlineResource;
 import nl.b3p.csw.util.Protocol;
 import org.jdom.Document;
@@ -63,6 +65,14 @@ public class OutputBySearch extends Output {
     @Override
     protected Class getTargetType() {
         return GetRecordsResponseType.class;
+    }
+
+    public SearchResultsType getSearchResultsObject() throws JDOMException, JAXBException{
+        if (getResponse()==null ||
+                getResponse().getValue()==null ||
+                getResponse().getValue().getSearchResults()==null)
+            return null;
+        return getResponse().getValue().getSearchResults();
     }
 
     public List<org.w3c.dom.Element> getSearchResultsW3C() throws JDOMException, JAXBException {
@@ -210,6 +220,28 @@ public class OutputBySearch extends Output {
 
     public String getResponsibleOrganisationName(Element recordElement) throws JDOMException {
         return responsibleOrganisationNameJdomXPath.valueOf(recordElement);
+    }
+
+    public BigInteger getNumberOfRecordsMatched() throws JDOMException, JAXBException{
+        SearchResultsType results =getSearchResultsObject();
+        if (results==null){
+            return null;
+        }
+        return results.getNumberOfRecordsMatched();
+    }
+    public BigInteger getNumberOfRecordsReturned() throws JDOMException, JAXBException{
+        SearchResultsType results =getSearchResultsObject();
+        if (results==null){
+            return null;
+        }
+        return results.getNumberOfRecordsReturned();
+    }
+    public BigInteger getNextRecord() throws JDOMException, JAXBException{
+        SearchResultsType results =getSearchResultsObject();
+        if (results==null){
+            return null;
+        }
+        return results.getNextRecord();        
     }
 
     private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {

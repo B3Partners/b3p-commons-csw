@@ -58,7 +58,7 @@ public class CswRequestCreator {
 
     public static String createQueryString(String queryString, boolean forceSearchUsingPartialWords) {
         if (queryString == null || queryString.trim().length() == 0) {
-            return null;
+            return defaultWildCard;
         } else {
             if (forceSearchUsingPartialWords) {
                 queryString = surroundWithWildCards(queryString);
