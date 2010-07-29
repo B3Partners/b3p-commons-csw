@@ -7,6 +7,7 @@ package nl.b3p.csw.client;
 import com.vividsolutions.jts.io.ParseException;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Arrays;
 import javax.naming.OperationNotSupportedException;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -31,6 +32,10 @@ import org.apache.commons.logging.LogFactory;
 import nl.b3p.csw.jaxb.filter.BinarySpatialOpType;
 import nl.b3p.csw.jaxb.filter.Filter;
 import nl.b3p.csw.jaxb.filter.PropertyName;
+import nl.b3p.csw.jaxb.filter.SortBy;
+import nl.b3p.csw.jaxb.filter.SortByType;
+import nl.b3p.csw.jaxb.filter.SortOrderType;
+import nl.b3p.csw.jaxb.filter.SortPropertyType;
 import nl.b3p.csw.util.Util;
 import org.jdom.JDOMException;
 import org.opengis.referencing.FactoryException;
@@ -100,6 +105,23 @@ public class CswRequestCreator {
         return elementSetNameType;
     }
 
+    // will sort on "anyText"
+    public static SortBy createDefaultSortBy() {
+        return createSortBy(null, SortOrderType.ASC);
+    }
+
+    public static SortBy createSortBy(String propertyName, SortOrderType type) {
+        PropertyNameType propertyNameType = new PropertyNameType();
+        propertyNameType.getContent().add(createPropertyName(propertyName));
+        
+        SortPropertyType sortProperty = new SortPropertyType(new PropertyName(propertyNameType), type);
+
+        SortByType sortByType = new SortByType();
+        sortByType.getSortProperty().add(sortProperty);
+
+        return new SortBy(sortByType);
+    }
+
     public static void addStartPosition(GetRecordsType getRecordsType, BigInteger startPosition) {
         if (startPosition != null) {
             getRecordsType.setStartPosition(startPosition);
@@ -113,14 +135,15 @@ public class CswRequestCreator {
     }
 
     public static GetRecords createSimpleCswRequest(String queryString) {
-        return createCswRequest(queryString, "", null, null, "", "", "");
+        return createCswRequest(queryString, "", null, null, null, "", "", "");
     }
 
     public static GetRecords createSimpleCswRequest(
             String queryString,
             BigInteger startPosition,
-            BigInteger maxRecords) {
-        return createCswRequest(queryString, "", startPosition, maxRecords, "", "", "");
+            BigInteger maxRecords,
+            SortBy sortBy) {
+        return createCswRequest(queryString, "", startPosition, maxRecords, sortBy, "", "", "");
     }
 
     public static GetRecords createCswRequest(
@@ -128,10 +151,11 @@ public class CswRequestCreator {
             String propertyName,
             BigInteger startPosition,
             BigInteger maxRecords,
+            SortBy sortBy,
             String elementSetName,
             String outputSchema,
             String resultTypeString) {
-        return createCswRequest(queryString, propertyName, startPosition, maxRecords, elementSetName, outputSchema, resultTypeString, true);
+        return createCswRequest(queryString, propertyName, startPosition, maxRecords, sortBy, elementSetName, outputSchema, resultTypeString, true);
     }
 
     /**
@@ -149,6 +173,7 @@ public class CswRequestCreator {
             String propertyName,
             BigInteger startPosition,
             BigInteger maxRecords,
+            SortBy sortBy,
             String elementSetName,
             String outputSchema,
             String resultTypeString,
@@ -165,6 +190,7 @@ public class CswRequestCreator {
         return createCswRequest(filterType,
                 startPosition,
                 maxRecords,
+                sortBy,
                 elementSetName,
                 outputSchema,
                 resultTypeString
@@ -176,6 +202,7 @@ public class CswRequestCreator {
             String propertyName,
             BigInteger startPosition,
             BigInteger maxRecords,
+            SortBy sortBy,
             String elementSetName,
             String outputSchema,
             String resultTypeString,
@@ -192,6 +219,7 @@ public class CswRequestCreator {
         return createCswRequest(filterType,
                 startPosition,
                 maxRecords,
+                sortBy,
                 elementSetName,
                 outputSchema,
                 resultTypeString
@@ -231,17 +259,18 @@ public class CswRequestCreator {
     }*/
 
     public static GetRecords createCswRequest(FilterType filterType) {
-        return createCswRequest(filterType, null, null, null, null, null);
+        return createCswRequest(filterType, null, null, null, null, null, null);
     }
 
-    public static GetRecords createCswRequest(FilterType filterType, BigInteger startPosition, BigInteger maxRecords) {
-        return createCswRequest(filterType, startPosition, maxRecords, null, null, null);
+    public static GetRecords createCswRequest(FilterType filterType, BigInteger startPosition, BigInteger maxRecords, SortBy sortBy) {
+        return createCswRequest(filterType, startPosition, maxRecords, sortBy, null, null, null);
     }
 
     public static GetRecords createCswRequest(
             FilterType filterType,
             BigInteger startPosition,
             BigInteger maxRecords,
+            SortBy sortBy,
             String elementSetName,
             String outputSchema,
             String resultTypeString
@@ -262,6 +291,7 @@ public class CswRequestCreator {
         addMaxRecords(getRecordsType, maxRecords);
         
         QueryType queryType = new QueryType();
+        queryType.setSortBy(sortBy);
         queryType.setElementSetName(new ElementSetName(elementSetNameType));
         queryType.getTypeNames().add(QName.valueOf("gmd:MD_Metadata"));
 

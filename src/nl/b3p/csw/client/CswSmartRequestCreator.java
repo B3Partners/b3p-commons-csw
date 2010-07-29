@@ -14,6 +14,7 @@ import nl.b3p.csw.jaxb.filter.FilterType;
 import nl.b3p.csw.jaxb.filter.Or;
 import nl.b3p.csw.jaxb.filter.PropertyIsEqualTo;
 import nl.b3p.csw.jaxb.filter.PropertyIsLike;
+import nl.b3p.csw.jaxb.filter.SortBy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Token;
@@ -35,21 +36,22 @@ public class CswSmartRequestCreator extends CswRequestCreator {
         return createSmartCswRequest(queryString, null, null, null);
     }
 
-    public static GetRecords createSmartCswRequest(String queryString, BigInteger startPosition, BigInteger maxRecords) {
-        return createSmartCswRequest(queryString, null, startPosition, maxRecords);
+    public static GetRecords createSmartCswRequest(String queryString, BigInteger startPosition, BigInteger maxRecords, SortBy sortBy) {
+        return createSmartCswRequest(queryString, null, startPosition, maxRecords, sortBy);
     }
 
     public static GetRecords createSmartCswRequest(
             String queryString,
             String propertyName) {
-        return createSmartCswRequest(queryString, propertyName, null, null);
+        return createSmartCswRequest(queryString, propertyName, null, null, null);
     }
 
     public static GetRecords createSmartCswRequest(
             String queryString,
             String propertyName,
             BigInteger startPosition,
-            BigInteger maxRecords) {
+            BigInteger maxRecords,
+            SortBy sortBy) {
 
         queryString = createQueryString(queryString, false);
         if (queryString == null) return null;
@@ -82,7 +84,7 @@ public class CswSmartRequestCreator extends CswRequestCreator {
         FilterType filterType = new FilterType();
         filterType.setLogicOps(or);
 
-        return createCswRequest(filterType, startPosition, maxRecords);
+        return createCswRequest(filterType, startPosition, maxRecords, sortBy);
     }
 
 }
