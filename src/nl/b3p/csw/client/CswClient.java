@@ -5,7 +5,6 @@
 package nl.b3p.csw.client;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -20,15 +19,20 @@ import nl.b3p.csw.jaxb.csw.HarvestResponse;
 import nl.b3p.csw.jaxb.csw.HarvestResponseType;
 import nl.b3p.csw.jaxb.csw.HarvestType;
 import nl.b3p.csw.jaxb.csw.InsertType;
+import nl.b3p.csw.jaxb.csw.QueryConstraintType;
 import nl.b3p.csw.jaxb.csw.Transaction;
 import nl.b3p.csw.jaxb.csw.TransactionResponse;
 import nl.b3p.csw.jaxb.csw.TransactionResponseType;
 import nl.b3p.csw.jaxb.csw.TransactionType;
 import nl.b3p.csw.jaxb.csw.UpdateType;
+import nl.b3p.csw.jaxb.filter.Filter;
+import nl.b3p.csw.jaxb.filter.FilterType;
+import nl.b3p.csw.jaxb.filter.PropertyIsEqualTo;
 import nl.b3p.csw.jaxb.filter.Within;
 import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
 import nl.b3p.csw.util.CswClientFactory;
+import nl.b3p.csw.util.ExceptionUtil;
 import nl.b3p.csw.util.MarshallUtil;
 import nl.b3p.csw.util.OnlineResource;
 import nl.b3p.csw.util.Protocol;
@@ -38,7 +42,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.xml.sax.SAXException;
 
@@ -114,6 +117,9 @@ public class CswClient {
 
     protected Transaction createTransaction(Object object) {
         TransactionType transactionType = new TransactionType();
+
+        transactionType.setService("CSW");
+        transactionType.setVersion("2.0.2");
         transactionType.getInsertOrUpdateOrDelete().add(object);
 
         return new Transaction(transactionType);
@@ -126,41 +132,73 @@ public class CswClient {
         return new TransactionResponse(transactionResponse.getValue());
     }
 
-    public TransactionResponse insert(Document document) throws IOException, JDOMException, JAXBException {
+    protected InsertType createInsertType(org.w3c.dom.Document document) {
         InsertType insertType = new InsertType();
-        insertType.getAny().add(new XMLOutputter().outputString(document));
 
-        return insert(insertType);
+        insertType.setTypeName("gmd:MD_Metadata");
+        insertType.setHandle("insertHandle");// kan van alles zijn; is voor error handling/localization handig
+        insertType.getAny().add(document.getDocumentElement());
+        
+        return insertType;
     }
 
-    public TransactionResponse insert(InsertType insertType) throws IOException, JDOMException, JAXBException {
+    public TransactionResponse insert(org.w3c.dom.Document document) throws IOException, JDOMException, JAXBException, OwsException {
+        return insert(createInsertType(document));
+    }
+
+    public TransactionResponse insert(InsertType insertType) throws IOException, JDOMException, JAXBException, OwsException {
         Document responseDocument = doRequest(createTransaction(insertType));
+
+        ExceptionUtil.throwExceptionIfException(responseDocument);
 
         return createTransactionResponse(responseDocument);
     }
 
-    public TransactionResponse update(Document document) throws IOException, JDOMException, JAXBException {
+    // TODO: update nog niet ok
+    public TransactionResponse update(Document document) throws IOException, JDOMException, JAXBException, OwsException {
         UpdateType updateType = new UpdateType();
         updateType.setAny(new XMLOutputter().outputString(document));
 
         return update(updateType);
     }
 
-    public TransactionResponse update(UpdateType updateType) throws IOException, JDOMException, JAXBException {
+    public TransactionResponse update(UpdateType updateType) throws IOException, JDOMException, JAXBException, OwsException {
         Document responseDocument = doRequest(createTransaction(updateType));
+
+        ExceptionUtil.throwExceptionIfException(responseDocument);
 
         return createTransactionResponse(responseDocument);
     }
 
-    public TransactionResponse delete(Constraint constraint) throws IOException, JDOMException, JAXBException {
+    protected DeleteType createDeleteType(String uuid) {
         DeleteType deleteType = new DeleteType();
-        deleteType.setConstraint(constraint);
 
-        return delete(deleteType);
+        deleteType.setTypeName("gmd:MD_Metadata");
+        deleteType.setHandle("deleteHandle");// kan van alles zijn; is voor error handling/localization handig
+
+        PropertyIsEqualTo propertyIsEqualTo = FilterCreator.createPropertyIsEqualTo(
+                uuid, "apiso:identifier", null);
+
+        FilterType filterType = new FilterType();
+        filterType.setComparisonOps(propertyIsEqualTo);
+
+        QueryConstraintType queryConstraintType = new QueryConstraintType();
+        queryConstraintType.setVersion("1.1.0");
+        queryConstraintType.setFilter(new Filter(filterType));
+
+        deleteType.setConstraint(new Constraint(queryConstraintType));
+
+        return deleteType;
     }
 
-    public TransactionResponse delete(DeleteType deleteType) throws IOException, JDOMException, JAXBException {
+    public TransactionResponse delete(String uuid) throws IOException, JDOMException, JAXBException, OwsException {
+        return delete(createDeleteType(uuid));
+    }
+
+    public TransactionResponse delete(DeleteType deleteType) throws IOException, JDOMException, JAXBException, OwsException {
         Document responseDocument = doRequest(createTransaction(deleteType));
+
+        ExceptionUtil.throwExceptionIfException(responseDocument);
 
         return createTransactionResponse(responseDocument);
     }
@@ -187,6 +225,10 @@ public class CswClient {
         String testWktInput = "POLYGON ((280 380, 280 200, 60 200, 60 380, 180 220, 280 380),(40 160, 260 160, 240 60, 20 80, 40 160))";
 
         try {
+            GetRecords getRTest = CswSmartRequestCreator.createSmartCswRequest("test in nog een test");
+            System.out.println("Test smart csw");
+            System.out.println(MarshallUtil.marshall(getRTest, null));
+
             GetRecords getRecords = CswRequestCreator.createCswRequest(
                     new Within(), "anyText", testWktInput);
             System.out.println(MarshallUtil.marshall(getRecords, null));

@@ -4,19 +4,15 @@
  */
 package nl.b3p.csw.client;
 
-import java.util.Iterator;
-import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
+import nl.b3p.csw.jaxb.ows.ExceptionReport;
+import nl.b3p.csw.util.ExceptionUtil;
 import nl.b3p.csw.util.MarshallUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,6 +46,8 @@ public abstract class Output {
     protected static org.jdom.xpath.XPath keywordsJdomXPath;
     protected static org.jdom.xpath.XPath identificationDateJdomXPath;
     protected static org.jdom.xpath.XPath responsibleOrganisationNameJdomXPath;
+
+    protected static final String exceptionName = "ExceptionReport";
     static {
         try {
             titleJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString/text()");
@@ -100,7 +98,13 @@ public abstract class Output {
         }
     }
 
-    protected JAXBElement getResponse() throws JDOMException, JAXBException {
+    protected JAXBElement getResponse() throws JDOMException, JAXBException, OwsException {
+        ExceptionUtil.throwExceptionIfException(xmlDocument);
+        
+        return getResponseImpl();
+    }
+
+    private JAXBElement getResponseImpl() throws JDOMException, JAXBException {
         if (response == null) {
             response = MarshallUtil.unMarshall(xmlDocument, schema, getTargetType());
         }
@@ -108,4 +112,29 @@ public abstract class Output {
     }
 
     protected abstract Class getTargetType();
+
+    /*public boolean isException() {
+        return xmlDocument.getRootElement().getName().equals(exceptionName);
+    }
+
+    protected OwsException getException() throws JDOMException, JAXBException {
+        if (!isException()) {
+            return new OwsException(null);
+        } else {
+
+            try {
+                ExceptionReport exceptionReport = null;
+                JAXBElement<ExceptionReport> jaxbElement = 
+                        MarshallUtil.unMarshall(xmlDocument, schema, ExceptionReport.class);
+                exceptionReport = jaxbElement.getValue();
+                return new OwsException(exceptionReport);
+            } catch(Exception e) {
+                log.debug(e);
+                return new OwsException(null);
+            }
+            
+        }
+
+    }*/
+    
 }

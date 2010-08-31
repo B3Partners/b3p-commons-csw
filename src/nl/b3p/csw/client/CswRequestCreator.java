@@ -74,7 +74,7 @@ public class CswRequestCreator {
 
     public static String createOutputSchema(String outputSchema) {
         if (outputSchema == null || outputSchema.trim().length() == 0) {
-            outputSchema = "csw:IsoRecord";
+            outputSchema = "http://www.isotc211.org/2005/gmd";
         }
         return outputSchema;
     }
@@ -294,16 +294,41 @@ public class CswRequestCreator {
         queryType.setSortBy(sortBy);
         queryType.setElementSetName(new ElementSetName(elementSetNameType));
         queryType.getTypeNames().add(QName.valueOf("gmd:MD_Metadata"));
+        //queryType.getTypeNames().add(QName.valueOf("csw:Records"));
 
-        QueryConstraintType constraintType = new QueryConstraintType();
-        constraintType.setVersion("1.1.0");
-        constraintType.setFilter(new Filter(filterType));
-        
-        queryType.setConstraint(new Constraint(constraintType));
+        if (filterType != null) {
+            QueryConstraintType constraintType = new QueryConstraintType();
+            constraintType.setVersion("1.1.0");
+            constraintType.setFilter(new Filter(filterType));
+
+            queryType.setConstraint(new Constraint(constraintType));
+        }
 
         getRecordsType.setAbstractQuery(new Query(queryType));
 
         return new GetRecords(getRecordsType);
+    }
+
+    public static GetRecords createEmptyCswRequest() {
+        return createEmptyCswRequest(null, null, null, null, null, null);
+    }
+
+    public static GetRecords createEmptyCswRequest(
+            BigInteger startPosition,
+            BigInteger maxRecords,
+            SortBy sortBy,
+            String elementSetName,
+            String outputSchema,
+            String resultTypeString
+            ) {
+        return createCswRequest(
+                null,
+                startPosition,
+                maxRecords,
+                sortBy,
+                elementSetName,
+                outputSchema,
+                resultTypeString);
     }
 
     public static GetRecordById createGetRecordByIdRequest(String id) {

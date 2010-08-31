@@ -43,6 +43,10 @@ public class FilterCreator extends CswRequestCreator {
     }
 
     public static PropertyIsEqualTo createPropertyIsEqualTo(String queryString, String propertyName) {
+        return createPropertyIsEqualTo(queryString, propertyName, false);
+    }
+
+    public static PropertyIsEqualTo createPropertyIsEqualTo(String queryString, String propertyName, Boolean matchCase) {
         PropertyNameType propertyNameType = new PropertyNameType();
         propertyNameType.getContent().add(propertyName);
 
@@ -52,7 +56,7 @@ public class FilterCreator extends CswRequestCreator {
         BinaryComparisonOpType binaryComparisonOpType = new BinaryComparisonOpType();
         binaryComparisonOpType.getExpression().add(new PropertyName(propertyNameType));
         binaryComparisonOpType.getExpression().add(new Literal(literalType));
-        binaryComparisonOpType.setMatchCase(Boolean.FALSE);
+        binaryComparisonOpType.setMatchCase(matchCase);
         
         return new PropertyIsEqualTo(binaryComparisonOpType);
     }

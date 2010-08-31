@@ -57,7 +57,7 @@ public class OutputBySearch extends Output {
     }
 
     @Override
-    public GetRecordsResponse getResponse() throws JDOMException, JAXBException {
+    public GetRecordsResponse getResponse() throws JDOMException, JAXBException, OwsException {
         JAXBElement<GetRecordsResponseType> jaxbElement = super.getResponse();
         return new GetRecordsResponse(jaxbElement.getValue());
     }
@@ -67,7 +67,7 @@ public class OutputBySearch extends Output {
         return GetRecordsResponseType.class;
     }
 
-    public SearchResultsType getSearchResultsObject() throws JDOMException, JAXBException{
+    public SearchResultsType getSearchResultsObject() throws JDOMException, JAXBException, OwsException{
         if (getResponse()==null ||
                 getResponse().getValue()==null ||
                 getResponse().getValue().getSearchResults()==null)
@@ -75,11 +75,11 @@ public class OutputBySearch extends Output {
         return getResponse().getValue().getSearchResults();
     }
 
-    public List<org.w3c.dom.Element> getSearchResultsW3C() throws JDOMException, JAXBException {
+    public List<org.w3c.dom.Element> getSearchResultsW3C() throws JDOMException, JAXBException, OwsException {
         return getResponse().getValue().getSearchResults().getAny();
     }
 
-    public List<Element> getSearchResults() throws JDOMException, JAXBException {
+    public List<Element> getSearchResults() throws JDOMException, JAXBException, OwsException {
         List<org.w3c.dom.Element> w3cList = getSearchResultsW3C();
         List<Element> jdomList = new ArrayList<Element>(w3cList.size());
 
@@ -222,21 +222,21 @@ public class OutputBySearch extends Output {
         return responsibleOrganisationNameJdomXPath.valueOf(recordElement);
     }
 
-    public BigInteger getNumberOfRecordsMatched() throws JDOMException, JAXBException{
+    public BigInteger getNumberOfRecordsMatched() throws JDOMException, JAXBException, OwsException{
         SearchResultsType results =getSearchResultsObject();
         if (results==null){
             return null;
         }
         return results.getNumberOfRecordsMatched();
     }
-    public BigInteger getNumberOfRecordsReturned() throws JDOMException, JAXBException{
+    public BigInteger getNumberOfRecordsReturned() throws JDOMException, JAXBException, OwsException{
         SearchResultsType results =getSearchResultsObject();
         if (results==null){
             return null;
         }
         return results.getNumberOfRecordsReturned();
     }
-    public BigInteger getNextRecord() throws JDOMException, JAXBException{
+    public BigInteger getNextRecord() throws JDOMException, JAXBException, OwsException{
         SearchResultsType results =getSearchResultsObject();
         if (results==null){
             return null;

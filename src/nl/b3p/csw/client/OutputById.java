@@ -32,7 +32,7 @@ public class OutputById extends Output {
     }
 
     @Override
-    public GetRecordByIdResponse getResponse() throws JDOMException, JAXBException {
+    public GetRecordByIdResponse getResponse() throws JDOMException, JAXBException, OwsException {
         return new GetRecordByIdResponse((GetRecordByIdResponseType)super.getResponse().getValue());
     }
 
@@ -41,7 +41,7 @@ public class OutputById extends Output {
         return GetRecordByIdResponseType.class;
     }
 
-    public org.w3c.dom.Element getSearchResultW3C() throws JDOMException, JAXBException {
+    public org.w3c.dom.Element getSearchResultW3C() throws JDOMException, JAXBException, OwsException {
         List<org.w3c.dom.Element> searchResults = getResponse().getValue().getAny();
         if (searchResults.size() != 1)
             throw new JDOMException("Search result not found or multiple search results.");
