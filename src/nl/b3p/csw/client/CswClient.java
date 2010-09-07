@@ -5,6 +5,7 @@
 package nl.b3p.csw.client;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,8 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
+import org.jdom.Namespace;
+import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.xml.sax.SAXException;
 
@@ -107,6 +110,14 @@ public class CswClient {
             throw new IllegalArgumentException("Provided jaxbElement must be non-null.");
 
         String marshalledCswXml = MarshallUtil.marshall(jaxbElement, null);
+
+        // Voor compatibiliteit met het apiso profiel op csw:
+        // OpenGIS Catalogue Services Specification 2.0.2 - ISO Metadata Application Profile (1.0.0)
+        // voegen we de apiso namspace toe.
+        // Zonder deze namespace kan Degree bijvoorbeeld geen delete request uitvoeren.
+        Document doc = new SAXBuilder().build(new StringReader(marshalledCswXml));
+        doc.getRootElement().addNamespaceDeclaration(Namespace.getNamespace("http://www.opengis.net/cat/csw/apiso/1.0", "apiso"));
+        marshalledCswXml = new XMLOutputter().outputString(doc);
 
         //log.debug("Request:\n" + marshalledCswXml);
 
