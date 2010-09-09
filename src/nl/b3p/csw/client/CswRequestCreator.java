@@ -149,6 +149,15 @@ public class CswRequestCreator {
     public static GetRecords createCswRequest(
             String queryString,
             String propertyName,
+            String elementSetName,
+            String outputSchema,
+            String resultTypeString) {
+        return createCswRequest(queryString, propertyName, null, null, null, elementSetName, outputSchema, resultTypeString, true);
+    }
+
+    public static GetRecords createCswRequest(
+            String queryString,
+            String propertyName,
             BigInteger startPosition,
             BigInteger maxRecords,
             SortBy sortBy,

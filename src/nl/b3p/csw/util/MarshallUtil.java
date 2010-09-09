@@ -6,9 +6,10 @@
 package nl.b3p.csw.util;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -39,10 +40,10 @@ public class MarshallUtil {
     protected final static String SEPARATOR =        ":";
 
     protected static String JAXB_PACKAGES;
-    protected static List<String> JAXB_PACKAGES_LIST;
+    protected static Set<String> JAXB_PACKAGES_LIST;
 
     static {
-        JAXB_PACKAGES_LIST = new ArrayList<String>(Arrays.asList(
+        JAXB_PACKAGES_LIST = new HashSet<String>(Arrays.asList(
             CSW_PACKAGE,
             ELEMENTS_PACKAGE,
             FILTER_PACKAGE,
@@ -58,7 +59,7 @@ public class MarshallUtil {
         JAXB_PACKAGES = createPackagesString(JAXB_PACKAGES_LIST);
     }
 
-    private static String createPackagesString(List<String> packagesList) {
+    private static String createPackagesString(Set<String> packagesList) {
         return StringUtils.join(packagesList, SEPARATOR);
     }
 
