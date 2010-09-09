@@ -116,7 +116,7 @@ public class CswClient {
         // voegen we de apiso namspace toe.
         // Zonder deze namespace kan Degree bijvoorbeeld geen delete request uitvoeren.
         Document doc = new SAXBuilder().build(new StringReader(marshalledCswXml));
-        doc.getRootElement().addNamespaceDeclaration(Namespace.getNamespace("http://www.opengis.net/cat/csw/apiso/1.0", "apiso"));
+        doc.getRootElement().addNamespaceDeclaration(Namespace.getNamespace("apiso", "http://www.opengis.net/cat/csw/apiso/1.0"));
         marshalledCswXml = new XMLOutputter().outputString(doc);
 
         //log.debug("Request:\n" + marshalledCswXml);
