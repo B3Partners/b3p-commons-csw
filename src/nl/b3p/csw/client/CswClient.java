@@ -26,8 +26,10 @@ import nl.b3p.csw.jaxb.csw.TransactionResponse;
 import nl.b3p.csw.jaxb.csw.TransactionResponseType;
 import nl.b3p.csw.jaxb.csw.TransactionType;
 import nl.b3p.csw.jaxb.csw.UpdateType;
+import nl.b3p.csw.jaxb.filter.BinaryLogicOpType;
 import nl.b3p.csw.jaxb.filter.Filter;
 import nl.b3p.csw.jaxb.filter.FilterType;
+import nl.b3p.csw.jaxb.filter.Or;
 import nl.b3p.csw.jaxb.filter.PropertyIsEqualTo;
 import nl.b3p.csw.jaxb.filter.Within;
 import nl.b3p.csw.server.CswServable;
@@ -192,6 +194,34 @@ public class CswClient {
 
         FilterType filterType = new FilterType();
         filterType.setComparisonOps(propertyIsEqualTo);
+
+        QueryConstraintType queryConstraintType = new QueryConstraintType();
+        queryConstraintType.setVersion("1.1.0");
+        queryConstraintType.setFilter(new Filter(filterType));
+
+        deleteType.setConstraint(new Constraint(queryConstraintType));
+
+        return deleteType;
+    }
+
+    protected DeleteType createDeleteType(String[] uuids) {
+        if (uuids.length==1){
+            return createDeleteType(uuids[0]);
+        }
+        DeleteType deleteType = new DeleteType();
+
+        deleteType.setTypeName("gmd:MD_Metadata");
+        deleteType.setHandle("deleteHandle");// kan van alles zijn; is voor error handling/localization handig
+        BinaryLogicOpType binaryLogicOpType = new BinaryLogicOpType();
+        for (String uuid : uuids){
+            PropertyIsEqualTo propertyIsEqualTo = FilterCreator.createPropertyIsEqualTo(
+                uuid, "apiso:identifier", null);
+            binaryLogicOpType.getComparisonOpsOrSpatialOpsOrLogicOps().add(propertyIsEqualTo);
+        }
+        Or or = new Or(binaryLogicOpType);
+
+        FilterType filterType = new FilterType();
+        filterType.setLogicOps(or);
 
         QueryConstraintType queryConstraintType = new QueryConstraintType();
         queryConstraintType.setVersion("1.1.0");
