@@ -11,6 +11,8 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.io.ParseException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.naming.OperationNotSupportedException;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -53,9 +55,10 @@ public class Util {
         return (JAXBElement)unmarshaller.unmarshal(w3cDomDoc);
     }
 
-    public static Schema createSchema(String path) throws SAXException {
+    public static Schema createSchema(String path) throws SAXException, URISyntaxException {
         SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        return sf.newSchema(new File(path));
+        URI uri = Thread.currentThread().getContextClassLoader().getResource(path).toURI();
+        return sf.newSchema(new File(uri));
     }
 
 

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings 
+			xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" 
+			xmlns:xjc= "http://java.sun.com/xml/ns/jaxb/xjc" 
+			jaxb:extensionBindingPrefixes="xjc" 
+			jaxb:version="2.0" 
+			>
+
+	<jaxb:globalBindings 
+		generateMixedExtensions="true"
+		generateElementClass="true"
+	/>
+	<!-- onderstaande kan bij globalBindings, maar vind ik lelijk. Dan beginnen sommige classes namelijk met een underScore. -->
+	<!-- underscoreBinding="asCharInWord" --> 
+	
+	<!-- Packaging -->
+
+	<jaxb:bindings schemaLocation="csw/2.0.2/CSW-publication.xsd"  node="/xs:schema">
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.csw"/>
+		</jaxb:schemaBindings>
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="filter/1.1.0/filter.xsd" node="/xs:schema">
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.filter"/>
+		</jaxb:schemaBindings>
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="gml/3.1.1/base/geometryAggregates.xsd" node="/xs:schema">
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.gml"/>
+		</jaxb:schemaBindings>
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="xlink/1.0.0/xlinks.xsd" node="/xs:schema">
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.xlink"/>
+		</jaxb:schemaBindings>
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="ows/1.0.0/owsAll.xsd" node="/xs:schema">
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.ows"/>
+		</jaxb:schemaBindings>
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="csw/2.0.2/rec-dcterms.xsd" node="/xs:schema">
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.terms"/>
+		</jaxb:schemaBindings>
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="csw/2.0.2/rec-dcmes.xsd" node="/xs:schema">
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.elements"/>
+		</jaxb:schemaBindings>
+	</jaxb:bindings>
+	
+	
+	<!-- Underscore renames -->
+	
+	<jaxb:bindings schemaLocation="gml/3.1.1/base/geometryPrimitives.xsd" node="/xs:schema">
+	
+		<jaxb:bindings node="./xs:element[@name='_Solid']">
+			<jaxb:class name="AbstractSolid"/>    
+		</jaxb:bindings>
+		
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="gml/3.1.1/base/geometryBasic0d1d.xsd" node="/xs:schema">
+	
+		<jaxb:bindings node="./xs:element[@name='_Curve']">
+			<jaxb:class name="AbstractCurve"/>    
+		</jaxb:bindings>
+		
+		<jaxb:bindings node="./xs:element[@name='_Geometry']">
+			<jaxb:class name="AbstractGeometry"/>    
+		</jaxb:bindings>
+		
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="gml/3.1.1/base/geometryBasic2d.xsd" node="/xs:schema">
+	
+		<jaxb:bindings node="./xs:element[@name='_Ring']">
+			<jaxb:class name="AbstractRing"/>    
+		</jaxb:bindings>
+		
+		<jaxb:bindings node="./xs:element[@name='_Surface']">
+			<jaxb:class name="AbstractSurface"/>    
+		</jaxb:bindings>
+		
+	</jaxb:bindings>
+	
+</jaxb:bindings>

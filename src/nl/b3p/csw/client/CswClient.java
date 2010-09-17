@@ -7,6 +7,7 @@ package nl.b3p.csw.client;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
@@ -59,25 +60,32 @@ public class CswClient {
 
     protected static Log log = LogFactory.getLog(CswClient.class);
     
-    protected CswServable server;
+    protected CswServable server = null;
+    protected Schema cswSchema = null;
 
-    protected Schema cswSchema;
+    protected String APISO_CSW_XSD_PATH = "nl/b3p/csw/xsds/csw/2.0.2/profiles/apiso/1.0.0/apiso.xsd";
 
+    
     protected CswClient() {
-        this.server = null;
-        this.cswSchema = null;
+        
     }
 
     public CswClient(CswServable server) {
-        this();
-        this.setServer(server);
+        init(server, APISO_CSW_XSD_PATH);
     }
 
-    public CswClient(CswServable server, String cswSchemaPath) throws SAXException {
-        this(server);
-        this.setCswSchema(cswSchemaPath);
+    public CswClient(CswServable server, String cswSchemaPath) {
+        init(server, cswSchemaPath);
     }
-
+    
+    private void init(CswServable server, String cswSchemaPath) {
+        this.server = server;
+        try {
+            this.cswSchema = Util.createSchema(cswSchemaPath);
+        } catch(Exception e) {
+            log.error("Schema validation not possible.", e);
+        }
+    }
 
     public CswServable getServer() {
         return this.server;
@@ -95,7 +103,7 @@ public class CswClient {
         this.cswSchema = schema;
     }
 
-    public void setCswSchema(String validationPath) throws SAXException {
+    public void setCswSchema(String validationPath) throws SAXException, URISyntaxException {
         this.cswSchema = Util.createSchema(validationPath);
     }
 
@@ -111,7 +119,7 @@ public class CswClient {
         if (jaxbElement == null)
             throw new IllegalArgumentException("Provided jaxbElement must be non-null.");
 
-        String marshalledCswXml = MarshallUtil.marshall(jaxbElement, null);
+        String marshalledCswXml = MarshallUtil.marshall(jaxbElement, cswSchema);
 
         // Voor compatibiliteit met het apiso profiel op csw:
         // OpenGIS Catalogue Services Specification 2.0.2 - ISO Metadata Application Profile (1.0.0)
