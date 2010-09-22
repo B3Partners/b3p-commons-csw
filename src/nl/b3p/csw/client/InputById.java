@@ -22,6 +22,10 @@ public class InputById extends Input {
     public InputById(String idString) {
         this.request = CswRequestCreator.createGetRecordByIdRequest(idString);
     }
+    
+    public InputById(String[] idsString) {
+        this.request = CswRequestCreator.createGetRecordByIdRequest(idsString);
+    }
 
     public InputById(JAXBElement<GetRecordByIdType> request) {
         this.request = request;

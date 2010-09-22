@@ -170,7 +170,7 @@ public class OutputBySearch extends Output {
         return services;
     }
 
-    protected Map<URI, List<OnlineResource>> getResourcesMap(Element resultElem, List<Protocol> allowedProtocols) throws UnsupportedOperationException {
+    public static Map<URI, List<OnlineResource>> getResourcesMap(Element resultElem, List<Protocol> allowedProtocols) throws UnsupportedOperationException {
         Map<URI, List<OnlineResource>> services = new HashMap<URI, List<OnlineResource>>();
 
         //int resourceId = 0;
@@ -197,7 +197,7 @@ public class OutputBySearch extends Output {
         return services;
     }
 
-    public String getUUID(Element rootElement) throws UnsupportedOperationException {
+    public static String getUUID(Element rootElement) throws UnsupportedOperationException {
         Iterator<Element> fileIdentifierResult = rootElement.getDescendants(fileIdentifierElementFilter);
         if (!fileIdentifierResult.hasNext()) {
             throw new UnsupportedOperationException("No UUID found for metadata.");
@@ -206,19 +206,19 @@ public class OutputBySearch extends Output {
         return fileIdentifier.getChildTextTrim("CharacterString", gcoNameSpace);
     }
 
-    public String getTitle(Element recordElement) throws JDOMException {
+    public static String getTitle(Element recordElement) throws JDOMException {
         return titleJdomXPath.valueOf(recordElement);
     }
 
-    public List<Text> getKeyWords(Element recordElement) throws JDOMException {
+    public static List<Text> getKeyWords(Element recordElement) throws JDOMException {
         return (List<Text>) keywordsJdomXPath.selectNodes(recordElement);
     }
 
-    public String getIdentificationDate(Element recordElement) throws JDOMException {
+    public static String getIdentificationDate(Element recordElement) throws JDOMException {
         return identificationDateJdomXPath.valueOf(recordElement);
     }
 
-    public String getResponsibleOrganisationName(Element recordElement) throws JDOMException {
+    public static String getResponsibleOrganisationName(Element recordElement) throws JDOMException {
         return responsibleOrganisationNameJdomXPath.valueOf(recordElement);
     }
 
@@ -244,7 +244,7 @@ public class OutputBySearch extends Output {
         return results.getNextRecord();        
     }
 
-    private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {
+    private static OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {
         URI url = null;
         Protocol protocol = null;
         String name = null;
@@ -297,7 +297,7 @@ public class OutputBySearch extends Output {
         return null;
     }
 
-    private Protocol getProtocol(Element protocolElem) {
+    private static Protocol getProtocol(Element protocolElem) {
         Protocol protocol = null;
 
         Element SV_ServiceTypeElem = protocolElem.getChild("SV_ServiceType", gmdNameSpace);

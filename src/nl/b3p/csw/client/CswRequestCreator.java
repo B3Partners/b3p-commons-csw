@@ -341,6 +341,10 @@ public class CswRequestCreator {
     }
 
     public static GetRecordById createGetRecordByIdRequest(String id) {
+        return createGetRecordByIdRequest(new String[]{id});
+    }
+
+    public static GetRecordById createGetRecordByIdRequest(String[] ids) {
         GetRecordByIdType getRecordByIdType = new GetRecordByIdType();
 
         getRecordByIdType.setService("CSW");
@@ -351,9 +355,9 @@ public class CswRequestCreator {
 
         ElementSetNameType elementSetNameType = new ElementSetNameType();
         elementSetNameType.setValue(ElementSetType.FULL);
-        
+
         getRecordByIdType.setElementSetName(new ElementSetName(elementSetNameType));
-        getRecordByIdType.getId().add(id);
+        getRecordByIdType.getId().addAll(Arrays.asList(ids));
         
         return new GetRecordById(getRecordByIdType);
     }
