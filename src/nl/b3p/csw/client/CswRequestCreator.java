@@ -152,7 +152,17 @@ public class CswRequestCreator {
             String elementSetName,
             String outputSchema,
             String resultTypeString) {
-        return createCswRequest(queryString, propertyName, null, null, null, elementSetName, outputSchema, resultTypeString, true);
+        return createCswRequest(queryString, propertyName, elementSetName, outputSchema, resultTypeString, true);
+    }
+
+    public static GetRecords createCswRequest(
+            String queryString,
+            String propertyName,
+            String elementSetName,
+            String outputSchema,
+            String resultTypeString,
+            boolean forceSearchUsingPartialWords) {
+        return createCswRequest(queryString, propertyName, null, null, null, elementSetName, outputSchema, resultTypeString, forceSearchUsingPartialWords);
     }
 
     public static GetRecords createCswRequest(
