@@ -6,6 +6,7 @@
 package nl.b3p.csw.client;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
@@ -42,10 +43,15 @@ public class OutputById extends Output {
     }
 
     public org.w3c.dom.Element getSearchResultW3C() throws JDOMException, JAXBException, OwsException {
-        List<org.w3c.dom.Element> searchResults = getResponse().getValue().getAny();
+        List<org.w3c.dom.Element> searchResults = getSearchResultsW3C();
         if (searchResults.size() != 1)
             throw new JDOMException("Search result not found or multiple search results.");
         return searchResults.get(0);
+    }
+
+    @Override
+    public List<org.w3c.dom.Element> getSearchResultsW3C() throws JDOMException, JAXBException, OwsException {
+        return getResponse().getValue().getAny();
     }
 
     public Element getSearchResult() throws JDOMException, JAXBException, IOException {
