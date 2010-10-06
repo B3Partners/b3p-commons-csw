@@ -5,8 +5,6 @@
 package nl.b3p.csw.client;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -15,9 +13,7 @@ import nl.b3p.csw.jaxb.csw.GetRecordsResponse;
 import nl.b3p.csw.jaxb.csw.GetRecordsResponseType;
 import nl.b3p.csw.jaxb.csw.SearchResultsType;
 import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.input.DOMBuilder;
 
 /**
  *

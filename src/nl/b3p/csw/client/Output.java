@@ -61,6 +61,7 @@ public abstract class Output implements Iterable<Element> {
     protected static org.jdom.xpath.XPath responsibleOrganisationNameJdomXPath;
     protected static org.jdom.xpath.XPath dateStampJdomXPath;
     protected static org.jdom.xpath.XPath abstractJdomXPath;
+    protected static org.jdom.xpath.XPath browseGraphicFileName;
 
     protected static final Protocol defaultProtocol = Protocol.WMS;
     protected static final List<Protocol> defaultAllowedProtocols;
@@ -90,7 +91,10 @@ public abstract class Output implements Iterable<Element> {
             abstractJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()");
             abstractJdomXPath.addNamespace(gmdPrefixNameSpace);
             abstractJdomXPath.addNamespace(gcoPrefixNameSpace);
-            
+            browseGraphicFileName = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:graphicOverview/gmd:MD_BrowseGraphic/gmd:fileName/gco:CharacterString/text()");
+            browseGraphicFileName.addNamespace(gmdPrefixNameSpace);
+            browseGraphicFileName.addNamespace(gcoPrefixNameSpace);
+
         } catch (JDOMException ex) {
             log.error("Error creating xpath expressions");
         }
@@ -299,6 +303,9 @@ public abstract class Output implements Iterable<Element> {
 
     public String getAbstractText(Element recordElement) throws JDOMException{
         return abstractJdomXPath.valueOf(recordElement);
+    }
+    public String getBrowseGraphicFileName(Element recordElement) throws JDOMException{
+        return browseGraphicFileName.valueOf(recordElement);
     }
     private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {
         URI url = null;
