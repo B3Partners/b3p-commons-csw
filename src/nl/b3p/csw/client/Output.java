@@ -59,6 +59,8 @@ public abstract class Output implements Iterable<Element> {
     protected static org.jdom.xpath.XPath keywordsJdomXPath;
     protected static org.jdom.xpath.XPath identificationDateJdomXPath;
     protected static org.jdom.xpath.XPath responsibleOrganisationNameJdomXPath;
+    protected static org.jdom.xpath.XPath dateStampJdomXPath;
+    protected static org.jdom.xpath.XPath abstractJdomXPath;
 
     protected static final Protocol defaultProtocol = Protocol.WMS;
     protected static final List<Protocol> defaultAllowedProtocols;
@@ -82,6 +84,13 @@ public abstract class Output implements Iterable<Element> {
             responsibleOrganisationNameJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:contact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString/text()");
             responsibleOrganisationNameJdomXPath.addNamespace(gmdPrefixNameSpace);
             responsibleOrganisationNameJdomXPath.addNamespace(gcoPrefixNameSpace);
+            dateStampJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:dateStamp/gco:Date/text()");
+            dateStampJdomXPath.addNamespace(gmdPrefixNameSpace);
+            dateStampJdomXPath.addNamespace(gcoPrefixNameSpace);
+            abstractJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()");
+            abstractJdomXPath.addNamespace(gmdPrefixNameSpace);
+            abstractJdomXPath.addNamespace(gcoPrefixNameSpace);
+            
         } catch (JDOMException ex) {
             log.error("Error creating xpath expressions");
         }
@@ -284,6 +293,13 @@ public abstract class Output implements Iterable<Element> {
         return responsibleOrganisationNameJdomXPath.valueOf(recordElement);
     }
 
+    public String getDateStamp(Element recordElement) throws JDOMException{
+        return dateStampJdomXPath.valueOf(recordElement);
+    }
+
+    public String getAbstractText(Element recordElement) throws JDOMException{
+        return abstractJdomXPath.valueOf(recordElement);
+    }
     private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {
         URI url = null;
         Protocol protocol = null;
