@@ -9,7 +9,8 @@ package nl.b3p.csw.util;
  * @author Erik van de Pol
  */
 public enum Protocol {
-    WMS("OGC:WMS-1.1.1-http-get-map");
+    WMS("OGC:WMS-1.1.1-http-get-map"),
+    WFS("OGC:WFS");
 
     private String name;
 
@@ -22,10 +23,12 @@ public enum Protocol {
     }
 
     public static Protocol fromValue(String n) {
-        String lowerCaseInput = n.toLowerCase();
-        for (Protocol p: Protocol.values()) {
-            if (p.name.toLowerCase().equals(lowerCaseInput)) {
-                return p;
+        if (n!=null){
+            String lowerCaseInput = n.toLowerCase();
+            for (Protocol p: Protocol.values()) {
+                if (lowerCaseInput.startsWith(p.name.toLowerCase())) {
+                    return p;
+                }
             }
         }
         throw new IllegalArgumentException(n);
