@@ -252,8 +252,10 @@ public class CswClient {
         return createTransactionResponse(responseDocument);
     }
 
-    public HarvestResponse harvest(HarvestType harvestType) throws IOException, JDOMException, JAXBException {
+    public HarvestResponse harvest(HarvestType harvestType) throws IOException, JDOMException, JAXBException, OwsException {
         Document responseDocument = doRequest(new Harvest(harvestType));
+
+        ExceptionUtil.throwExceptionIfException(responseDocument);
 
         JAXBElement<HarvestResponseType> harvestResponse = (JAXBElement<HarvestResponseType>)
                 MarshallUtil.unMarshall(responseDocument, cswSchema, HarvestResponseType.class);

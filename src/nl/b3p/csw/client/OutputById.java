@@ -12,6 +12,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 import nl.b3p.csw.jaxb.csw.GetRecordByIdResponse;
 import nl.b3p.csw.jaxb.csw.GetRecordByIdResponseType;
+import nl.b3p.csw.util.ExceptionUtil;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -54,13 +55,15 @@ public class OutputById extends Output {
         return getResponse().getValue().getAny();
     }
 
-    public Element getSearchResult() throws JDOMException, JAXBException, IOException {
+    public Element getSearchResult() throws JDOMException, JAXBException, IOException, OwsException {
         // IE can't handle xml outputted by this DOMBuilder and/or created by org.w3c.dom (not sure if it's both or one of them)
         //return new DOMBuilder().build(getSearchResultW3C());
+        ExceptionUtil.throwExceptionIfException(xmlDocument);
+
         return xmlDocument.getRootElement().getChild("MD_Metadata", gmdNameSpace);//ugly like this
     }
 
-    public String getSearchResultString() throws JDOMException, JAXBException, IOException {
+    public String getSearchResultString() throws JDOMException, JAXBException, IOException, OwsException {
         return new XMLOutputter().outputString(getSearchResult());
     }
 
