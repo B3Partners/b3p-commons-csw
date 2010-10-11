@@ -5,7 +5,8 @@
 package nl.b3p.csw.server;
 
 import java.io.IOException;
-import org.jdom.Document;
+import javax.xml.bind.JAXBException;
+import nl.b3p.csw.client.OwsException;
 import org.jdom.JDOMException;
 
 /**
@@ -20,5 +21,5 @@ public interface CswServable<T> {
      * @param cswRequestXml
      * @return The response from the server as a String. The String should contain xml.
      */
-    public T doRequest(String cswRequestXml) throws IOException, JDOMException;
+    public T doRequest(String cswRequestXml) throws IOException, JDOMException, JAXBException, OwsException;
 }

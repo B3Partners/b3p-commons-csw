@@ -6,7 +6,9 @@ package nl.b3p.csw.server;
 
 import java.io.IOException;
 import java.io.InputStream;
+import javax.xml.bind.JAXBException;
 import nl.b3p.csw.client.JDOMResponseListener;
+import nl.b3p.csw.client.OwsException;
 
 import nl.b3p.csw.client.ResponseListenable;
 import org.apache.commons.httpclient.Cookie;
@@ -66,7 +68,7 @@ public class GeoNetworkCswServer implements CswServable<Document> {
         this.responseListenable = responseListenable;
     }
 
-    public Document doRequest(String cswRequestXml) throws IOException, JDOMException {
+    public Document doRequest(String cswRequestXml) throws IOException, JDOMException, JAXBException, OwsException {
         try {
             if (login(loginUrl, cswUser, cswPassword)) {
                 return httpPostCswRequest(cswRequestXml, cswUrl);
@@ -78,7 +80,7 @@ public class GeoNetworkCswServer implements CswServable<Document> {
         }
     }
 
-    protected boolean login(String url, String username, String password) throws IOException, JDOMException {
+    protected boolean login(String url, String username, String password) throws IOException, JDOMException, JAXBException, OwsException {
         if (url == null || username == null || password == null) {
             return false;
         }
@@ -106,11 +108,11 @@ public class GeoNetworkCswServer implements CswServable<Document> {
         return loginSuccess;
     }
 
-    protected Document httpPostCswRequest(String request, String url) throws IOException, JDOMException {
+    protected Document httpPostCswRequest(String request, String url) throws IOException, JDOMException, JAXBException, OwsException {
         return httpPostCswRequest(request, url, null, null);
     }
 
-    protected Document httpPostCswRequest(String request, String url, String username, String password) throws IOException, JDOMException {
+    protected Document httpPostCswRequest(String request, String url, String username, String password) throws IOException, JDOMException, JAXBException, OwsException {
         HttpState initialState = new HttpState();
         if (cookies != null) {
             for (Cookie cookie : cookies) {

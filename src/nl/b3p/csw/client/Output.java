@@ -133,8 +133,6 @@ public abstract class Output implements Iterable<Element> {
     }
 
     protected JAXBElement getResponse() throws JDOMException, JAXBException, OwsException {
-        ExceptionUtil.throwExceptionIfException(xmlDocument);
-        
         return getResponseImpl();
     }
 

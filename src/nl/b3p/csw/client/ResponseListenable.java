@@ -7,6 +7,7 @@ package nl.b3p.csw.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import javax.xml.bind.JAXBException;
 
 /**
  *
@@ -14,5 +15,5 @@ import java.io.InputStream;
  */
 public interface ResponseListenable<T> {
 
-    public T handleResponse(InputStream response) throws IOException;
+    public T handleResponse(InputStream response) throws IOException, JAXBException, OwsException;
 }

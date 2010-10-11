@@ -58,8 +58,6 @@ public class OutputById extends Output {
     public Element getSearchResult() throws JDOMException, JAXBException, IOException, OwsException {
         // IE can't handle xml outputted by this DOMBuilder and/or created by org.w3c.dom (not sure if it's both or one of them)
         //return new DOMBuilder().build(getSearchResultW3C());
-        ExceptionUtil.throwExceptionIfException(xmlDocument);
-
         return xmlDocument.getRootElement().getChild("MD_Metadata", gmdNameSpace);//ugly like this
     }
 

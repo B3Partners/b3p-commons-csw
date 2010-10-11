@@ -7,6 +7,8 @@ package nl.b3p.csw.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import javax.xml.bind.JAXBException;
+import nl.b3p.csw.util.ExceptionUtil;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -18,13 +20,17 @@ import org.jdom.input.SAXBuilder;
 public class JDOMResponseListener implements ResponseListenable<Document> {
     protected final static boolean VALIDATE_CSW_RESPONSE = false;
 
-    public Document handleResponse(InputStream response) throws IOException {
+    public Document handleResponse(InputStream response) throws IOException, JAXBException, OwsException {
         SAXBuilder builder = new SAXBuilder(VALIDATE_CSW_RESPONSE);
         try {
             if (response == null)
                 throw new IOException();
 
-            return builder.build(response);
+            Document responseDocument = builder.build(response);
+
+            ExceptionUtil.throwExceptionIfException(responseDocument);
+
+            return responseDocument;
         } catch (JDOMException ex) {
             throw new IOException("Could not build an xml document from the csw response.\nResponse: " + response, ex);
         } catch (IOException ex) {
