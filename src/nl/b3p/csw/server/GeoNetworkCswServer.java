@@ -69,23 +69,22 @@ public class GeoNetworkCswServer implements CswServable<Document> {
     }
 
     public Document doRequest(String cswRequestXml) throws IOException, JDOMException, JAXBException, OwsException {
-        try {
-            if (login(loginUrl, cswUser, cswPassword)) {
-                return httpPostCswRequest(cswRequestXml, cswUrl);
-            } else {
-                return httpPostCswRequest(cswRequestXml, cswUrl, cswUser, cswPassword);
-            }
-        } catch (IOException e) {
-            throw new IOException("Exception bij ophalen csw: " + cswUrl, e);
+        if (login(loginUrl, cswUser, cswPassword)) {
+            // standard Geonetwork login failed. Exception has probably been thrown in method above.
+            return httpPostCswRequest(cswRequestXml, cswUrl);
+        } else {
+            // generic UsernamePasswordCredentials login try:
+            return httpPostCswRequest(cswRequestXml, cswUrl, cswUser, cswPassword);
         }
     }
 
     protected boolean login(String url, String username, String password) throws IOException, JDOMException, JAXBException, OwsException {
+        // Geonetwork uses a separate login message that must be sent up front.
         if (url == null || username == null || password == null) {
             return false;
         }
 
-        StringBuffer loginMessage = new StringBuffer();
+        StringBuilder loginMessage = new StringBuilder();
         loginMessage.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         loginMessage.append("<request>");
         loginMessage.append("<username>");
@@ -100,7 +99,7 @@ public class GeoNetworkCswServer implements CswServable<Document> {
         try {
             responseMessage = httpPostCswRequest(loginMessage.toString(), url);
         } catch (IOException ex) {
-            log.error("Error logging in.", ex);
+            throw new IOException("Error logging in on csw-server: " + ex.getLocalizedMessage());
         }
 
         boolean loginSuccess = responseMessage != null;
@@ -143,7 +142,7 @@ public class GeoNetworkCswServer implements CswServable<Document> {
         try {
             int statusCode = client.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
-                throw new IOException("HttpStatus: " + statusCode + "; Host: " + url + "; Reason: " + method.getStatusLine().getReasonPhrase());
+                throw new IOException("Url: " + url + ". Reason: " + method.getStatusLine());
             }
 
             cookies = client.getState().getCookies();

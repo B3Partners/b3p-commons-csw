@@ -36,7 +36,6 @@ import nl.b3p.csw.jaxb.filter.Within;
 import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
 import nl.b3p.csw.util.CswClientFactory;
-import nl.b3p.csw.util.ExceptionUtil;
 import nl.b3p.csw.util.MarshallUtil;
 import nl.b3p.csw.util.OnlineResource;
 import nl.b3p.csw.util.Protocol;
@@ -63,7 +62,8 @@ public class CswClient {
     protected CswServable server = null;
     protected Schema cswSchema = null;
 
-    protected String APISO_CSW_XSD_PATH = "nl/b3p/csw/xsds/csw/2.0.2/profiles/apiso/1.0.0/apiso.xsd";
+    //protected String APISO_XSD_PATH = "nl/b3p/csw/xsd/csw/2.0.2/profiles/apiso/1.0.0/apiso.xsd";
+    protected String CSW_XSD_PATH = "nl/b3p/csw/xsd/csw/2.0.2/CSW-publication.xsd";
 
     
     protected CswClient() {
@@ -71,7 +71,7 @@ public class CswClient {
     }
 
     public CswClient(CswServable server) {
-        init(server, APISO_CSW_XSD_PATH);
+        init(server, CSW_XSD_PATH);
     }
 
     public CswClient(CswServable server, String cswSchemaPath) {
@@ -81,9 +81,13 @@ public class CswClient {
     private void init(CswServable server, String cswSchemaPath) {
         this.server = server;
         try {
-            this.cswSchema = Util.createSchema(cswSchemaPath);
+            // schema validation turned off because of strange requirement that
+            // iso 19139 must be loaded.
+            // apparently caused by using "gmd:MD_Metadata" as the value of an attribute.
+            // we seem to be required to use this as the value of the attribute though.
+            this.cswSchema = null;//Util.createSchema(cswSchemaPath);
         } catch(Exception e) {
-            log.error("Schema validation not possible.", e);
+            log.warn("Schema validation not possible.", e);
         }
     }
 
@@ -119,6 +123,7 @@ public class CswClient {
         if (jaxbElement == null)
             throw new IllegalArgumentException("Provided jaxbElement must be non-null.");
 
+        log.debug(MarshallUtil.marshall(jaxbElement, null));
         String marshalledCswXml = MarshallUtil.marshall(jaxbElement, cswSchema);
 
         // Voor compatibiliteit met het apiso profiel op csw:
@@ -264,7 +269,7 @@ public class CswClient {
                 "http://dev.b3p.nl/geonetwork/srv/en/csw",
                 "admin", "***REMOVED***");
 
-        String cswValidationPath  = "c:\\dev_erik\\b3p-commons\\b3p-commons-csw\\jaxb\\xsds\\csw\\2.0.2\\CSW-discovery.xsd";
+        //String cswValidationPath  = "c:\\dev_erik\\b3p-commons\\b3p-commons-csw\\jaxb\\xsds\\csw\\2.0.2\\CSW-discovery.xsd";
 
         //String testWktInput = "POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2, 3 2, 3 3, 2 3,2 2))";
         String testWktInput = "POLYGON ((280 380, 280 200, 60 200, 60 380, 180 220, 280 380),(40 160, 260 160, 240 60, 20 80, 40 160))";
@@ -278,7 +283,7 @@ public class CswClient {
                     new Within(), "anyText", testWktInput);
             System.out.println(MarshallUtil.marshall(getRecords, null));
 
-            CswClient client = new CswClient(server, cswValidationPath);
+            CswClient client = new CswClient(server);//, cswValidationPath);
 
             InputBySearch inputBySearch = new InputBySearch("archeo");
 

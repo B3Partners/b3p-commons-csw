@@ -8,7 +8,6 @@ package nl.b3p.csw.util;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -39,20 +38,17 @@ public class MarshallUtil {
     protected final static String TERMS_PACKAGE =    "nl.b3p.csw.jaxb.terms";
     protected final static String SEPARATOR =        ":";
 
-    protected static String JAXB_PACKAGES;
-    protected static Set<String> JAXB_PACKAGES_LIST;
+    protected final static Set<String> JAXB_PACKAGES_LIST = new HashSet<String>(Arrays.asList(
+        CSW_PACKAGE,
+        ELEMENTS_PACKAGE,
+        FILTER_PACKAGE,
+        GML_PACKAGE,
+        OWS_PACKAGE,
+        TERMS_PACKAGE
+    ));
 
-    static {
-        JAXB_PACKAGES_LIST = new HashSet<String>(Arrays.asList(
-            CSW_PACKAGE,
-            ELEMENTS_PACKAGE,
-            FILTER_PACKAGE,
-            GML_PACKAGE,
-            OWS_PACKAGE,
-            TERMS_PACKAGE
-        ));
-        JAXB_PACKAGES = createPackagesString(JAXB_PACKAGES_LIST);
-    }
+    protected static String JAXB_PACKAGES = createPackagesString(JAXB_PACKAGES_LIST);
+    
 
     public static void addPackage(String packageName) {
         JAXB_PACKAGES_LIST.add(packageName);

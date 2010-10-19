@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import javax.naming.OperationNotSupportedException;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -23,6 +24,8 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.geotools.geometry.jts.WKTReader2;
 import org.geotools.xml.Encoder;
 import org.jdom.JDOMException;
@@ -35,6 +38,7 @@ import org.xml.sax.SAXException;
  * @author Erik van de Pol
  */
 public class Util {
+    protected final static Log log = LogFactory.getLog(Util.class);
 
     protected final static int SRID_RIJKSDRIEHOEKSTELSEL = 28992;
 
@@ -57,7 +61,8 @@ public class Util {
 
     public static Schema createSchema(String path) throws SAXException, URISyntaxException {
         SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        URI uri = Thread.currentThread().getContextClassLoader().getResource(path).toURI();
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        URI uri = cl.getResource(path).toURI();
         return sf.newSchema(new File(uri));
     }
 
