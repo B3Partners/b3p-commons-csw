@@ -54,7 +54,10 @@ public class CswSmartRequestCreator extends CswRequestCreator {
             SortBy sortBy) {
 
         queryString = createQueryString(queryString, false);
-        if (queryString == null) return null;
+        if (queryString == null)
+            return null;
+        if (queryString.trim().equals(defaultWildCard))
+            return createCswRequest(queryString, propertyName, startPosition, maxRecords, sortBy, null, null, null);
 
         propertyName = createPropertyName(propertyName);
 
