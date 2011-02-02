@@ -271,12 +271,23 @@ public abstract class Output implements Iterable<Element> {
     }
 
     public String getUUID(Element rootElement) throws UnsupportedOperationException {
+        return getUUID(rootElement, false);
+    }
+
+    public String getUUID(Element rootElement, boolean sanitize) throws UnsupportedOperationException {
         Iterator<Element> fileIdentifierResult = rootElement.getDescendants(fileIdentifierElementFilter);
         if (!fileIdentifierResult.hasNext()) {
             throw new UnsupportedOperationException("No UUID found for metadata.");
         }
         Element fileIdentifier = fileIdentifierResult.next();
-        return fileIdentifier.getChildTextTrim("CharacterString", gcoNameSpace);
+        String uuid = fileIdentifier.getChildTextTrim("CharacterString", gcoNameSpace);
+        if (!sanitize) {
+            return uuid;
+        } else {
+            uuid = uuid.startsWith("{") ? uuid.substring(1) : uuid;
+            uuid = uuid.endsWith("}") ? uuid.substring(0, uuid.length() - 1) : uuid;
+            return uuid;
+        }
     }
 
     public String getTitle(Element recordElement) throws JDOMException {
@@ -302,9 +313,11 @@ public abstract class Output implements Iterable<Element> {
     public String getAbstractText(Element recordElement) throws JDOMException{
         return abstractJdomXPath.valueOf(recordElement);
     }
+
     public String getBrowseGraphicFileName(Element recordElement) throws JDOMException{
         return browseGraphicFileName.valueOf(recordElement);
     }
+
     private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {
         URI url = null;
         Protocol protocol = null;
