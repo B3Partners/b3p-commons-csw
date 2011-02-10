@@ -36,8 +36,12 @@ public class ExceptionUtil {
         try {
             JAXBElement<ExceptionReport> jaxbElement =
                     MarshallUtil.unMarshall(document, null, ExceptionReport.class);
-
-            return new OwsException(jaxbElement.getValue());
+            if (jaxbElement==null){
+                ExceptionReport er=null;
+                return new OwsException(er);
+            }else{
+                return new OwsException(jaxbElement.getValue());
+            }
         } catch(Exception e) {
             log.debug(e);
             return new OwsException(e);
