@@ -81,7 +81,7 @@ public class CswRequestCreator {
 
     public static String createPropertyName(String propertyName) {
         if (propertyName == null || propertyName.trim().length() == 0) {
-            propertyName = "anyText";
+            propertyName = "AnyText"; // Hoofdletters verplicht voor Deegree (3). Niet voor bv Geonetwork (2.6).
         }
         return propertyName;
     }
