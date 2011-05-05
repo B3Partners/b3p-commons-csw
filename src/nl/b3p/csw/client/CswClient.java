@@ -194,7 +194,7 @@ public class CswClient {
         return createTransactionResponse(responseDocument);
     }
 
-    protected DeleteType createDeleteType(String uuid) {
+    public DeleteType createDeleteType(String uuid) {
         DeleteType deleteType = new DeleteType();
 
         deleteType.setTypeName("gmd:MD_Metadata");
@@ -215,7 +215,7 @@ public class CswClient {
         return deleteType;
     }
 
-    protected DeleteType createDeleteType(String[] uuids) {
+    public DeleteType createDeleteType(String[] uuids) {
         if (uuids.length==1){
             return createDeleteType(uuids[0]);
         }
