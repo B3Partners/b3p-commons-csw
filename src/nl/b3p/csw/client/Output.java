@@ -60,6 +60,7 @@ public abstract class Output implements Iterable<Element> {
     protected static org.jdom.xpath.XPath identificationDateJdomXPath;
     protected static org.jdom.xpath.XPath responsibleOrganisationNameJdomXPath;
     protected static org.jdom.xpath.XPath dateStampJdomXPath;
+    protected static org.jdom.xpath.XPath dateTimeStampJdomXPath;
     protected static org.jdom.xpath.XPath abstractJdomXPath;
     protected static org.jdom.xpath.XPath browseGraphicFileName;
 
@@ -79,6 +80,7 @@ public abstract class Output implements Iterable<Element> {
             keywordsJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString/text()");
             keywordsJdomXPath.addNamespace(gmdPrefixNameSpace);
             keywordsJdomXPath.addNamespace(gcoPrefixNameSpace);
+            //gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:thesaurusName/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date/gco:DateTime
             identificationDateJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date/gco:Date/text()");
             identificationDateJdomXPath.addNamespace(gmdPrefixNameSpace);
             identificationDateJdomXPath.addNamespace(gcoPrefixNameSpace);
@@ -88,6 +90,9 @@ public abstract class Output implements Iterable<Element> {
             dateStampJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:dateStamp/gco:Date/text()");
             dateStampJdomXPath.addNamespace(gmdPrefixNameSpace);
             dateStampJdomXPath.addNamespace(gcoPrefixNameSpace);
+            dateTimeStampJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:dateStamp/gco:DateTime/text()");
+            dateTimeStampJdomXPath.addNamespace(gmdPrefixNameSpace);
+            dateTimeStampJdomXPath.addNamespace(gcoPrefixNameSpace);
             abstractJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()");
             abstractJdomXPath.addNamespace(gmdPrefixNameSpace);
             abstractJdomXPath.addNamespace(gcoPrefixNameSpace);
@@ -305,9 +310,16 @@ public abstract class Output implements Iterable<Element> {
     public String getResponsibleOrganisationName(Element recordElement) throws JDOMException {
         return responsibleOrganisationNameJdomXPath.valueOf(recordElement);
     }
-
+    
+    /**
+     * First try to get the Date object if empty or ommitted try to get the DateTime object. 
+     */     
     public String getDateStamp(Element recordElement) throws JDOMException{
-        return dateStampJdomXPath.valueOf(recordElement);
+        String s=dateStampJdomXPath.valueOf(recordElement);
+        if (s==null || s.length()==0){
+            s=dateTimeStampJdomXPath.valueOf(recordElement);
+        }
+        return s;
     }
 
     public String getAbstractText(Element recordElement) throws JDOMException{
