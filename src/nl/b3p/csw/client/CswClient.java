@@ -5,9 +5,12 @@
 package nl.b3p.csw.client;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
@@ -27,12 +30,7 @@ import nl.b3p.csw.jaxb.csw.TransactionResponse;
 import nl.b3p.csw.jaxb.csw.TransactionResponseType;
 import nl.b3p.csw.jaxb.csw.TransactionType;
 import nl.b3p.csw.jaxb.csw.UpdateType;
-import nl.b3p.csw.jaxb.filter.BinaryLogicOpType;
-import nl.b3p.csw.jaxb.filter.Filter;
-import nl.b3p.csw.jaxb.filter.FilterType;
-import nl.b3p.csw.jaxb.filter.Or;
-import nl.b3p.csw.jaxb.filter.PropertyIsEqualTo;
-import nl.b3p.csw.jaxb.filter.Within;
+import nl.b3p.csw.jaxb.filter.*;
 import nl.b3p.csw.server.CswServable;
 import nl.b3p.csw.server.GeoNetworkCswServer;
 import nl.b3p.csw.util.CswClientFactory;
@@ -180,6 +178,46 @@ public class CswClient {
         return createTransactionResponse(responseDocument);
     }
 
+    public TransactionResponse update(String fileIdentifier, org.w3c.dom.Document document) throws Exception {
+        UpdateType update = new UpdateType();
+        
+        update.setHandle("update_" + fileIdentifier);
+        update.setAny(document.getDocumentElement());
+        
+        QueryConstraintType qct = new QueryConstraintType();
+        qct.setVersion("1.0.0");
+        
+        // Fails on (old?) GeoNetwork with:
+        // Error transforming Filter to XMLnet.sf.saxon.trans.XPathException: 
+        // The SAX2 parser org.geotools.xml.transform.TransformerBase$XMLReaderSupport 
+        // does not support setting the 'namespaces' feature to true
+        //qct.setCqlText("apiso:identifier = '" + fileIdentifier + "'");
+                
+        // Fucking shit having to use generated Java code from XML 
+        // schema without thinking
+        // WHILE GEOTOOLS ALREADY HAS FILTER SUPPORT!
+        
+        FilterType ft = new FilterType();
+        
+        List<JAXBElement<? extends ExpressionType>> operators = new ArrayList();
+        
+        List<Serializable> l = new ArrayList();
+        l.add("apiso:identifier");
+        operators.add(new PropertyName(new PropertyNameType(l)));
+        
+        l = new ArrayList();
+        l.add(fileIdentifier);
+        operators.add(new Literal(new LiteralType(l)));
+
+        PropertyIsEqualTo eq = new PropertyIsEqualTo(new BinaryComparisonOpType(operators, null));
+        ft.setComparisonOps(eq);
+        qct.setFilter(new Filter(ft));
+
+        update.setConstraint(new Constraint(qct));
+        
+        return update(update);
+    }
+    
     // TODO: update nog niet ok
     public TransactionResponse update(Document document) throws IOException, JDOMException, JAXBException, OwsException {
         UpdateType updateType = new UpdateType();
