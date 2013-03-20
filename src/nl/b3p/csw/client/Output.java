@@ -19,9 +19,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-import nl.b3p.csw.util.ExceptionUtil;
 import nl.b3p.csw.util.MarshallUtil;
 import nl.b3p.csw.util.OnlineResource;
+import nl.b3p.csw.util.OperatesOn;
 import nl.b3p.csw.util.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,6 +50,8 @@ public abstract class Output implements Iterable<Element> {
     protected static final Namespace cswPrefixNameSpace = Namespace.getNamespace("csw","http://www.opengis.net/cat/csw/2.0.2");
     protected static final Namespace gmdPrefixNameSpace = Namespace.getNamespace("gmd","http://www.isotc211.org/2005/gmd");
     protected static final Namespace gcoPrefixNameSpace = Namespace.getNamespace("gco","http://www.isotc211.org/2005/gco");
+    protected static final Namespace srvPrefixNameSpace = Namespace.getNamespace("srv","http://www.isotc211.org/2005/srv");
+    
     // TODO: deze staat hard op ISO 19139. Andere standaarden toevoegen?
     protected static final ElementFilter resultElementFilter = new ElementFilter("MD_Metadata", gmdNameSpace);
     protected static final ElementFilter resourceElementFilter = new ElementFilter("CI_OnlineResource", gmdNameSpace);
@@ -63,8 +65,11 @@ public abstract class Output implements Iterable<Element> {
     protected static org.jdom.xpath.XPath dateTimeStampJdomXPath;
     protected static org.jdom.xpath.XPath abstractJdomXPath;
     protected static org.jdom.xpath.XPath browseGraphicFileName;
-    protected static org.jdom.xpath.XPath metadataStandardName;    
-
+    protected static org.jdom.xpath.XPath metadataStandardNameXPath;  
+    
+    //for MD for services
+    protected static org.jdom.xpath.XPath operatesOnXpath;  
+    
     protected static final Protocol defaultProtocol = Protocol.WMS;
     protected static final List<Protocol> defaultAllowedProtocols;
 
@@ -106,9 +111,14 @@ public abstract class Output implements Iterable<Element> {
             browseGraphicFileName = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:graphicOverview/gmd:MD_BrowseGraphic/gmd:fileName/gco:CharacterString/text()");
             browseGraphicFileName.addNamespace(gmdPrefixNameSpace);
             browseGraphicFileName.addNamespace(gcoPrefixNameSpace);
-            metadataStandardName = org.jdom.xpath.XPath.newInstance("gmd:metadataStandardName/gco:CharacterString/text()");
-            metadataStandardName.addNamespace(gmdPrefixNameSpace);
-            metadataStandardName.addNamespace(gcoPrefixNameSpace);
+            metadataStandardNameXPath = org.jdom.xpath.XPath.newInstance("gmd:metadataStandardName/gco:CharacterString/text()");
+            metadataStandardNameXPath.addNamespace(gmdPrefixNameSpace);
+            metadataStandardNameXPath.addNamespace(gcoPrefixNameSpace);
+            //metadata for services
+            operatesOnXpath = org.jdom.xpath.XPath.newInstance("/gmd:MD_Metadata/gmd:identificationInfo/srv:SV_ServiceIdentification/srv:operatesOn");
+            operatesOnXpath.addNamespace(gmdPrefixNameSpace);
+            operatesOnXpath.addNamespace(srvPrefixNameSpace);
+            
             
         } catch (JDOMException ex) {
             log.error("Error creating xpath expressions");
@@ -346,7 +356,7 @@ public abstract class Output implements Iterable<Element> {
      * @throws JDOMException 
      */
     public String getMetadataStandardName(Element recordElement) throws JDOMException{
-        return metadataStandardName.valueOf(recordElement);
+        return metadataStandardNameXPath.valueOf(recordElement);
     }
     /**
      * Returns true if given metadata element describes a service.
@@ -354,7 +364,7 @@ public abstract class Output implements Iterable<Element> {
      * @return true if metadata describes services
      */
     public boolean isMetadataForService(Element recordElement) throws JDOMException{
-        return ISO_19119.equalsIgnoreCase(metadataStandardName.valueOf(recordElement));
+        return ISO_19119.equalsIgnoreCase(metadataStandardNameXPath.valueOf(recordElement));
     }
     private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {
         URI url = null;
@@ -434,5 +444,14 @@ public abstract class Output implements Iterable<Element> {
             protocol = defaultProtocol;
         }
         return protocol;
+    }
+    
+    public List<OperatesOn> getOperatesOn(Element recordElement)throws JDOMException{
+        List<OperatesOn> returnList = new ArrayList<OperatesOn>();
+        List<Element> elements=operatesOnXpath.selectNodes(recordElement);
+        for (Element el : elements){
+            returnList.add(new OperatesOn(el));
+        }
+        return returnList;
     }
 }
