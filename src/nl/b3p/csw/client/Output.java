@@ -63,25 +63,32 @@ public abstract class Output implements Iterable<Element> {
     protected static org.jdom.xpath.XPath dateTimeStampJdomXPath;
     protected static org.jdom.xpath.XPath abstractJdomXPath;
     protected static org.jdom.xpath.XPath browseGraphicFileName;
+    protected static org.jdom.xpath.XPath metadataStandardName;    
 
     protected static final Protocol defaultProtocol = Protocol.WMS;
     protected static final List<Protocol> defaultAllowedProtocols;
 
     protected static final String exceptionName = "ExceptionReport";
+    
+    //metadata for datasets
+    public static final String ISO_19115 = "ISO 19115";
+    //metadata for services
+    public static final String ISO_19119 = "ISO 19119";
+    
 
     static {
         defaultAllowedProtocols = new ArrayList<Protocol>();
         defaultAllowedProtocols.add(defaultProtocol);
 
         try {
-            titleJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString/text()");
+            titleJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString/text()");
             titleJdomXPath.addNamespace(gmdPrefixNameSpace);
             titleJdomXPath.addNamespace(gcoPrefixNameSpace);
-            keywordsJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString/text()");
+            keywordsJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString/text()");
             keywordsJdomXPath.addNamespace(gmdPrefixNameSpace);
             keywordsJdomXPath.addNamespace(gcoPrefixNameSpace);
             //gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:thesaurusName/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date/gco:DateTime
-            identificationDateJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date/gco:Date/text()");
+            identificationDateJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:citation/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date/gco:Date/text()");
             identificationDateJdomXPath.addNamespace(gmdPrefixNameSpace);
             identificationDateJdomXPath.addNamespace(gcoPrefixNameSpace);
             responsibleOrganisationNameJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:contact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString/text()");
@@ -93,13 +100,16 @@ public abstract class Output implements Iterable<Element> {
             dateTimeStampJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:dateStamp/gco:DateTime/text()");
             dateTimeStampJdomXPath.addNamespace(gmdPrefixNameSpace);
             dateTimeStampJdomXPath.addNamespace(gcoPrefixNameSpace);
-            abstractJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()");
+            abstractJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:abstract/gco:CharacterString/text()");
             abstractJdomXPath.addNamespace(gmdPrefixNameSpace);
             abstractJdomXPath.addNamespace(gcoPrefixNameSpace);
-            browseGraphicFileName = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:graphicOverview/gmd:MD_BrowseGraphic/gmd:fileName/gco:CharacterString/text()");
+            browseGraphicFileName = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:graphicOverview/gmd:MD_BrowseGraphic/gmd:fileName/gco:CharacterString/text()");
             browseGraphicFileName.addNamespace(gmdPrefixNameSpace);
             browseGraphicFileName.addNamespace(gcoPrefixNameSpace);
-
+            metadataStandardName = org.jdom.xpath.XPath.newInstance("gmd:metadataStandardName/gco:CharacterString/text()");
+            metadataStandardName.addNamespace(gmdPrefixNameSpace);
+            metadataStandardName.addNamespace(gcoPrefixNameSpace);
+            
         } catch (JDOMException ex) {
             log.error("Error creating xpath expressions");
         }
@@ -329,7 +339,23 @@ public abstract class Output implements Iterable<Element> {
     public String getBrowseGraphicFileName(Element recordElement) throws JDOMException{
         return browseGraphicFileName.valueOf(recordElement);
     }
-
+    /**
+     * Returns the metadata standard name.
+     * @param recordElement
+     * @return The ISO verison of the metadata standard
+     * @throws JDOMException 
+     */
+    public String getMetadataStandardName(Element recordElement) throws JDOMException{
+        return metadataStandardName.valueOf(recordElement);
+    }
+    /**
+     * Returns true if given metadata element describes a service.
+     * @param recordElement
+     * @return true if metadata describes services
+     */
+    public boolean isMetadataForService(Element recordElement) throws JDOMException{
+        return ISO_19119.equalsIgnoreCase(metadataStandardName.valueOf(recordElement));
+    }
     private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {
         URI url = null;
         Protocol protocol = null;
