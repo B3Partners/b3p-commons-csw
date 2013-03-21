@@ -115,7 +115,7 @@ public abstract class Output implements Iterable<Element> {
             metadataStandardNameXPath.addNamespace(gmdPrefixNameSpace);
             metadataStandardNameXPath.addNamespace(gcoPrefixNameSpace);
             //metadata for services
-            operatesOnXpath = org.jdom.xpath.XPath.newInstance("/gmd:MD_Metadata/gmd:identificationInfo/srv:SV_ServiceIdentification/srv:operatesOn");
+            operatesOnXpath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/srv:SV_ServiceIdentification/srv:operatesOn");                                                                
             operatesOnXpath.addNamespace(gmdPrefixNameSpace);
             operatesOnXpath.addNamespace(srvPrefixNameSpace);
             
