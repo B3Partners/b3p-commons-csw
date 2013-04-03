@@ -62,7 +62,12 @@ public class OutputById extends Output {
     }
 
     public String getSearchResultString() throws JDOMException, JAXBException, IOException, OwsException {
-        return new XMLOutputter().outputString(getSearchResult());
+        Element el = getSearchResult();
+        if (el!=null){
+            return new XMLOutputter().outputString(el);
+        }else{
+            return null;
+        }
     }
 
 }
