@@ -6,16 +6,12 @@
 package nl.b3p.csw.util;
 
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
@@ -38,26 +34,13 @@ public class MarshallUtil {
     protected final static String TERMS_PACKAGE =    "nl.b3p.csw.jaxb.terms";
     protected final static String SEPARATOR =        ":";
 
-    protected final static Set<String> JAXB_PACKAGES_LIST = new HashSet<String>(Arrays.asList(
-        CSW_PACKAGE,
-        ELEMENTS_PACKAGE,
-        FILTER_PACKAGE,
-        GML_PACKAGE,
-        OWS_PACKAGE,
-        TERMS_PACKAGE
-    ));
-
-    protected static String JAXB_PACKAGES = createPackagesString(JAXB_PACKAGES_LIST);
-    
-
-    public static void addPackage(String packageName) {
-        JAXB_PACKAGES_LIST.add(packageName);
-        JAXB_PACKAGES = createPackagesString(JAXB_PACKAGES_LIST);
-    }
-
-    private static String createPackagesString(Set<String> packagesList) {
-        return StringUtils.join(packagesList, SEPARATOR);
-    }
+    protected final static String JAXB_PACKAGES = 
+        CSW_PACKAGE + SEPARATOR +
+        ELEMENTS_PACKAGE + SEPARATOR +
+        FILTER_PACKAGE + SEPARATOR +
+        GML_PACKAGE + SEPARATOR +
+        OWS_PACKAGE + SEPARATOR +
+        TERMS_PACKAGE;
 
     public static String marshall(JAXBElement input, Schema schema) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(JAXB_PACKAGES);
