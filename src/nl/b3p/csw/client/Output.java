@@ -369,6 +369,7 @@ public abstract class Output implements Iterable<Element> {
     private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {
         URI url = null;
         Protocol protocol = null;
+        String version = null;
         String name = null;
         String desc = null;
 
@@ -382,7 +383,9 @@ public abstract class Output implements Iterable<Element> {
             }
             Element protocolElem = resourceElem.getChild("protocol", gmdNameSpace);
             if (protocolElem != null) {
-                protocol = getProtocol(protocolElem);
+                String completeProtocolString = this.getProtocolString(protocolElem);
+                protocol = getProtocol(completeProtocolString);
+                version = getVersion(protocol,completeProtocolString);
             }
             Element nameElem = resourceElem.getChild("name", gmdNameSpace);
             if (nameElem != null) {
@@ -407,6 +410,7 @@ public abstract class Output implements Iterable<Element> {
                 onlineResource.setName(name);
                 onlineResource.setDescription(desc);
                 onlineResource.setProtocol(protocol);
+                onlineResource.setVersion(version);
                 //log.debug("md:\n" + new XMLOutputter().outputString(metadataElement));
                 onlineResource.setMetadata(metadataElement);
                 //log.debug(onlineResource);
@@ -418,32 +422,52 @@ public abstract class Output implements Iterable<Element> {
         }
         return null;
     }
-
-    private Protocol getProtocol(Element protocolElem) {
-        Protocol protocol = null;
-
+    
+    private String getProtocolString(Element protocolElem){
+        String protocolText=null;
+        
         Element SV_ServiceTypeElem = protocolElem.getChild("SV_ServiceType", gmdNameSpace);
         // onderstaand element is voor compatibiliteit. Is eigenlijk niet correct.
         Element protocolStringElem = protocolElem.getChild("CharacterString", gcoNameSpace);
 
         if (SV_ServiceTypeElem != null) {
-            String protocolText = SV_ServiceTypeElem.getTextTrim();
-            try {
-                protocol = Protocol.fromValue(protocolText);
-            } catch (Exception e) {
-            }
+            protocolText = SV_ServiceTypeElem.getTextTrim();            
+            
         } else if (protocolStringElem != null) {
-            String protocolText = protocolStringElem.getTextTrim();
+            protocolText = protocolStringElem.getTextTrim();            
+        }
+        return protocolText;
+    }
+
+    private Protocol getProtocol(String protocolText) {
+        Protocol protocol = null;
+        if (protocolText != null) {            
             try {
                 protocol = Protocol.fromValue(protocolText);
             } catch (Exception e) {
             }
         }
-
         if (protocol == null) {
             protocol = defaultProtocol;
         }
         return protocol;
+    }
+    
+    private String getVersion(Protocol protocol, String protocolString){
+        String version = null;
+        if (protocolString!=null){            
+            String extraString = protocolString.substring(protocol.getName().length());
+            if (extraString.length()>1){
+                //Is there a - that indicates more then only the version
+                if (extraString.indexOf("-",1)>0){
+                    version = extraString.substring(1,extraString.indexOf("-",1));
+                }else{
+                    version = extraString.substring(1);
+                }
+            }
+        }
+        return version;
+                
     }
     
     public List<OperatesOn> getOperatesOn(Element recordElement)throws JDOMException{

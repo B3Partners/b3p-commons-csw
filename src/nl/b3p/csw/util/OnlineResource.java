@@ -25,6 +25,7 @@ public class OnlineResource {
     private Protocol protocol = null;
     private String name = "";
     private String description = "";
+    private String version =null;
     private Element metadata = null;
     private String metadataDescription = "";
 
@@ -74,6 +75,14 @@ public class OnlineResource {
     public String getMetadataDescription() {
         return metadataDescription;
     }
+    
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public void setMetadataDescription(String xslDocPath) throws Exception {
         if (metadata == null)
@@ -112,5 +121,4 @@ public class OnlineResource {
     public String toString() {
         return url + "; " + name + "; " + protocol;
     }
-    
 }
