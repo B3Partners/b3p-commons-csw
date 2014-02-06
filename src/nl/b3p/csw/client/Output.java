@@ -401,7 +401,8 @@ public abstract class Output implements Iterable<Element> {
                     desc = descStringElem.getTextTrim();
                 }
             }
-            if (url != null && name != null
+            //if WMS/WFS and name (layer) is null dont add.. Not usable
+            if (url != null && ((!Protocol.WMS.equals(protocol) && !Protocol.WFS.equals(protocol)) || name != null)
                     && (allowedProtocols.isEmpty() || allowedProtocols.contains(protocol))) {
 
                 OnlineResource onlineResource = new OnlineResource();
