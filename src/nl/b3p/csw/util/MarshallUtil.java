@@ -34,13 +34,17 @@ public class MarshallUtil {
     protected final static String TERMS_PACKAGE =    "nl.b3p.csw.jaxb.terms";
     protected final static String SEPARATOR =        ":";
 
-    protected final static String JAXB_PACKAGES = 
+    protected static String JAXB_PACKAGES = 
         CSW_PACKAGE + SEPARATOR +
         ELEMENTS_PACKAGE + SEPARATOR +
         FILTER_PACKAGE + SEPARATOR +
         GML_PACKAGE + SEPARATOR +
         OWS_PACKAGE + SEPARATOR +
         TERMS_PACKAGE;
+   
+    public static void addPackage(String packageName) {
+        JAXB_PACKAGES += SEPARATOR + packageName;
+    }
 
     public static String marshall(JAXBElement input, Schema schema) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(JAXB_PACKAGES);
