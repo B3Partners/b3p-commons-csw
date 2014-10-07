@@ -5,24 +5,43 @@
 package nl.b3p.csw.server;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.ProxySelector;
+import java.net.URL;
+import java.util.Arrays;
 import javax.xml.bind.JAXBException;
+import nl.b3p.commons.services.B3PCredentials;
+import nl.b3p.commons.services.HttpClientConfigured;
 import nl.b3p.csw.client.JDOMResponseListener;
 import nl.b3p.csw.client.OwsException;
-
 import nl.b3p.csw.client.ResponseListenable;
-import org.apache.commons.httpclient.Cookie;
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.cookie.CookiePolicy;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.AuthSchemes;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 
@@ -33,10 +52,8 @@ import org.jdom.JDOMException;
 public class GeoNetworkCswServer implements CswServable<Document> {
 
     protected static Log log;
-    protected static final String host = AuthScope.ANY_HOST;
-    protected static final int port = AuthScope.ANY_PORT;
     protected static final int RTIMEOUT = 20000;
-    protected static Cookie[] cookies = null;
+    protected CookieStore cookieStore = null;
     protected String cswUrl;
     protected String loginUrl;
     protected String cswUser;
@@ -112,54 +129,50 @@ public class GeoNetworkCswServer implements CswServable<Document> {
     }
 
     protected Document httpPostCswRequest(String request, String url, String username, String password) throws IOException, JDOMException, JAXBException, OwsException {
-        HttpState initialState = new HttpState();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                initialState.addCookie(cookie);
-            }
+        B3PCredentials credentials = new B3PCredentials();
+        credentials.setUserName(username);
+        credentials.setPassword(password);
+        credentials.setUrl(url);
+        credentials.setPreemptive(true);
+        
+        HttpClientConfigured client = new HttpClientConfigured(credentials, RTIMEOUT);
+        HttpClientContext context = client.getContext();
+
+        // cookies
+        if (cookieStore != null) {
+            context.setCookieStore(cookieStore);
         }
+        
+        HttpPost post = new HttpPost(url);
+        post.addHeader("Accept", "text/xml");
+        post.setEntity(new StringEntity(request, ContentType.TEXT_XML));
 
-        HttpClient client = new HttpClient();
-        client.getHttpConnectionManager().getParams().setConnectionTimeout(RTIMEOUT);
-        client.getParams().setCookiePolicy(CookiePolicy.RFC_2109);
-        //client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+        HttpResponse response = client.execute(post);
 
-        if (username != null && password != null) {
-            client.getParams().setAuthenticationPreemptive(true);
-            Credentials defaultcreds = new UsernamePasswordCredentials(username, password);
-            AuthScope authScope = new AuthScope(host, port);
-            initialState.setCredentials(authScope, defaultcreds);
-        }
-
-        client.setState(initialState);
-
-        // Create a method instance.
-        PostMethod method = new PostMethod(url);
-        method.setRequestHeader("Accept", "text/xml");
-        method.setRequestEntity(new StringRequestEntity(request, "text/xml", "UTF-8"));
-
-        InputStream responseStream = null;
         try {
-            int statusCode = client.executeMethod(method);
-            if (statusCode != HttpStatus.SC_OK) {
-                throw new IOException("Url: " + url + ". Reason: " + method.getStatusLine());
+
+            int statusCode = response.getStatusLine().getStatusCode();
+            HttpEntity entity = response.getEntity();
+            
+            if (statusCode != 200) {
+                throw new IOException("Url: " + url + ". Reason: " + response.getStatusLine());
             }
 
-            cookies = client.getState().getCookies();
-
+            cookieStore = context.getCookieStore();
             // Display the cookies
             log.debug("Present cookies: ");
-            for (Cookie cookie : cookies) {
-                log.debug(" - " + cookie.toExternalForm());
+            if (cookieStore != null) {
+                for (Cookie cookie : cookieStore.getCookies()) {
+                    log.debug(" - " + cookie.toString());
+                }
             }
-
-            responseStream = method.getResponseBodyAsStream();
-
-            return responseListenable.handleResponse(responseStream);
+            
+            return responseListenable.handleResponse(entity.getContent());
+            
         } finally {
-            // Release the connection.
-            method.releaseConnection();
-            //return responseStream;
+            if (response instanceof CloseableHttpResponse) {
+                ((CloseableHttpResponse)response).close();
+            }
         }
 
     }
