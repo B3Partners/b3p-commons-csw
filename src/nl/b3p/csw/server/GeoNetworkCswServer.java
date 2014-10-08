@@ -114,8 +114,8 @@ public class GeoNetworkCswServer implements CswServable<Document> {
         credentials.setUrl(url);
         credentials.setPreemptive(true);
         
-        HttpClientConfigured client = new HttpClientConfigured(credentials);
-        HttpClientContext context = client.getContext();
+        HttpClientConfigured hcc = new HttpClientConfigured(credentials);
+        HttpClientContext context = hcc.getContext();
 
         // cookies
         if (cookieStore != null) {
@@ -126,7 +126,7 @@ public class GeoNetworkCswServer implements CswServable<Document> {
         post.addHeader("Accept", "text/xml");
         post.setEntity(new StringEntity(request, ContentType.TEXT_XML));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = hcc.execute(post);
 
         try {
 
@@ -149,9 +149,8 @@ public class GeoNetworkCswServer implements CswServable<Document> {
             return responseListenable.handleResponse(entity.getContent());
             
         } finally {
-            if (response instanceof CloseableHttpResponse) {
-                ((CloseableHttpResponse)response).close();
-            }
+            hcc.close(response);
+            hcc.close();
         }
 
     }
