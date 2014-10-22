@@ -8,7 +8,7 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 
 /**
- *
+ *  <srv:operatesOn xmlns:xlink="http://www.w3.org/1999/xlink" uuidref="" xlink:href="" />
  * @author Roy Braam
  */
 public class OperatesOn {

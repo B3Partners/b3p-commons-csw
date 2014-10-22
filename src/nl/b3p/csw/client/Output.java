@@ -23,6 +23,7 @@ import nl.b3p.csw.util.MarshallUtil;
 import nl.b3p.csw.util.OnlineResource;
 import nl.b3p.csw.util.OperatesOn;
 import nl.b3p.csw.util.Protocol;
+import nl.b3p.csw.util.UrlDataset;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
@@ -66,6 +67,7 @@ public abstract class Output implements Iterable<Element> {
     protected static org.jdom.xpath.XPath abstractJdomXPath;
     protected static org.jdom.xpath.XPath browseGraphicFileName;
     protected static org.jdom.xpath.XPath metadataStandardNameXPath;  
+    protected static org.jdom.xpath.XPath urlDatasetNameXPath;  
     
     //for MD for services
     protected static org.jdom.xpath.XPath operatesOnXpath;  
@@ -114,6 +116,9 @@ public abstract class Output implements Iterable<Element> {
             metadataStandardNameXPath = org.jdom.xpath.XPath.newInstance("gmd:metadataStandardName/gco:CharacterString/text()");
             metadataStandardNameXPath.addNamespace(gmdPrefixNameSpace);
             metadataStandardNameXPath.addNamespace(gcoPrefixNameSpace);
+            urlDatasetNameXPath = org.jdom.xpath.XPath.newInstance("gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource");
+            urlDatasetNameXPath.addNamespace(gmdPrefixNameSpace);
+            urlDatasetNameXPath.addNamespace(gcoPrefixNameSpace);
             //metadata for services
             operatesOnXpath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/srv:SV_ServiceIdentification/srv:operatesOn");                                                                
             operatesOnXpath.addNamespace(gmdPrefixNameSpace);
@@ -378,6 +383,7 @@ public abstract class Output implements Iterable<Element> {
     public boolean isMetadataForService(Element recordElement) throws JDOMException{
         return ISO_19119.equalsIgnoreCase(metadataStandardNameXPath.valueOf(recordElement));
     }
+    
     private OnlineResource getResource(Element resourceElem, List<Protocol> allowedProtocols, Element metadataElement) {
         URI url = null;
         Protocol protocol = null;
@@ -493,14 +499,49 @@ public abstract class Output implements Iterable<Element> {
         return returnList;
     }
     
-    public List<String> getOperatesOnAsStringList(Element recordElement) throws JDOMException {
+    public List<Map<String,String>> getOperatesOnAsStringList(Element recordElement) throws JDOMException {
         List<OperatesOn> ool = operatesOnXpath.selectNodes(recordElement);
         if (ool==null || ool.isEmpty()) {
             return null;
         }
-        List<String> sl = new ArrayList<String>();
+        List<Map<String,String>> sl = new ArrayList<Map<String,String>>();
         for (OperatesOn oo : ool) {
-            sl.add(oo.getUuidref() + " -> " + oo.getHref());
+            Map<String,String> oom = new HashMap<String,String>();
+            oom.put("uuidref", oo.getUuidref());
+            oom.put("href", oo.getHref());
+            sl.add(oom);
+        }
+        return sl;
+    }
+    
+    public List<UrlDataset> getUrlDatasets(Element recordElement)throws JDOMException{
+        List<UrlDataset> returnList = new ArrayList<UrlDataset>();
+        List<Element> elements=urlDatasetNameXPath.selectNodes(recordElement);
+        for (Element el : elements){
+            returnList.add(new UrlDataset(el));
+        }
+        return returnList;
+    }
+    
+    public List<Map<String,String>> getUrlDatasetsAsStringList(Element recordElement) throws JDOMException {
+        List<UrlDataset> udl = urlDatasetNameXPath.selectNodes(recordElement);
+        if (udl == null || udl.isEmpty()) {
+            List<Map<String, String>> sl = new ArrayList<Map<String, String>>();
+            Map<String, String> udm = new HashMap<String, String>();
+            udm.put("name", "dataset-naam");
+            udm.put("href", "dataset-href");
+            udm.put("protocol", "dataset-protocol");
+            sl.add(udm);
+            return sl;
+//            return null;
+        }
+        List<Map<String,String>> sl = new ArrayList<Map<String,String>>();
+        for (UrlDataset ud : udl) {
+            Map<String,String> udm = new HashMap<String,String>();
+            udm.put("name", ud.getName());
+            udm.put("href", ud.getHref());
+            udm.put("protocol", ud.getProtocol());
+            sl.add(udm);
         }
         return sl;
     }
