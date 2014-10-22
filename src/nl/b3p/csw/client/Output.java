@@ -500,7 +500,7 @@ public abstract class Output implements Iterable<Element> {
     }
     
     public List<Map<String,String>> getOperatesOnAsStringList(Element recordElement) throws JDOMException {
-        List<OperatesOn> ool = operatesOnXpath.selectNodes(recordElement);
+        List<OperatesOn> ool = getOperatesOn(recordElement);
         if (ool==null || ool.isEmpty()) {
             return null;
         }
@@ -524,7 +524,7 @@ public abstract class Output implements Iterable<Element> {
     }
     
     public List<Map<String,String>> getUrlDatasetsAsStringList(Element recordElement) throws JDOMException {
-        List<UrlDataset> udl = urlDatasetNameXPath.selectNodes(recordElement);
+        List<UrlDataset> udl = getUrlDatasets(recordElement);
         if (udl == null || udl.isEmpty()) {
             List<Map<String, String>> sl = new ArrayList<Map<String, String>>();
             Map<String, String> udm = new HashMap<String, String>();
