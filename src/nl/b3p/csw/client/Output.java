@@ -322,6 +322,18 @@ public abstract class Output implements Iterable<Element> {
     public List<Text> getKeyWords(Element recordElement) throws JDOMException {
         return (List<Text>) keywordsJdomXPath.selectNodes(recordElement);
     }
+    
+    public List<String> getKeyWordsAsStringList(Element recordElement) throws JDOMException {
+        List<Text> kwtl = keywordsJdomXPath.selectNodes(recordElement);
+        if (kwtl==null || kwtl.isEmpty()) {
+            return null;
+        }
+        List<String> sl = new ArrayList<String>();
+        for (Text kwt : kwtl) {
+            sl.add(kwt.getText());
+        }
+        return sl;
+    }
 
     public String getIdentificationDate(Element recordElement) throws JDOMException {
         return identificationDateJdomXPath.valueOf(recordElement);
@@ -480,4 +492,17 @@ public abstract class Output implements Iterable<Element> {
         }
         return returnList;
     }
+    
+    public List<String> getOperatesOnAsStringList(Element recordElement) throws JDOMException {
+        List<OperatesOn> ool = operatesOnXpath.selectNodes(recordElement);
+        if (ool==null || ool.isEmpty()) {
+            return null;
+        }
+        List<String> sl = new ArrayList<String>();
+        for (OperatesOn oo : ool) {
+            sl.add(oo.getUuidref() + " -> " + oo.getHref());
+        }
+        return sl;
+    }
+
 }
