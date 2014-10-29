@@ -528,9 +528,14 @@ public abstract class Output implements Iterable<Element> {
         if (udl == null || udl.isEmpty()) {
             List<Map<String, String>> sl = new ArrayList<Map<String, String>>();
             Map<String, String> udm = new HashMap<String, String>();
-            udm.put("name", "dataset-naam");
-            udm.put("href", "dataset-href");
-            udm.put("protocol", "dataset-protocol");
+            udm.put("name", "voorbeeld");
+            udm.put("href", "http://www.b3partners.nl");
+            udm.put("protocol", "website");
+            sl.add(udm);
+            udm = new HashMap<String, String>();
+            udm.put("name", "voorbeeld");
+            udm.put("href", "http://www.b3partners.nl");
+            udm.put("protocol", "download");
             sl.add(udm);
             return sl;
 //            return null;

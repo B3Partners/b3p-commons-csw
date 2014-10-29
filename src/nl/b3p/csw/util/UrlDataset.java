@@ -24,15 +24,15 @@ public class UrlDataset {
     public UrlDataset(Element el) {
         Element linkage = el.getChild("linkage", Namespace.getNamespace("gmd", "http://www.isotc211.org/2005/gmd"));
         if (linkage != null) {
-            this.href = el.getChildText("URL", Namespace.getNamespace("gmd", "http://www.isotc211.org/2005/gmd"));
+            this.href = linkage.getChildText("URL", Namespace.getNamespace("gmd", "http://www.isotc211.org/2005/gmd"));
         }
         Element lprotocol = el.getChild("protocol", Namespace.getNamespace("gmd", "http://www.isotc211.org/2005/gmd"));
         if (lprotocol != null) {
-            this.protocol = el.getChildText("CharacterString", Namespace.getNamespace("gco", "http://www.isotc211.org/2005/gco"));
+            this.protocol = lprotocol.getChildText("CharacterString", Namespace.getNamespace("gco", "http://www.isotc211.org/2005/gco"));
         }
         Element lname = el.getChild("name", Namespace.getNamespace("gmd", "http://www.isotc211.org/2005/gmd"));
         if (lname != null) {
-            this.name = el.getChildText("CharacterString", Namespace.getNamespace("gco", "http://www.isotc211.org/2005/gco"));
+            this.name = lname.getChildText("CharacterString", Namespace.getNamespace("gco", "http://www.isotc211.org/2005/gco"));
         }
     }
 
