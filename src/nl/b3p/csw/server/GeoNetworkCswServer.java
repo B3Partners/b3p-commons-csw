@@ -16,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.cookie.Cookie;
@@ -33,7 +32,8 @@ public class GeoNetworkCswServer implements CswServable<Document> {
 
     protected static Log log;
     protected CookieStore cookieStore = null;
-    protected String cswUrl;
+    protected String cswDiscoveryUrl; 
+    protected String cswPublicationUrl;
     protected String loginUrl;
     protected String cswUser;
     protected String cswPassword;
@@ -57,16 +57,25 @@ public class GeoNetworkCswServer implements CswServable<Document> {
         log.info("Initializing " + this.getClass().getSimpleName());
 
         this.loginUrl = loginUrl;
-        this.cswUrl = cswUrl;
+        this.cswDiscoveryUrl = cswUrl;
+        this.cswPublicationUrl = cswUrl + "-publication"; //ugly
         this.cswUser = cswUser;
         this.cswPassword = cswPassword;
 
         this.responseListenable = responseListenable;
     }
 
-    public Document doRequest(String cswRequestXml) throws IOException, JDOMException, JAXBException, OwsException {
-        if (login(loginUrl, cswUser, cswPassword)) {
-            // standard Geonetwork login failed. Exception has probably been thrown in method above.
+    public Document doRequest(String cswRequestXml, boolean transaction) throws IOException, JDOMException, JAXBException, OwsException {
+        boolean preLoggedIn = false;
+        try {
+            preLoggedIn = login(loginUrl, cswUser, cswPassword);
+        } catch (Exception e) {
+            log.error("Geonetwork probably configured for old login methode, error: " + e.getLocalizedMessage());
+        }
+        
+        String cswUrl = transaction ? cswPublicationUrl : cswDiscoveryUrl;
+        if (preLoggedIn) {
+            // standard Geonetwork pre login above worked.
             return httpPostCswRequest(cswRequestXml, cswUrl);
         } else {
             // generic UsernamePasswordCredentials login try:
@@ -79,28 +88,72 @@ public class GeoNetworkCswServer implements CswServable<Document> {
         if (url == null || username == null || password == null) {
             return false;
         }
+        
+        if (url.contains("j_spring_security_check")) {
+            
+            return httpPostCswLoginRequest(url, username,  password);
 
-        StringBuilder loginMessage = new StringBuilder();
-        loginMessage.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        loginMessage.append("<request>");
-        loginMessage.append("<username>");
-        loginMessage.append(username);
-        loginMessage.append("</username>");
-        loginMessage.append("<password>");
-        loginMessage.append(password);
-        loginMessage.append("</password>");
-        loginMessage.append("</request>");
+        } else if (url.contains("xml.user.login")) {
+            
+            StringBuilder loginMessage = new StringBuilder();
+            loginMessage.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            loginMessage.append("<request>");
+            loginMessage.append("<username>");
+            loginMessage.append(username);
+            loginMessage.append("</username>");
+            loginMessage.append("<password>");
+            loginMessage.append(password);
+            loginMessage.append("</password>");
+            loginMessage.append("</request>");
 
-        Document responseMessage = null;
-        try {
-            responseMessage = httpPostCswRequest(loginMessage.toString(), url);
-        } catch (IOException ex) {
-            throw new IOException("Error logging in on csw-server: " + ex.getLocalizedMessage());
+            Document responseMessage = null;
+            try {
+                responseMessage = httpPostCswRequest(loginMessage.toString(), url);
+            } catch (IOException ex) {
+                throw new IOException("Error logging in on csw-server in old way: " + ex.getLocalizedMessage());
+            }
+            return responseMessage != null;
+
+        } else {
+            // unkown login string, rely on basic authentication later
+            return false;
         }
 
-        boolean loginSuccess = responseMessage != null;
+    }
+    
+    protected boolean httpPostCswLoginRequest(String url, String username, String password) throws IOException, JDOMException, JAXBException, OwsException {
+        
+        HttpClientConfigured hcc = new HttpClientConfigured(null);
+        HttpClientContext context = hcc.getContext();
 
-        return loginSuccess;
+        // cookies
+        if (cookieStore != null) {
+            context.setCookieStore(cookieStore);
+        }
+        HttpPost post = new HttpPost(url);
+        post.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        
+        String data = "username="+username+"&password="+password;
+        post.setEntity(new StringEntity(data, ContentType.APPLICATION_FORM_URLENCODED.TEXT_XML));
+
+        HttpResponse response = hcc.execute(post);
+        
+        try {
+            int statusCode = response.getStatusLine().getStatusCode();
+            // geonetwork geeft altijd 302 ???
+            log.debug("Status code: " + statusCode);    
+            
+            cookieStore = context.getCookieStore();
+
+        } catch (Exception ex) {
+            log.debug("Exception login: ", ex);
+            return false;
+        } finally {
+            hcc.close(response);
+            hcc.close();
+        }
+        
+        return true;
     }
 
     protected Document httpPostCswRequest(String request, String url) throws IOException, JDOMException, JAXBException, OwsException {
@@ -121,7 +174,6 @@ public class GeoNetworkCswServer implements CswServable<Document> {
         if (cookieStore != null) {
             context.setCookieStore(cookieStore);
         }
-        
         HttpPost post = new HttpPost(url);
         post.addHeader("Accept", "text/xml");
         post.setEntity(new StringEntity(request, ContentType.TEXT_XML));

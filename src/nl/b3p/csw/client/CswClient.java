@@ -110,14 +110,14 @@ public class CswClient {
     }
 
     public OutputById search(InputById input) throws IOException, JDOMException, JAXBException, OwsException {
-        return new OutputById(doRequest(input.getRequest()));
+        return new OutputById(doRequest(input.getRequest(), false));
     }
 
     public OutputBySearch search(InputBySearch input) throws IOException, JDOMException, JAXBException, OwsException {
-        return new OutputBySearch(doRequest(input.getRequest()));
+        return new OutputBySearch(doRequest(input.getRequest(), false));
     }
 
-    protected Document doRequest(JAXBElement jaxbElement) throws IOException, JDOMException, JAXBException, OwsException {
+    protected Document doRequest(JAXBElement jaxbElement, boolean transaction) throws IOException, JDOMException, JAXBException, OwsException {
         if (jaxbElement == null)
             throw new IllegalArgumentException("Provided jaxbElement must be non-null.");
 
@@ -136,7 +136,7 @@ public class CswClient {
 
         // door expliciet te casten naar org.jdom.Document wordt het niet echt een algemene API
         // We zitten nu voor deze client altijd op JDOM.
-        Document responseDocument = (Document)server.doRequest(marshalledCswXml);
+        Document responseDocument = (Document)server.doRequest(marshalledCswXml, transaction);
 
         return responseDocument;
     }
@@ -173,7 +173,7 @@ public class CswClient {
     }
 
     public TransactionResponse insert(InsertType insertType) throws IOException, JDOMException, JAXBException, OwsException {
-        Document responseDocument = doRequest(createTransaction(insertType));
+        Document responseDocument = doRequest(createTransaction(insertType), true);
 
         return createTransactionResponse(responseDocument);
     }
@@ -227,7 +227,7 @@ public class CswClient {
     }
 
     public TransactionResponse update(UpdateType updateType) throws IOException, JDOMException, JAXBException, OwsException {
-        Document responseDocument = doRequest(createTransaction(updateType));
+        Document responseDocument = doRequest(createTransaction(updateType), true);
 
         return createTransactionResponse(responseDocument);
     }
@@ -286,13 +286,13 @@ public class CswClient {
     }
 
     public TransactionResponse delete(DeleteType deleteType) throws IOException, JDOMException, JAXBException, OwsException {
-        Document responseDocument = doRequest(createTransaction(deleteType));
+        Document responseDocument = doRequest(createTransaction(deleteType), true);
 
         return createTransactionResponse(responseDocument);
     }
 
     public HarvestResponse harvest(HarvestType harvestType) throws IOException, JDOMException, JAXBException, OwsException {
-        Document responseDocument = doRequest(new Harvest(harvestType));
+        Document responseDocument = doRequest(new Harvest(harvestType), true);
 
         JAXBElement<HarvestResponseType> harvestResponse = (JAXBElement<HarvestResponseType>)
                 MarshallUtil.unMarshall(responseDocument, cswSchema, HarvestResponseType.class);

@@ -21,5 +21,5 @@ public interface CswServable<T> {
      * @param cswRequestXml
      * @return The response from the server as a String. The String should contain xml.
      */
-    public T doRequest(String cswRequestXml) throws IOException, JDOMException, JAXBException, OwsException;
+    public T doRequest(String cswRequestXml, boolean transaction) throws IOException, JDOMException, JAXBException, OwsException;
 }
