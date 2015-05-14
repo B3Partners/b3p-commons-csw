@@ -305,7 +305,7 @@ public class CswClient {
         CswServable server = new GeoNetworkCswServer(
                 "http://dev.b3p.nl/geonetwork/srv/en/xml.user.login",
                 "http://dev.b3p.nl/geonetwork/srv/en/csw",
-                "admin", "***REMOVED***");
+                "admin", "xxxxxxxxxx");
 
         //String cswValidationPath  = "c:\\dev_erik\\b3p-commons\\b3p-commons-csw\\jaxb\\xsds\\csw\\2.0.2\\CSW-discovery.xsd";
 
