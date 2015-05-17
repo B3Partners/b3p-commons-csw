@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+               xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               jaxb:version="2.0">
+               
+	<jaxb:bindings schemaLocation="csw-response.xsd"  node="/xs:schema">
+	
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.response"/>
+		</jaxb:schemaBindings>
+
+	</jaxb:bindings>
+	
+</jaxb:bindings>

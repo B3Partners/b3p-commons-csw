@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gmd="http://www.isotc211.org/2005/gmd" targetNamespace="http://www.isotc211.org/2005/gmd" elementFormDefault="qualified" version="0.1">
+	<!-- ================================= Annotation ================================ -->
+	<xs:annotation>
+		<xs:documentation>Wrapper to include both Csw and Gmd (apiso profile). EvdP.</xs:documentation>
+	</xs:annotation>
+	<!-- ================================== Imports & Includes ================================== -->
+	
+	<!-- !!!!!! Gaat niet: gml bijvoorbeeld zit in alletwee de schema's als dependency. dit schema valideert dus niet !!!!!!!!!-->
+	
+	<xs:include schemaLocation="profiles/apiso/1.0.0/apiso.xsd"/>
+	<xs:import namespace="http://www.opengis.net/cat/csw/2.0.2" schemaLocation="CSW-publication.xsd"/>
+</xs:schema>

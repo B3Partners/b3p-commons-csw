@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings 
+			xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" 
+			xmlns:xjc= "http://java.sun.com/xml/ns/jaxb/xjc" 
+			jaxb:extensionBindingPrefixes="xjc" 
+			jaxb:version="2.0" 
+			>
+
+	<jaxb:globalBindings generateMixedExtensions="true"/>
+
+	<jaxb:bindings schemaLocation="csw-request.xsd"  node="/xs:schema">
+	
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.request"/>
+		</jaxb:schemaBindings>
+		
+		<jaxb:bindings node="./xs:simpleType[@name='filterVersionType']">
+			<jaxb:typesafeEnumClass>
+				<jaxb:typesafeEnumMember value="1.1.0" name="Version_1_1_0"/>
+			</jaxb:typesafeEnumClass>
+		</jaxb:bindings>
+		
+		<jaxb:bindings node="./xs:simpleType[@name='cswVersionType']">
+			<jaxb:typesafeEnumClass>
+				<jaxb:typesafeEnumMember value="2.0.2" name="Version_2_0_2"/>
+			</jaxb:typesafeEnumClass>
+		</jaxb:bindings>
+
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="filter/1.1.0/filter.xsd" node="/xs:schema">
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.filter"/>
+		</jaxb:schemaBindings>
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="gml/3.1.1/base/geometryAggregates.xsd" node="/xs:schema">
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.gml"/>
+		</jaxb:schemaBindings>
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="xlink/1.0.0/xlinks.xsd" node="/xs:schema">
+		<jaxb:schemaBindings>
+			<jaxb:package name="nl.b3p.csw.jaxb.xlink"/>
+		</jaxb:schemaBindings>
+	</jaxb:bindings>
+	
+</jaxb:bindings>
