@@ -73,8 +73,6 @@
     </dependencies>
     <properties>
         <project.build.sourceEncoding>windows-1252</project.build.sourceEncoding>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
     </properties>    
     <repositories>
         <repository>
