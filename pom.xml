@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>nl.b3p</groupId>
     <artifactId>b3p-commons-csw</artifactId>
-    <version>4.2</version>
+    <version>4.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>nl.b3p</groupId>
             <artifactId>b3p-commons-core</artifactId>
-            <version>4.2</version>
+            <version>4.2-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
