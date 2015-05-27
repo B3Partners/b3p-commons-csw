@@ -3,8 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>nl.b3p</groupId>
     <artifactId>b3p-commons-csw</artifactId>
-    <version>4.2-SNAPSHOT</version>
+    <version>4.2.1-SNAPSHOT</version>
     <packaging>jar</packaging>
+    
+    <properties>
+        <project.build.sourceEncoding>windows-1252</project.build.sourceEncoding>
+        <geotools.version>10.4</geotools.version>
+    </properties>
+    
     <dependencies>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -24,27 +30,27 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-opengis</artifactId>
-            <version>10.4</version>
+            <version>${geotools.version}</version>
         </dependency>
         <dependency>
-            <groupId>nl.b3p</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>b3p-commons-core</artifactId>
-            <version>4.2-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-main</artifactId>
-            <version>10.4</version>
+            <version>${geotools.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools.xsd</groupId>
             <artifactId>gt-xsd-core</artifactId>
-            <version>10.4</version>
+            <version>${geotools.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools.xsd</groupId>
             <artifactId>gt-xsd-gml3</artifactId>
-            <version>10.4</version>
+            <version>${geotools.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -62,9 +68,6 @@
             <version>2.3.2</version>
         </dependency>
     </dependencies>
-    <properties>
-        <project.build.sourceEncoding>windows-1252</project.build.sourceEncoding>
-    </properties>    
     <repositories>
         <repository>
             <id>osgeo</id>
