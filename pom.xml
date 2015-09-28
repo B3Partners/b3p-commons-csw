@@ -89,7 +89,7 @@
         <connection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</connection>
         <developerConnection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</developerConnection>
         <url>https://github.com/B3Partners/b3p-commons-csw</url>
-      <tag>b3p-commons-csw-4.2.1</tag>
+      <tag>b3p-commons-csw-${project.version}</tag>
     </scm>
     <distributionManagement>
         <repository>
