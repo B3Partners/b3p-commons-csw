@@ -46,11 +46,18 @@ public class MarshallUtil {
         JAXB_PACKAGES += SEPARATOR + packageName;
     }
 
+    //javax.xml.bind.PropertyException: property "com.sun.xml.bind.namespacePrefixMapper" 
+    //must be an instance of type com.sun.xml.bind.marshaller.NamespacePrefixMapper, 
+    //not nl.b3p.csw.util.CswNamespaceMapper
+    
+    //com.sun.xml.bind.marshaller.NamespacePrefixMapper
+
     public static String marshall(JAXBElement input, Schema schema) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(JAXB_PACKAGES);
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setSchema(schema);
         marshaller.setProperty("jaxb.formatted.output", true);
+        marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new CswNamespaceMapper());
 
         StringWriter stringWriter = new StringWriter();
         marshaller.marshal(input, stringWriter);
