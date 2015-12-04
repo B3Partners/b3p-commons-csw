@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
@@ -129,7 +130,10 @@ public class CswClient {
         // voegen we de apiso namspace toe.
         // Zonder deze namespace kan Degree bijvoorbeeld geen delete request uitvoeren.
         Document doc = new SAXBuilder().build(new StringReader(marshalledCswXml));
-        doc.getRootElement().addNamespaceDeclaration(Namespace.getNamespace("apiso", "http://www.opengis.net/cat/csw/apiso/1.0"));
+        Element rootElem = doc.getRootElement();
+        rootElem.addNamespaceDeclaration(Namespace.getNamespace("apiso", "http://www.opengis.net/cat/csw/apiso/1.0"));
+        //geonetwork heeft per se csw als prefix nodig
+        replaceCswNs(rootElem);
         marshalledCswXml = new XMLOutputter().outputString(doc);
 
         //log.debug("Request:\n" + marshalledCswXml);
@@ -139,6 +143,18 @@ public class CswClient {
         Document responseDocument = (Document)server.doRequest(marshalledCswXml, transaction);
 
         return responseDocument;
+    }
+    
+    private void replaceCswNs(Element e) {
+        if (e.getNamespaceURI().equalsIgnoreCase("http://www.opengis.net/cat/csw/2.0.2")) {
+            e.setNamespace(Namespace.getNamespace("csw", "http://www.opengis.net/cat/csw/2.0.2"));
+            
+            Iterator itr = e.getChildren().iterator();
+            while (itr.hasNext()) {
+                Element subElem = (Element) itr.next();
+                replaceCswNs(subElem);
+            }
+        }
     }
 
     protected Transaction createTransaction(Object object) {
