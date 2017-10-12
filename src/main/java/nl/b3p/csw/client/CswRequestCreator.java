@@ -37,7 +37,7 @@ import nl.b3p.csw.jaxb.filter.SortByType;
 import nl.b3p.csw.jaxb.filter.SortOrderType;
 import nl.b3p.csw.jaxb.filter.SortPropertyType;
 import nl.b3p.csw.util.Util;
-import org.jdom.JDOMException;
+import org.jdom2.JDOMException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.xml.sax.SAXException;

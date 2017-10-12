@@ -12,8 +12,8 @@ import javax.xml.validation.Schema;
 import nl.b3p.csw.jaxb.csw.GetRecordsResponse;
 import nl.b3p.csw.jaxb.csw.GetRecordsResponseType;
 import nl.b3p.csw.jaxb.csw.SearchResultsType;
-import org.jdom.Document;
-import org.jdom.JDOMException;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
 
 /**
  *

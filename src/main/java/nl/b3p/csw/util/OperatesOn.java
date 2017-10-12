@@ -4,8 +4,8 @@
  */
 package nl.b3p.csw.util;
 
-import org.jdom.Element;
-import org.jdom.Namespace;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  *  <srv:operatesOn xmlns:xlink="http://www.w3.org/1999/xlink" uuidref="" xlink:href="" />

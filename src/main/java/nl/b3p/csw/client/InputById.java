@@ -10,8 +10,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 import nl.b3p.csw.jaxb.csw.GetRecordByIdType;
 import nl.b3p.csw.util.MarshallUtil;
-import org.jdom.Document;
-import org.jdom.JDOMException;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
 
 /**
  *
