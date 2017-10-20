@@ -26,16 +26,16 @@ import nl.b3p.csw.util.Protocol;
 import nl.b3p.csw.util.UrlDataset;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.Namespace;
-import org.jdom.Text;
-import org.jdom.filter.ElementFilter;
-import org.jdom.input.DOMBuilder;
-import org.jdom.output.XMLOutputter;
-import org.jdom.transform.JDOMResult;
-import org.jdom.transform.JDOMSource;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.Text;
+import org.jdom2.filter.ElementFilter;
+import org.jdom2.input.DOMBuilder;
+import org.jdom2.output.XMLOutputter;
+import org.jdom2.transform.JDOMResult;
+import org.jdom2.transform.JDOMSource;
 
 /**
  *
@@ -58,19 +58,19 @@ public abstract class Output implements Iterable<Element> {
     protected static final ElementFilter resourceElementFilter = new ElementFilter("CI_OnlineResource", gmdNameSpace);
     protected static final ElementFilter fileIdentifierElementFilter = new ElementFilter("fileIdentifier", gmdNameSpace);
     //for jdom
-    protected static org.jdom.xpath.XPath titleJdomXPath;
-    protected static org.jdom.xpath.XPath keywordsJdomXPath;
-    protected static org.jdom.xpath.XPath identificationDateJdomXPath;
-    protected static org.jdom.xpath.XPath responsibleOrganisationNameJdomXPath;
-    protected static org.jdom.xpath.XPath dateStampJdomXPath;
-    protected static org.jdom.xpath.XPath dateTimeStampJdomXPath;
-    protected static org.jdom.xpath.XPath abstractJdomXPath;
-    protected static org.jdom.xpath.XPath browseGraphicFileName;
-    protected static org.jdom.xpath.XPath metadataStandardNameXPath;  
-    protected static org.jdom.xpath.XPath urlDatasetNameXPath;  
+    protected static org.jdom2.xpath.XPath titleJdomXPath;
+    protected static org.jdom2.xpath.XPath keywordsJdomXPath;
+    protected static org.jdom2.xpath.XPath identificationDateJdomXPath;
+    protected static org.jdom2.xpath.XPath responsibleOrganisationNameJdomXPath;
+    protected static org.jdom2.xpath.XPath dateStampJdomXPath;
+    protected static org.jdom2.xpath.XPath dateTimeStampJdomXPath;
+    protected static org.jdom2.xpath.XPath abstractJdomXPath;
+    protected static org.jdom2.xpath.XPath browseGraphicFileName;
+    protected static org.jdom2.xpath.XPath metadataStandardNameXPath;
+    protected static org.jdom2.xpath.XPath urlDatasetNameXPath;
     
     //for MD for services
-    protected static org.jdom.xpath.XPath operatesOnXpath;  
+    protected static org.jdom2.xpath.XPath operatesOnXpath;
     
     protected static final Protocol defaultProtocol = Protocol.WMS;
     protected static final List<Protocol> defaultAllowedProtocols;
@@ -88,39 +88,39 @@ public abstract class Output implements Iterable<Element> {
         defaultAllowedProtocols.add(defaultProtocol);
 
         try {
-            titleJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString/text()");
+            titleJdomXPath = org.jdom2.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString/text()");
             titleJdomXPath.addNamespace(gmdPrefixNameSpace);
             titleJdomXPath.addNamespace(gcoPrefixNameSpace);
-            keywordsJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString/text()");
+            keywordsJdomXPath = org.jdom2.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString/text()");
             keywordsJdomXPath.addNamespace(gmdPrefixNameSpace);
             keywordsJdomXPath.addNamespace(gcoPrefixNameSpace);
             //gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:thesaurusName/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date/gco:DateTime
-            identificationDateJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:citation/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date/gco:Date/text()");
+            identificationDateJdomXPath = org.jdom2.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:citation/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date/gco:Date/text()");
             identificationDateJdomXPath.addNamespace(gmdPrefixNameSpace);
             identificationDateJdomXPath.addNamespace(gcoPrefixNameSpace);
-            responsibleOrganisationNameJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:contact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString/text()");
+            responsibleOrganisationNameJdomXPath = org.jdom2.xpath.XPath.newInstance("gmd:contact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString/text()");
             responsibleOrganisationNameJdomXPath.addNamespace(gmdPrefixNameSpace);
             responsibleOrganisationNameJdomXPath.addNamespace(gcoPrefixNameSpace);
-            dateStampJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:dateStamp/gco:Date/text()");
+            dateStampJdomXPath = org.jdom2.xpath.XPath.newInstance("gmd:dateStamp/gco:Date/text()");
             dateStampJdomXPath.addNamespace(gmdPrefixNameSpace);
             dateStampJdomXPath.addNamespace(gcoPrefixNameSpace);
-            dateTimeStampJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:dateStamp/gco:DateTime/text()");
+            dateTimeStampJdomXPath = org.jdom2.xpath.XPath.newInstance("gmd:dateStamp/gco:DateTime/text()");
             dateTimeStampJdomXPath.addNamespace(gmdPrefixNameSpace);
             dateTimeStampJdomXPath.addNamespace(gcoPrefixNameSpace);
-            abstractJdomXPath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:abstract/gco:CharacterString/text()");
+            abstractJdomXPath = org.jdom2.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:abstract/gco:CharacterString/text()");
             abstractJdomXPath.addNamespace(gmdPrefixNameSpace);
             abstractJdomXPath.addNamespace(gcoPrefixNameSpace);
-            browseGraphicFileName = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:graphicOverview/gmd:MD_BrowseGraphic/gmd:fileName/gco:CharacterString/text()");
+            browseGraphicFileName = org.jdom2.xpath.XPath.newInstance("gmd:identificationInfo/*/gmd:graphicOverview/gmd:MD_BrowseGraphic/gmd:fileName/gco:CharacterString/text()");
             browseGraphicFileName.addNamespace(gmdPrefixNameSpace);
             browseGraphicFileName.addNamespace(gcoPrefixNameSpace);
-            metadataStandardNameXPath = org.jdom.xpath.XPath.newInstance("gmd:metadataStandardName/gco:CharacterString/text()");
+            metadataStandardNameXPath = org.jdom2.xpath.XPath.newInstance("gmd:metadataStandardName/gco:CharacterString/text()");
             metadataStandardNameXPath.addNamespace(gmdPrefixNameSpace);
             metadataStandardNameXPath.addNamespace(gcoPrefixNameSpace);
-            urlDatasetNameXPath = org.jdom.xpath.XPath.newInstance("gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource");
+            urlDatasetNameXPath = org.jdom2.xpath.XPath.newInstance("gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource");
             urlDatasetNameXPath.addNamespace(gmdPrefixNameSpace);
             urlDatasetNameXPath.addNamespace(gcoPrefixNameSpace);
             //metadata for services
-            operatesOnXpath = org.jdom.xpath.XPath.newInstance("gmd:identificationInfo/srv:SV_ServiceIdentification/srv:operatesOn");                                                                
+            operatesOnXpath = org.jdom2.xpath.XPath.newInstance("gmd:identificationInfo/srv:SV_ServiceIdentification/srv:operatesOn");
             operatesOnXpath.addNamespace(gmdPrefixNameSpace);
             operatesOnXpath.addNamespace(srvPrefixNameSpace);
             
@@ -329,13 +329,15 @@ public abstract class Output implements Iterable<Element> {
     }
     
     public List<String> getKeyWordsAsStringList(Element recordElement) throws JDOMException {
-        List<Text> kwtl = keywordsJdomXPath.selectNodes(recordElement);
+        List<?> kwtl = keywordsJdomXPath.selectNodes(recordElement);
         if (kwtl==null || kwtl.isEmpty()) {
             return null;
         }
-        List<String> sl = new ArrayList<String>();
-        for (Text kwt : kwtl) {
-            sl.add(kwt.getText());
+        List<String> sl = new ArrayList<>();
+        for (Object kwt : kwtl) {
+            if (kwt instanceof Text) {
+                sl.add(((Text) kwt).getText());
+            }
         }
         return sl;
     }
@@ -491,10 +493,12 @@ public abstract class Output implements Iterable<Element> {
     }
     
     public List<OperatesOn> getOperatesOn(Element recordElement)throws JDOMException{
-        List<OperatesOn> returnList = new ArrayList<OperatesOn>();
-        List<Element> elements=operatesOnXpath.selectNodes(recordElement);
-        for (Element el : elements){
-            returnList.add(new OperatesOn(el));
+        List<OperatesOn> returnList = new ArrayList<>();
+        List<?> elements = operatesOnXpath.selectNodes(recordElement);
+        for (Object el : elements) {
+            if (el instanceof Element) {
+                returnList.add(new OperatesOn((Element) el));
+            }
         }
         return returnList;
     }
@@ -515,10 +519,12 @@ public abstract class Output implements Iterable<Element> {
     }
     
     public List<UrlDataset> getUrlDatasets(Element recordElement)throws JDOMException{
-        List<UrlDataset> returnList = new ArrayList<UrlDataset>();
-        List<Element> elements=urlDatasetNameXPath.selectNodes(recordElement);
-        for (Element el : elements){
-            returnList.add(new UrlDataset(el));
+        List<UrlDataset> returnList = new ArrayList<>();
+        List<?> elements = urlDatasetNameXPath.selectNodes(recordElement);
+        for (Object el : elements) {
+            if (el instanceof Element) {
+                returnList.add(new UrlDataset((Element) el));
+            }
         }
         return returnList;
     }

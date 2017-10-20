@@ -16,8 +16,8 @@ import nl.b3p.csw.client.OutputBySearch;
 import nl.b3p.csw.client.OwsException;
 import nl.b3p.csw.jaxb.csw.GetRecords;
 import nl.b3p.csw.server.CswServable;
-import org.jdom.Document;
-import org.jdom.JDOMException;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
 
 /**
  *

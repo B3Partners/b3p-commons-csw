@@ -11,8 +11,8 @@ import nl.b3p.csw.client.OwsException;
 import nl.b3p.csw.jaxb.ows.ExceptionReport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jdom.Document;
-import org.jdom.JDOMException;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
 
 /**
  *

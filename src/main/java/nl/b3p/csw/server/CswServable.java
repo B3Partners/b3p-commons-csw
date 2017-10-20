@@ -7,7 +7,7 @@ package nl.b3p.csw.server;
 import java.io.IOException;
 import javax.xml.bind.JAXBException;
 import nl.b3p.csw.client.OwsException;
-import org.jdom.JDOMException;
+import org.jdom2.JDOMException;
 
 /**
  *

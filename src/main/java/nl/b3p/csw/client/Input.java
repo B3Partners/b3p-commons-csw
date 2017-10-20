@@ -5,14 +5,9 @@
 package nl.b3p.csw.client;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.validation.Schema;
 import nl.b3p.csw.jaxb.csw.RequestBaseType;
-import nl.b3p.csw.util.MarshallUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jdom.Document;
-import org.jdom.JDOMException;
 
 
 /**

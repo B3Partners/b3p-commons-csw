@@ -6,18 +6,15 @@
 package nl.b3p.csw.client;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 import nl.b3p.csw.jaxb.csw.GetRecordByIdResponse;
 import nl.b3p.csw.jaxb.csw.GetRecordByIdResponseType;
-import nl.b3p.csw.util.ExceptionUtil;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.DOMBuilder;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.output.XMLOutputter;
 
 /**
  *
