@@ -1,0 +1,9 @@
+nl.b3p.csw.client
+nl.b3p.csw.jaxb.csw
+nl.b3p.csw.jaxb.elements
+nl.b3p.csw.jaxb.filter
+nl.b3p.csw.jaxb.gml
+nl.b3p.csw.jaxb.ows
+nl.b3p.csw.jaxb.terms
+nl.b3p.csw.server
+nl.b3p.csw.util
