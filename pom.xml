@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>nl.b3p</groupId>
     <artifactId>b3p-commons-csw</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceVersion>1.8</project.build.sourceVersion>
@@ -97,7 +97,7 @@
         <connection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</connection>
         <developerConnection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</developerConnection>
         <url>https://github.com/B3Partners/b3p-commons-csw</url>
-      <tag>b3p-commons-csw-5.0.0</tag>
+      <tag>HEAD</tag>
   </scm>
     <distributionManagement>
         <repository>
