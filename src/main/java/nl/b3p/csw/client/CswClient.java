@@ -118,8 +118,9 @@ public class CswClient {
     }
 
     protected Document doRequest(JAXBElement jaxbElement, boolean transaction) throws IOException, JDOMException, JAXBException, OwsException {
-        if (jaxbElement == null)
+        if (jaxbElement == null) {
             throw new IllegalArgumentException("Provided jaxbElement must be non-null.");
+        }
 
         log.debug(MarshallUtil.marshall(jaxbElement, null));
         String marshalledCswXml = MarshallUtil.marshall(jaxbElement, cswSchema);

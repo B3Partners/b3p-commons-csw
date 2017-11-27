@@ -14,6 +14,7 @@ import nl.b3p.csw.client.ResponseListenable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpPost;
@@ -175,7 +176,9 @@ public class GeoNetworkCswServer implements CswServable<Document> {
             context.setCookieStore(cookieStore);
         }
         HttpPost post = new HttpPost(url);
-        post.addHeader("Accept", "text/xml");
+        post.addHeader(HttpHeaders.ACCEPT, "text/xml");
+        post.addHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8");
+        post.addHeader(HttpHeaders.CONTENT_ENCODING, "utf-8");
         post.setEntity(new StringEntity(request, ContentType.TEXT_XML));
 
         HttpResponse response = hcc.execute(post);
