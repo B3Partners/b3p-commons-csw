@@ -5,6 +5,7 @@
 package nl.b3p.csw.server;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import javax.xml.bind.JAXBException;
 import nl.b3p.commons.services.B3PCredentials;
 import nl.b3p.commons.services.HttpClientConfigured;
@@ -179,7 +180,7 @@ public class GeoNetworkCswServer implements CswServable<Document> {
         post.addHeader(HttpHeaders.ACCEPT, "text/xml");
         post.addHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8");
         post.addHeader(HttpHeaders.CONTENT_ENCODING, "utf-8");
-        post.setEntity(new StringEntity(request, ContentType.TEXT_XML));
+        post.setEntity(new StringEntity(request, ContentType.create("text/xml", Charset.forName("utf-8"))));
 
         HttpResponse response = hcc.execute(post);
 
