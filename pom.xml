@@ -1,37 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>nl.b3p</groupId>
     <artifactId>b3p-commons-csw</artifactId>
     <version>5.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <url>https://github.com/B3Partners/${project.artifactId}/</url>
+    <organization>
+        <name>B3Partners B.V.</name>
+        <url>http://www.b3partners.nl/</url>
+    </organization>
+
+    <scm>
+        <connection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</connection>
+        <developerConnection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</developerConnection>
+        <url>https://github.com/B3Partners/b3p-commons-csw</url>
+        <tag>HEAD</tag>
+    </scm>
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/B3Partners/${project.artifactId}/issues</url>
+    </issueManagement>
+    <distributionManagement>
+        <repository>
+            <id>repo.b3p.nl</id>
+            <name>B3P release Repository</name>
+            <url>http://repo.b3p.nl/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>repo.b3p.nl</id>
+            <name>B3P snapshot Repository</name>
+            <url>http://repo.b3p.nl/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <site>
+            <id>gh-pages</id>
+            <name>github pages site</name>
+            <url>github:http://b3partners.github.io/${project.artifactId}/</url>
+        </site>
+    </distributionManagement>
+
     <properties>
         <project.build.sourceVersion>1.8</project.build.sourceVersion>
         <project.build.targetVersion>1.8</project.build.targetVersion>
         <maven.compiler.source>${project.build.sourceVersion}</maven.compiler.source>
         <maven.compiler.target>${project.build.targetVersion}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>    
-    <organization>
-        <name>B3Partners B.V.</name>
-        <url>http://www.b3partners.nl/</url>
-    </organization>
-    <url>https://github.com/B3Partners/${project.artifactId}/</url>
-    <issueManagement>
-        <system>Github</system>
-        <url>https://github.com/B3Partners/${project.artifactId}/issues</url>
-    </issueManagement>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>nl.b3p</groupId>
                 <artifactId>datastorelinker-bom</artifactId>
-                <version>5.0.1</version>
+                <version>5.0.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
-    </dependencyManagement>    
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -86,6 +114,7 @@
             <version>4.6.0</version>
         </dependency>
     </dependencies>
+
     <repositories>
         <repository>
             <id>repo.b3p.nl</id>
@@ -93,29 +122,7 @@
             <url>http://repo.b3p.nl/nexus/content/groups/public/</url>
         </repository>
     </repositories>
-    <scm>
-        <connection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</connection>
-        <developerConnection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</developerConnection>
-        <url>https://github.com/B3Partners/b3p-commons-csw</url>
-      <tag>HEAD</tag>
-  </scm>
-    <distributionManagement>
-        <repository>
-            <id>repo.b3p.nl</id>
-            <name>B3P release Repository</name>
-            <url>http://repo.b3p.nl/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>repo.b3p.nl</id>
-            <name>B3P snapshot Repository</name>
-            <url>http://repo.b3p.nl/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <site>
-            <id>gh-pages</id>
-            <name>github pages site</name>
-            <url>github:http://b3partners.github.io/${project.artifactId}/</url>
-        </site>
-    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -147,27 +154,67 @@
                     <outputEncoding>${project.build.sourceEncoding}</outputEncoding>
                     <locales>nl</locales>
                     <relativizeDecorationLinks>false</relativizeDecorationLinks>
-                    <reportPlugins>
-                        <plugin>
-                            <artifactId>maven-project-info-reports-plugin</artifactId>
-                        </plugin>
-                        <plugin>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <configuration>
-                                <!-- java 8 doclint van struikelt over de gegenereerde code; uitzetten! -->
-                                <additionalparam>-Xdoclint:none</additionalparam>
-                            </configuration>
-                            <reportSets>
-                                <reportSet>
-                                    <reports>
-                                        <report>javadoc-no-fork</report>
-                                    </reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                    </reportPlugins>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.2.5</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>${roject.build.sourceVersion}</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.9</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <configuration>
+                    <!-- java 8 doclint van struikelt over de gegenereerde code; uitzetten! -->
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>javadoc-no-fork</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.5</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependency-updates-report</report>
+                            <report>plugin-updates-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
