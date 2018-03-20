@@ -37,7 +37,7 @@
         <site>
             <id>gh-pages</id>
             <name>github pages site</name>
-            <url>github:http://b3partners.github.io/${project.artifactId}/</url>
+            <url>scm:git:ssh://git@github.com/b3partners/${project.artifactId}.git</url>
         </site>
     </distributionManagement>
 
@@ -47,6 +47,7 @@
         <maven.compiler.source>${project.build.sourceVersion}</maven.compiler.source>
         <maven.compiler.target>${project.build.targetVersion}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -54,7 +55,7 @@
             <dependency>
                 <groupId>nl.b3p</groupId>
                 <artifactId>datastorelinker-bom</artifactId>
-                <version>5.0.3</version>
+                <version>5.0.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -72,7 +73,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-commons-core</artifactId>
-            <version>5.0.0</version>
+            <version>5.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.vividsolutions</groupId>
@@ -114,7 +115,6 @@
             <version>4.6.0</version>
         </dependency>
     </dependencies>
-
     <repositories>
         <repository>
             <id>repo.b3p.nl</id>
@@ -122,7 +122,6 @@
             <url>http://repo.b3p.nl/nexus/content/groups/public/</url>
         </repository>
     </repositories>
-
     <build>
         <plugins>
             <plugin>
@@ -131,30 +130,39 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>${maven-javadoc-plugin.version}</version>
                 <configuration>
-                    <!-- java 8 doclint van struikelt over de gegenereerde code; uitzetten! -->
-                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <doclint>none</doclint>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.6</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>net.trajano.wagon</groupId>
-                        <artifactId>wagon-git</artifactId>
-                        <!-- 2.0.4 heeft problemen met accepteren/toevoegen van de RSA fingerprint -->
-                        <version>2.0.3</version>
-                    </dependency>
-                </dependencies>
+                <version>3.7</version>
                 <configuration>
                     <generateSitemap>true</generateSitemap>
                     <attach>false</attach>
+                    <skipDeploy>true</skipDeploy>
                     <outputEncoding>${project.build.sourceEncoding}</outputEncoding>
                     <locales>nl</locales>
                     <relativizeDecorationLinks>false</relativizeDecorationLinks>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <content>${project.reporting.outputDirectory}</content>
+                    <scmBranch>gh-pages</scmBranch>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>scm-publish</id>
+                        <phase>site-deploy</phase>
+                        <goals>
+                            <goal>publish-scm</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -180,7 +188,6 @@
             </plugin>
         </plugins>
     </build>
-
     <reporting>
         <plugins>
             <plugin>
@@ -189,10 +196,9 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>${maven-javadoc-plugin.version}</version>
                 <configuration>
-                    <!-- java 8 doclint van struikelt over de gegenereerde code; uitzetten! -->
-                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <doclint>none</doclint>
                 </configuration>
                 <reportSets>
                     <reportSet>
