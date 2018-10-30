@@ -4,7 +4,7 @@
  */
 package nl.b3p.csw.client;
 
-import com.vividsolutions.jts.io.ParseException;
+import org.locationtech.jts.io.ParseException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
