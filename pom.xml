@@ -27,12 +27,12 @@
         <repository>
             <id>repo.b3p.nl</id>
             <name>B3P release Repository</name>
-            <url>http://repo.b3p.nl/nexus/content/repositories/releases/</url>
+            <url>https://repo.b3p.nl/nexus/repository/releases/</url>
         </repository>
         <snapshotRepository>
             <id>repo.b3p.nl</id>
             <name>B3P snapshot Repository</name>
-            <url>http://repo.b3p.nl/nexus/content/repositories/snapshots/</url>
+            <url>https://repo.b3p.nl/nexus/repository/snapshots/</url>
         </snapshotRepository>
         <site>
             <id>gh-pages</id>
@@ -55,7 +55,7 @@
             <dependency>
                 <groupId>nl.b3p</groupId>
                 <artifactId>datastorelinker-bom</artifactId>
-                <version>5.0.7</version>
+                <version>5.0.8</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -119,7 +119,7 @@
         <repository>
             <id>repo.b3p.nl</id>
             <name>B3P Repository</name>
-            <url>http://repo.b3p.nl/nexus/content/groups/public/</url>
+            <url>https://repo.b3p.nl/nexus/repository/public/</url>
         </repository>
     </repositories>
     <build>
