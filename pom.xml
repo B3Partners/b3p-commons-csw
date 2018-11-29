@@ -55,7 +55,7 @@
             <dependency>
                 <groupId>nl.b3p</groupId>
                 <artifactId>datastorelinker-bom</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -176,7 +176,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>3.2.5</version>
+                                    <version>3.3.9</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
                                     <version>${project.build.sourceVersion}</version>
