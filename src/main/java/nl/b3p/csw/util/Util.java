@@ -26,7 +26,7 @@ import javax.xml.validation.SchemaFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.geometry.jts.WKTReader2;
-import org.geotools.xml.Encoder;
+import org.geotools.xsd.Encoder;
 import org.jdom2.JDOMException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
