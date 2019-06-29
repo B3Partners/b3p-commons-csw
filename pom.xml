@@ -48,7 +48,7 @@
         <maven.compiler.target>${project.build.targetVersion}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
-        <geotools.version>21.1</geotools.version>
+        <geotools.version>21.2</geotools.version>
     </properties>
 
     <dependencies>
@@ -126,7 +126,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>5.0.0</version>
+                    <version>5.1.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
