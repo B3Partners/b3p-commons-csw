@@ -41,9 +41,8 @@ timestamps {
 
             stage('OWASP Dependency Check') {
                 echo "Uitvoeren OWASP dependency check"
-                sh "mvn org.owasp:dependency-check-maven:check -DskipSystemScope=true -DnodeAuditAnalyzerEnabled=false -DnodeAnalyzerEnabled=false -Dformat=XML -DsuppressionFile=./.mvn/owasp-suppression.xml"
-
-                dependencyCheckPublisher canComputeNew: false, defaultEncoding: '', healthy: '85', pattern: '**/dependency-check-report.xml', shouldDetectModules: true, unHealthy: ''
+                sh "mvn org.owasp:dependency-check-maven:check"
+                dependencyCheckPublisher failedNewCritical: 1, unstableNewHigh: 1, unstableNewLow: 1, unstableNewMedium: 1
             }
         }
     }
