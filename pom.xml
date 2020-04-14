@@ -133,6 +133,18 @@
                         <suppressionFile>${project.basedir}/.mvn/owasp-suppression.xml</suppressionFile>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.1.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -188,7 +200,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>3.3.9</version>
+                                    <version>3.5.0</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
                                     <version>${project.build.sourceVersion}</version>
