@@ -49,7 +49,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <geotools.version>24.1</geotools.version>
-        <jts.version>1.17.1</jts.version>
+        <jts.version>1.18.0</jts.version>
     </properties>
 
     <dependencies>
