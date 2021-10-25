@@ -4,7 +4,7 @@
 
     <groupId>nl.b3p</groupId>
     <artifactId>b3p-commons-csw</artifactId>
-    <version>6.6</version>
+    <version>6.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <url>https://github.com/B3Partners/${project.artifactId}/</url>
@@ -17,7 +17,6 @@
         <connection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</connection>
         <developerConnection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</developerConnection>
         <url>https://github.com/B3Partners/b3p-commons-csw</url>
-        <tag>b3p-commons-csw-6.6</tag>
     </scm>
     <issueManagement>
         <system>Github</system>
@@ -48,7 +47,7 @@
         <maven.compiler.target>${project.build.targetVersion}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
-        <geotools.version>25.2</geotools.version>
+        <geotools.version>25.3</geotools.version>
         <jts.version>1.18.1</jts.version>
     </properties>
 
