@@ -12,8 +12,6 @@ timestamps {
         withEnv(["JAVA_HOME=${ tool 'OpenJDK8' }", "PATH+MAVEN=${tool 'Maven CURRENT'}/bin:${env.JAVA_HOME}/bin"]) {
 
             stage('Prepare') {
-                sh "ulimit -a"
-                sh "free -m"
                 checkout scm
             }
 
