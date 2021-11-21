@@ -49,7 +49,7 @@
         <maven.compiler.target>${project.build.targetVersion}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
-        <geotools.version>26.0</geotools.version>
+        <geotools.version>26.1</geotools.version>
         <jts.version>1.18.2</jts.version>
     </properties>
 
