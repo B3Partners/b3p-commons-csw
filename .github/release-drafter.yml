@@ -1,7 +1,9 @@
+version-template: "$MAJOR.$MINOR"
+
 tag-template: "b3p-commons-csw-$NEXT_MINOR_VERSION"
 name-template: v$NEXT_MINOR_VERSION 🎁
 
-version-template: "$MAJOR.$MINOR"
+
 
 template: |
   ## What’s Changed
