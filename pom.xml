@@ -17,7 +17,6 @@
         <connection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</connection>
         <developerConnection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</developerConnection>
         <url>https://github.com/B3Partners/b3p-commons-csw</url>
-      <tag>HEAD</tag>
   </scm>
     <issueManagement>
         <system>Github</system>
@@ -47,9 +46,9 @@
         <maven.compiler.source>${project.build.sourceVersion}</maven.compiler.source>
         <maven.compiler.target>${project.build.targetVersion}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
-        <geotools.version>25.3</geotools.version>
-        <jts.version>1.18.1</jts.version>
+        <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
+        <geotools.version>25.4</geotools.version>
+        <jts.version>1.18.2</jts.version>
     </properties>
 
     <dependencies>
@@ -61,12 +60,12 @@
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
-            <version>2.0.6</version>
+            <version>2.0.6.1</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-commons-core</artifactId>
-            <version>5.0.7</version>
+            <version>5.0.8</version>
         </dependency>
         <dependency>
             <groupId>org.locationtech.jts</groupId>
@@ -127,7 +126,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>6.2.2</version>
+                    <version>6.5.1</version>
                     <configuration>
                         <skipSystemScope>true</skipSystemScope>
                         <format>ALL</format>
@@ -162,7 +161,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.9.1</version>
+                <version>3.10.0</version>
                 <configuration>
                     <generateSitemap>true</generateSitemap>
                     <attach>false</attach>
@@ -191,7 +190,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
