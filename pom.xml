@@ -4,7 +4,7 @@
 
     <groupId>nl.b3p</groupId>
     <artifactId>b3p-commons-csw</artifactId>
-    <version>6.8-SNAPSHOT</version>
+    <version>6.8</version>
     <packaging>jar</packaging>
 
     <url>https://github.com/B3Partners/${project.artifactId}/</url>
@@ -17,6 +17,7 @@
         <connection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</connection>
         <developerConnection>scm:git:git@github.com:B3Partners/b3p-commons-csw.git</developerConnection>
         <url>https://github.com/B3Partners/b3p-commons-csw</url>
+    <tag>b3p-commons-csw-6.8</tag>
   </scm>
     <issueManagement>
         <system>Github</system>
